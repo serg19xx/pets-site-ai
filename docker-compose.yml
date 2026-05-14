@@ -1,0 +1,37 @@
+name: pets
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pets}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pets_dev_change_me}
+      POSTGRES_DB: ${POSTGRES_DB:-pets}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-pets} -d ${POSTGRES_DB:-pets}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: ./backend
+    ports:
+      - "${API_PORT:-8080}:8080"
+    environment:
+      PORT: 8080
+      # Use same :- defaults as postgres service so `docker compose up` works without a root .env file.
+      DATABASE_URL: postgresql://${POSTGRES_USER:-pets}:${POSTGRES_PASSWORD:-pets_dev_change_me}@postgres:5432/${POSTGRES_DB:-pets}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
