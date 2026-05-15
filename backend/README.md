@@ -21,6 +21,15 @@ Node.js **20+**, **TypeScript**, **Fastify**, **PostgreSQL** via `pg` and **`DAT
 - `GET /api/health` — process up
 - `GET /api/health/db` — `SELECT 1` through the pool
 
+## API documentation (Swagger / OpenAPI)
+
+With the API running on port **8080**:
+
+- **Swagger UI:** [http://localhost:8080/api/docs](http://localhost:8080/api/docs)
+- **OpenAPI JSON:** [http://localhost:8080/api/docs/json](http://localhost:8080/api/docs/json)
+
+More context: [docs/api.md](../docs/api.md). New endpoints should include a Fastify `schema` so they show up in the docs.
+
 ## Migrations
 
 SQL files in `backend/migrations/`, sorted by name. Applied once; names recorded in `schema_migrations`. Add `002_*.sql`, `003_*.sql`, etc.

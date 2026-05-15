@@ -13,6 +13,7 @@ Single workspace for the **Vue frontend**, **Node/Fastify API**, **n8n-related a
 | `docker/postgres/` | Reserved for optional SQL init scripts |
 | `docs/data-source.md` | How to swap Docker Postgres ↔ Supabase via `DATABASE_URL` |
 | `docs/postgres-client.md` | DBeaver / GUI clients and `psql` — connect to local Postgres |
+| `docs/api.md` | OpenAPI / Swagger UI URLs and notes for integrators |
 
 ## n8n
 
@@ -71,6 +72,8 @@ npm run dev
 ```
 
 Vite proxies `/api` to `http://localhost:8080` (see `frontend/vite.config.ts`).
+
+**API docs (Swagger UI):** with the backend on port 8080, open [http://localhost:8080/api/docs](http://localhost:8080/api/docs) — see [docs/api.md](docs/api.md).
 
 ## Full stack in Docker only
 
