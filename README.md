@@ -14,6 +14,7 @@ Single workspace for the **Vue frontend**, **Node/Fastify API**, **n8n-related a
 | `docs/data-source.md` | How to swap Docker Postgres ↔ Supabase via `DATABASE_URL` |
 | `docs/postgres-client.md` | DBeaver / GUI clients and `psql` — connect to local Postgres |
 | `docs/api.md` | OpenAPI / Swagger UI URLs and notes for integrators |
+| `docs/product-vision.md` | Product decisions: no roles, consultations catalog, lite consultant cabinet (later) |
 
 ## n8n
 

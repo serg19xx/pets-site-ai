@@ -13,6 +13,17 @@ With the API on port **8080** (Docker or `npm run dev` in `backend/`):
 
 If the API runs behind another host or port, replace `localhost:8080` accordingly.
 
+### Troubleshooting: `404` on `/api/docs` or `/api/docs/json`
+
+The API process must include the Swagger packages (`@fastify/swagger`, `@fastify/swagger-ui`). If you run the API **in Docker**, rebuild after pulling or changing the backend:
+
+```bash
+cd /path/to/PETS
+docker compose up -d --build api
+```
+
+If port **8080** is already taken by an old container, stop it first (`docker compose down`) or use local dev: `bash scripts/dev.sh` (backend on the host with the latest code).
+
 ## For developers
 
 - New routes should declare a **JSON Schema** on the route (`schema` in Fastify) so they appear in Swagger automatically.

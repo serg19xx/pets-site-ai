@@ -9,7 +9,7 @@ Node.js **20+**, **TypeScript**, **Fastify**, **PostgreSQL** via `pg` and **`DAT
 | `npm run dev` | Watch mode with `tsx` |
 | `npm run build` | Compile to `dist/` |
 | `npm start` | Run compiled app (runs migrations first) |
-| `npm run db:migrate` | Run SQL migrations only |
+| `npm run db:migrate` | Run SQL migrations only (requires `backend/.env` with `DATABASE_URL`; copy from `.env.example`) |
 
 ## Configuration
 
@@ -30,9 +30,18 @@ With the API running on port **8080**:
 
 More context: [docs/api.md](../docs/api.md). New endpoints should include a Fastify `schema` so they show up in the docs.
 
+If these URLs return **404**, the running API is probably an **old Docker image** — run `docker compose up -d --build api` from the repo root, or use `npm run dev` in `backend/`.
+
 ## Migrations
 
-SQL files in `backend/migrations/`, sorted by name. Applied once; names recorded in `schema_migrations`. Add `002_*.sql`, `003_*.sql`, etc.
+SQL files in `backend/migrations/`, sorted by name. Applied once; names recorded in `schema_migrations`.
+
+| File | Contents |
+|------|----------|
+| `001_initial.sql` | Example `items` table |
+| `002_users_and_auth.sql` | `users`, `user_auth`, `user_mfa` (2FA-ready) |
+
+Add `003_*.sql`, etc. for later changes.
 
 ## Docker
 
