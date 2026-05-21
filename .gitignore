@@ -30,6 +30,5 @@ npm-debug.log*
 **/postgres-data/
 
 # User/pet uploads (keep folder structure only)
-backend/uploads/*
-!backend/uploads/**/
+backend/uploads/**/*
 !backend/uploads/**/.gitkeep

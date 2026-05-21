@@ -11,6 +11,7 @@ Single workspace for the **Nuxt 3 web app**, **Node/Fastify API**, **n8n-related
 | `agents/n8n/` | Versioned workflow exports from your **VPS n8n** and operator docs (no secrets) |
 | `docker-compose.yml` | PostgreSQL + `api` (built from `backend/`) |
 | `docker/postgres/` | Reserved for optional SQL init scripts |
+| `docs/uploads.md` | Avatars & pet photos on disk — persistence for dev and production |
 | `docs/data-source.md` | How to swap Docker Postgres ↔ Supabase via `DATABASE_URL` |
 | `docs/postgres-client.md` | DBeaver / GUI clients and `psql` — connect to local Postgres |
 | `docs/api.md` | OpenAPI / Swagger UI URLs and notes for integrators |
@@ -88,6 +89,7 @@ With a root `.env` (after `cp .env.docker.example .env` and edits): `docker comp
 
 - API: `http://localhost:${API_PORT:-8080}` (e.g. health: `/api/health`)
 - Postgres: `localhost:${POSTGRES_PORT:-5432}`
+- Uploads: `backend/uploads/` on the host (bind-mounted into the API container — see [docs/uploads.md](docs/uploads.md))
 
 ### Connect from a desktop client (DBeaver, etc.)
 

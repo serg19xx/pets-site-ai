@@ -119,7 +119,7 @@ usePageSeo({
     <div class="mb-4">
       <NuxtLink
         :to="localePath('/')"
-        class="ui-link-back !mb-0 inline-flex"
+        class="ui-link-back mb-0! inline-flex"
       >
         <Icon :icon="UI_ACTION_ICONS.back" class="ui-icon-sm" aria-hidden="true" />
         {{ $t('pet.backToGallery') }}
