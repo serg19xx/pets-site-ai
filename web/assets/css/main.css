@@ -1,0 +1,10 @@
+@import 'tailwindcss';
+@import './tokens.css';
+@import './components.css';
+
+@layer base {
+  body {
+    @apply m-0 min-h-dvh bg-[var(--ui-surface-muted)] font-sans text-[var(--ui-text)] antialiased
+           dark:bg-stone-950 dark:text-stone-100;
+  }
+}

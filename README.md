@@ -1,12 +1,12 @@
 # PETS monorepo
 
-Single workspace for the **Vue frontend**, **Node/Fastify API**, **n8n-related assets** (exports and docs; runtime on VPS), and **Docker Compose** (PostgreSQL + API).
+Single workspace for the **Nuxt 3 web app**, **Node/Fastify API**, **n8n-related assets** (exports and docs; runtime on VPS), and **Docker Compose** (PostgreSQL + API).
 
 ## Layout
 
 | Path | Role |
 |------|------|
-| `frontend/` | Vue 3 + Vite + TypeScript SPA |
+| `web/` | **Nuxt 3** app — public gallery + login (SSG/SSR) and cabinet under `/app` — **http://localhost:3000** in dev |
 | `backend/` | Node.js + Fastify REST API, SQL migrations, `Dockerfile` |
 | `agents/n8n/` | Versioned workflow exports from your **VPS n8n** and operator docs (no secrets) |
 | `docker-compose.yml` | PostgreSQL + `api` (built from `backend/`) |
@@ -31,7 +31,7 @@ From the **repo root** `PETS/`:
 
 | Command | What it does |
 |---------|----------------|
-| `./scripts/dev.sh` | Docker Postgres → waits until ready → `npm run dev` in **backend** and **frontend** together (Ctrl+C stops both). Creates `backend/.env` and `frontend/.env` from `*.example` if missing. |
+| `./scripts/dev.sh` | Docker Postgres → **backend** + **web** (Nuxt). Creates `.env` from `*.example` if missing. **Open http://localhost:3000** (gallery `/`, login `/login`, cabinet `/app/`) |
 | `./scripts/docker-up.sh` | Only **Postgres** in Docker (when you run API/Vite yourself). |
 | `./scripts/docker-up-all.sh` | **Postgres + API** in Docker (`docker compose up -d --build`). |
 | `./scripts/docker-down.sh` | `docker compose down` (volumes kept). |
@@ -62,17 +62,18 @@ npm install
 npm run dev
 ```
 
-Terminal 3 — frontend:
+Terminal 3 — Nuxt web:
 
 ```bash
-cd frontend
+cd web
 cp .env.example .env
-# optional: leave VITE_API_BASE_URL unset to use the Vite /api proxy
 npm install
 npm run dev
 ```
 
-Vite proxies `/api` to `http://localhost:8080` (see `frontend/vite.config.ts`).
+Open http://localhost:3000 — gallery, login, and cabinet share one origin and `localStorage` for auth.
+
+Nuxt dev server proxies `/api` to `http://localhost:8080` (see `web/nuxt.config.ts`).
 
 **API docs (Swagger UI):** with the backend on port 8080, open [http://localhost:8080/api/docs](http://localhost:8080/api/docs) — see [docs/api.md](docs/api.md).
 

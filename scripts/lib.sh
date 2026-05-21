@@ -23,3 +23,29 @@ wait_for_postgres() {
   echo "error: Postgres did not become ready in time." >&2
   exit 1
 }
+
+wait_for_port() {
+  local port="$1"
+  local label="$2"
+  local i
+  for i in $(seq 1 60); do
+    if lsof -nP -iTCP:"${port}" -sTCP:LISTEN >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 0.5
+  done
+  echo "error: ${label} did not start on port ${port}." >&2
+  return 1
+}
+
+free_port() {
+  local port="$1"
+  local pids
+  pids="$(lsof -nP -iTCP:"${port}" -sTCP:LISTEN -t 2>/dev/null || true)"
+  if [[ -n "${pids}" ]]; then
+    echo "Freeing port ${port}..."
+    # shellcheck disable=SC2086
+    kill ${pids} 2>/dev/null || true
+    sleep 0.5
+  fi
+}

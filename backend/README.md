@@ -20,6 +20,14 @@ Node.js **20+**, **TypeScript**, **Fastify**, **PostgreSQL** via `pg` and **`DAT
 
 - `GET /api/health` — process up
 - `GET /api/health/db` — `SELECT 1` through the pool
+- `POST /api/auth/register` — signup (emails temp password or magic link; no password in form)
+- `POST /api/auth/login` — JWT session; `mustChangePassword` when password was system-generated
+- `POST /api/auth/change-password` — Bearer token required
+- `POST /api/auth/forgot-password` — emails new temporary password
+- `POST /api/auth/verify-email` — body `{ "token" }` from email link
+- `POST /api/auth/magic-login` — body `{ "token" }` for link-based signup
+
+Without SMTP, emails are printed to the API console. Set `AUTH_SIGNUP_DELIVERY=password|link` in `.env`.
 
 ## API documentation (Swagger / OpenAPI)
 
@@ -47,4 +55,4 @@ Add `003_*.sql`, etc. for later changes.
 
 The repo root `docker-compose.yml` builds this folder and runs the `api` service. `DATABASE_URL` is injected for the `postgres` hostname on the Compose network.
 
-The frontend calls the API via HTTP (see `frontend` Vite proxy for `/api` and `VITE_API_BASE_URL` in `frontend/.env.example`).
+The web app calls the API via HTTP (see `web/nuxt.config.ts` dev proxy for `/api` and `NUXT_PUBLIC_API_BASE` in `web/.env.example`).

@@ -4,7 +4,10 @@
 # Build outputs
 **/dist/
 **/.vite/
+**/.nuxt/
+**/.output/
 **/coverage/
+.tmp-iles/
 
 # Environment (never commit secrets)
 .env
@@ -25,3 +28,8 @@ npm-debug.log*
 
 # Optional local bind mounts (if you add them later)
 **/postgres-data/
+
+# User/pet uploads (keep folder structure only)
+backend/uploads/*
+!backend/uploads/**/
+!backend/uploads/**/.gitkeep

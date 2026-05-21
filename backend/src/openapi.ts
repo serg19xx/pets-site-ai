@@ -25,7 +25,28 @@ export async function registerOpenApi(app: FastifyInstance) {
           name: 'health',
           description: 'Liveness and database connectivity checks',
         },
+        {
+          name: 'gallery',
+          description: 'Public browse (pet photos grid)',
+        },
+        {
+          name: 'auth',
+          description: 'Registration, login, and password recovery',
+        },
+        {
+          name: 'pets',
+          description: 'User pets, species and breed catalog',
+        },
       ],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
+        },
+      },
     },
   })
 

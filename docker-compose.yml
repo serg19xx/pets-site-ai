@@ -29,6 +29,11 @@ services:
       PORT: 8080
       # Use same :- defaults as postgres service so `docker compose up` works without a root .env file.
       DATABASE_URL: postgresql://${POSTGRES_USER:-pets}:${POSTGRES_PASSWORD:-pets_dev_change_me}@postgres:5432/${POSTGRES_DB:-pets}
+      JWT_SECRET: ${JWT_SECRET:-pets-docker-jwt-secret-change-me}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      AUTH_SIGNUP_DELIVERY: ${AUTH_SIGNUP_DELIVERY:-password}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      EMAIL_FROM: ${EMAIL_FROM:-PETS <onboarding@resend.dev>}
     depends_on:
       postgres:
         condition: service_healthy
