@@ -1,6 +1,7 @@
 import { pool } from '../db/pool.js'
 import { AppError } from '../lib/errors.js'
 import { mapPublicMember } from '../lib/map-public-member.js'
+import { logProductEvent } from '../lib/product-events.js'
 import { notifyInquiryMessage } from './marketplace-inquiry-notify.js'
 
 interface InquiryRow {
@@ -270,6 +271,29 @@ export async function listMarketplaceInquiries(
   return { inquiries, total }
 }
 
+export async function getMarketplaceInquiryUnreadCount(userId: number): Promise<number> {
+  const r = await pool.query<{ c: string }>(
+    `SELECT COUNT(*)::text AS c
+     FROM marketplace_listing_inquiries i
+     INNER JOIN marketplace_listings l ON l.id = i.listing_id
+     INNER JOIN LATERAL (
+       SELECT m.sender_user_id, m.created_at
+       FROM marketplace_inquiry_messages m
+       WHERE m.inquiry_id = i.id
+       ORDER BY m.created_at DESC, m.id DESC
+       LIMIT 1
+     ) last_msg ON TRUE
+     WHERE (i.customer_user_id = $1 OR l.user_id = $1)
+       AND last_msg.sender_user_id <> $1
+       AND last_msg.created_at > COALESCE(
+         CASE WHEN l.user_id = $1 THEN i.seller_last_read_at ELSE i.customer_last_read_at END,
+         to_timestamp(0)
+       )`,
+    [userId],
+  )
+  return Number(r.rows[0]?.c ?? 0)
+}
+
 export async function getMarketplaceInquiryThread(
   inquiryId: number,
   userId: number,
@@ -433,6 +457,14 @@ export async function createOrReplyListingInquiry(
     await markMarketplaceInquiryRead(inquiryId, senderUserId)
   }
 
+  logProductEvent(isNewThread ? 'inquiry_started' : 'inquiry_replied', {
+    inquiryId,
+    listingId,
+    senderUserId,
+    recipientUserId,
+    source: 'listing_endpoint',
+  })
+
   return getMarketplaceInquiryThread(inquiryId, senderUserId)
 }
 
@@ -481,6 +513,14 @@ export async function replyMarketplaceInquiry(
     recipientUserId,
     messageBody: trimmed,
     isSellerRecipient: recipientUserId === sellerId,
+  })
+
+  logProductEvent('inquiry_replied', {
+    inquiryId,
+    listingId: Number(row.listing_id),
+    senderUserId,
+    recipientUserId,
+    source: 'inquiry_endpoint',
   })
 
   return getMarketplaceInquiryThread(inquiryId, senderUserId)

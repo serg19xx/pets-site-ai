@@ -74,6 +74,14 @@ export const marketplaceInquiryThreadResponseSchema = {
   required: ['inquiry', 'messages'],
 } as const
 
+export const marketplaceInquiryUnreadCountSchema = {
+  type: 'object',
+  properties: {
+    unreadCount: { type: 'integer' },
+  },
+  required: ['unreadCount'],
+} as const
+
 export const createInquiryMessageBodySchema = {
   type: 'object',
   additionalProperties: false,

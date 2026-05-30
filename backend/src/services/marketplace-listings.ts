@@ -4,6 +4,7 @@ import { config } from '../config.js'
 import { pool } from '../db/pool.js'
 import { AppError } from '../lib/errors.js'
 import { mapPublicMember } from '../lib/map-public-member.js'
+import { logProductEvent } from '../lib/product-events.js'
 import {
   normalizeListingMediaMime,
   saveListingMediaBuffer,
@@ -395,7 +396,21 @@ export async function createMarketplaceListing(
     savedPaths.push(...paths)
 
     await client.query('COMMIT')
-    return getMarketplaceListingById(listingId, userId)
+    const listing = await getMarketplaceListingById(listingId, userId)
+    logProductEvent('listing_created', {
+      userId,
+      listingId,
+      status: listing.status,
+      withMedia: files.length > 0,
+    })
+    if (listing.status === 'active') {
+      logProductEvent('listing_published', {
+        userId,
+        listingId,
+        source: 'create',
+      })
+    }
+    return listing
   } catch (err) {
     await client.query('ROLLBACK')
     await cleanupSavedPaths(savedPaths)
@@ -474,6 +489,11 @@ export async function updateMarketplaceListing(
   patch: UpdateMarketplaceListingInput,
 ): Promise<MarketplaceListing> {
   await assertListingOwner(userId, listingId)
+  const prevR = await pool.query<{ status: ListingStatus }>(
+    'SELECT status FROM marketplace_listings WHERE id = $1',
+    [listingId],
+  )
+  const prevStatus = prevR.rows[0]?.status ?? null
 
   const updates: string[] = []
   const values: Array<string | number | boolean | null> = []
@@ -539,7 +559,23 @@ export async function updateMarketplaceListing(
      WHERE id = $${index}`,
     values,
   )
-  return getMarketplaceListingById(listingId, userId)
+  const listing = await getMarketplaceListingById(listingId, userId)
+  logProductEvent('listing_updated', {
+    userId,
+    listingId,
+    fromStatus: prevStatus,
+    toStatus: listing.status,
+    changedFields: Object.keys(patch),
+  })
+  if (prevStatus !== 'active' && listing.status === 'active') {
+    logProductEvent('listing_published', {
+      userId,
+      listingId,
+      source: 'update',
+      fromStatus: prevStatus,
+    })
+  }
+  return listing
 }
 
 export async function deleteMarketplaceListing(userId: number, listingId: number): Promise<void> {

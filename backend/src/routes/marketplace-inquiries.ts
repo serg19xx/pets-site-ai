@@ -7,9 +7,11 @@ import {
   createInquiryMessageBodySchema,
   marketplaceInquiriesResponseSchema,
   marketplaceInquiryThreadResponseSchema,
+  marketplaceInquiryUnreadCountSchema,
 } from '../schemas/marketplace-inquiries.js'
 import {
   createOrReplyListingInquiry,
+  getMarketplaceInquiryUnreadCount,
   getMarketplaceInquiryThread,
   listMarketplaceInquiries,
   markMarketplaceInquiryRead,
@@ -66,6 +68,25 @@ function parseRole(value: unknown): 'customer' | 'seller' | 'all' {
 
 export const marketplaceInquiryRoutes: FastifyPluginAsync = async (app) => {
   app.get(
+    '/marketplace/inquiries/unread-count',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['marketplace'],
+        summary: 'Get unread marketplace conversation count',
+        security: [{ bearerAuth: [] }],
+        response: {
+          200: marketplaceInquiryUnreadCountSchema,
+          401: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      return { unreadCount: await getMarketplaceInquiryUnreadCount(getUserId(request)) }
+    },
+  )
+
+  app.get(
     '/marketplace/inquiries',
     {
       onRequest: [app.authenticate],
@@ -118,9 +139,8 @@ export const marketplaceInquiryRoutes: FastifyPluginAsync = async (app) => {
     async (request) => {
       const inquiryId = parseInquiryId((request.params as { id: string }).id)
       const userId = getUserId(request)
-      const thread = await getMarketplaceInquiryThread(inquiryId, userId)
       await markMarketplaceInquiryRead(inquiryId, userId)
-      return thread
+      return getMarketplaceInquiryThread(inquiryId, userId)
     },
   )
 

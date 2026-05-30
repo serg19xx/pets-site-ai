@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync, FastifyRequest } from 'fastify'
 
 import { AppError } from '../lib/errors.js'
+import { logProductEvent } from '../lib/product-events.js'
 import { getOptionalUserId, getUserId } from '../plugins/jwt-auth.js'
 import { errorResponseSchema } from '../schemas/auth.js'
 import {
@@ -197,7 +198,12 @@ export const marketplaceRoutes: FastifyPluginAsync = async (app) => {
     async (request) => {
       const { id } = request.params as { id: string }
       const listingId = parseListingId(id)
-      const listing = await getMarketplaceListingById(listingId, getOptionalUserId(request))
+      const viewerUserId = getOptionalUserId(request)
+      const listing = await getMarketplaceListingById(listingId, viewerUserId)
+      logProductEvent('listing_viewed', {
+        listingId,
+        viewerUserId: viewerUserId ?? null,
+      })
       return { listing }
     },
   )

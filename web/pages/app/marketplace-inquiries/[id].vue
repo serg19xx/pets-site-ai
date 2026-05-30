@@ -25,6 +25,8 @@ const loadError = ref('')
 const replyBody = ref('')
 const isSending = ref(false)
 const sendError = ref('')
+const isRefreshing = ref(false)
+let pollTimer: ReturnType<typeof setInterval> | null = null
 
 const otherParty = computed(() => {
   if (!thread.value) {
@@ -42,7 +44,7 @@ function formatTime(iso: string) {
   })
 }
 
-async function loadThread() {
+async function loadThread(options?: { silent?: boolean }) {
   const id = inquiryId.value
   const token = auth.accessToken
   if (!token || !Number.isInteger(id) || id < 1) {
@@ -50,7 +52,12 @@ async function loadThread() {
     isLoading.value = false
     return
   }
-  isLoading.value = true
+  const silent = options?.silent === true
+  if (silent) {
+    isRefreshing.value = true
+  } else {
+    isLoading.value = true
+  }
   loadError.value = ''
   try {
     thread.value = await fetchMarketplaceInquiryThread(id, token)
@@ -58,6 +65,7 @@ async function loadThread() {
     loadError.value =
       err instanceof ApiError ? err.message : t('marketplace.inquiry.loadError')
   } finally {
+    isRefreshing.value = false
     isLoading.value = false
   }
 }
@@ -84,6 +92,29 @@ async function onReply() {
 watch(inquiryId, () => {
   void loadThread()
 }, { immediate: true })
+
+function startPolling() {
+  stopPolling()
+  pollTimer = setInterval(() => {
+    void loadThread({ silent: true })
+  }, 8000)
+}
+
+function stopPolling() {
+  if (!pollTimer) {
+    return
+  }
+  clearInterval(pollTimer)
+  pollTimer = null
+}
+
+onMounted(() => {
+  startPolling()
+})
+
+onUnmounted(() => {
+  stopPolling()
+})
 </script>
 
 <template>
@@ -125,6 +156,14 @@ watch(inquiryId, () => {
         >
           {{ $t('marketplace.inquiry.viewListing') }}
         </NuxtLink>
+        <button
+          type="button"
+          class="ui-btn-sm ui-btn-secondary mt-3 ml-3"
+          :disabled="isRefreshing"
+          @click="loadThread({ silent: true })"
+        >
+          {{ isRefreshing ? $t('common.loading') : $t('common.refresh') }}
+        </button>
       </header>
 
       <ul class="mt-6 flex list-none flex-col gap-3">

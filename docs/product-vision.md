@@ -77,6 +77,12 @@ Implement as **separate tables/flags** (e.g. `consultant_profiles`, `verified_pr
 - **SMS alerts:** UI + backend ready; **Twilio not configured yet** — messages log to API console until `TWILIO_*` in `backend/.env`. See [marketplace-notifications.md](./marketplace-notifications.md).
 - **Later:** global notification defaults in user Preferences (today: per listing only).
 
+## Current cycle decision (May 2026)
+
+- Stabilization pass added inquiry unread badge + polling + read-state fixes.
+- Backend now emits structured product events in logs (`listing_*`, `inquiry_*`).
+- **Next product focus:** marketplace ranking + practical filters (category, price ranges, promoted/benefit ordering).
+
 ## Deferred
 
 - Marketplace inquiry **SMS via Twilio** (production); until then console/backup email only.

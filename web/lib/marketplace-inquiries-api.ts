@@ -63,6 +63,12 @@ export async function fetchMarketplaceInquiries(
   return requestJson(`/api/marketplace/inquiries?${search.toString()}`, { accessToken })
 }
 
+export async function fetchMarketplaceInquiryUnreadCount(
+  accessToken: string,
+): Promise<{ unreadCount: number }> {
+  return requestJson('/api/marketplace/inquiries/unread-count', { accessToken })
+}
+
 export async function fetchMarketplaceInquiryThread(
   inquiryId: number,
   accessToken: string,

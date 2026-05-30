@@ -20,6 +20,8 @@ const filter = ref<InboxFilter>('all')
 const inquiries = ref<MarketplaceInquirySummary[]>([])
 const isLoading = ref(true)
 const loadError = ref('')
+const isRefreshing = ref(false)
+let pollTimer: ReturnType<typeof setInterval> | null = null
 
 function otherParty(item: MarketplaceInquirySummary) {
   return item.role === 'seller' ? item.customer : item.seller
@@ -47,12 +49,27 @@ function formatTime(iso: string) {
   })
 }
 
-async function loadInquiries() {
+function emptyStateKey(): 'emptyAll' | 'emptySent' | 'emptyReceived' {
+  if (filter.value === 'customer') {
+    return 'emptySent'
+  }
+  if (filter.value === 'seller') {
+    return 'emptyReceived'
+  }
+  return 'emptyAll'
+}
+
+async function loadInquiries(options?: { silent?: boolean }) {
   const token = auth.accessToken
   if (!token) {
     return
   }
-  isLoading.value = true
+  const silent = options?.silent === true
+  if (silent) {
+    isRefreshing.value = true
+  } else {
+    isLoading.value = true
+  }
   loadError.value = ''
   try {
     const { inquiries: list } = await fetchMarketplaceInquiries(token, filter.value, {
@@ -63,6 +80,7 @@ async function loadInquiries() {
     loadError.value =
       err instanceof ApiError ? err.message : t('marketplace.inquiry.loadError')
   } finally {
+    isRefreshing.value = false
     isLoading.value = false
   }
 }
@@ -71,8 +89,28 @@ watch(filter, () => {
   void loadInquiries()
 })
 
+function startPolling() {
+  stopPolling()
+  pollTimer = setInterval(() => {
+    void loadInquiries({ silent: true })
+  }, 15000)
+}
+
+function stopPolling() {
+  if (!pollTimer) {
+    return
+  }
+  clearInterval(pollTimer)
+  pollTimer = null
+}
+
 onMounted(() => {
   void loadInquiries()
+  startPolling()
+})
+
+onUnmounted(() => {
+  stopPolling()
 })
 </script>
 
@@ -89,7 +127,7 @@ onMounted(() => {
       {{ $t('marketplace.inquiry.inboxExplain') }}
     </p>
 
-    <div class="mt-4 flex flex-wrap gap-2">
+    <div class="mt-4 flex flex-wrap items-center gap-2">
       <button
         type="button"
         class="ui-btn-sm"
@@ -114,12 +152,20 @@ onMounted(() => {
       >
         {{ $t('marketplace.inquiry.filterSelling') }}
       </button>
+      <button
+        type="button"
+        class="ui-btn-sm ui-btn-secondary ml-auto"
+        :disabled="isRefreshing"
+        @click="loadInquiries({ silent: true })"
+      >
+        {{ isRefreshing ? $t('common.loading') : $t('common.refresh') }}
+      </button>
     </div>
 
     <p v-if="isLoading" class="ui-loading mt-6">{{ $t('common.loading') }}</p>
     <p v-else-if="loadError" class="ui-alert-error mt-6" role="alert">{{ loadError }}</p>
     <p v-else-if="inquiries.length === 0" class="ui-empty mt-8">
-      {{ $t('marketplace.inquiry.emptyAll') }}
+      {{ $t(`marketplace.inquiry.${emptyStateKey()}`) }}
     </p>
 
     <ul v-else class="mt-6 flex list-none flex-col gap-3">
