@@ -77,7 +77,7 @@ function petPath(id: number) {
 </script>
 
 <template>
-  <section class="mx-auto max-w-lg">
+  <section class="ui-page-container">
     <div class="mb-4">
       <NuxtLink
         :to="localePath('/')"
@@ -111,15 +111,20 @@ function petPath(id: number) {
       </header>
 
       <section class="mt-8">
-        <h2 class="ui-h3">{{ $t('member.petsHeading') }}</h2>
+        <div class="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 class="ui-h3">{{ $t('member.petsHeading') }}</h2>
+          <p v-if="pets.length > 0" class="text-sm text-[var(--ui-text-muted)]">
+            {{ $t('member.petsCount', { count: pets.length }) }}
+          </p>
+        </div>
         <p v-if="pets.length === 0" class="ui-empty mt-4">
           {{ $t('member.emptyPets') }}
         </p>
-        <ul v-else class="ui-gallery-grid mt-4">
+        <ul v-else class="ui-gallery-grid ui-gallery-grid--profile mt-4">
           <li v-for="animal in pets" :key="animal.id" class="ui-gallery-card">
             <NuxtLink :to="petPath(animal.id)" class="ui-gallery-card-link">
               <div class="ui-gallery-card-media">
-                <PetAvatar :pet="animal" />
+                <PetAvatar :pet="animal" size="fill" />
               </div>
               <div class="ui-gallery-card-body">
                 <h3 class="ui-gallery-card-title">{{ animal.name }}</h3>

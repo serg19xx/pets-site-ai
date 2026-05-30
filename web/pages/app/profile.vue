@@ -23,6 +23,7 @@ import { useEnumLabels } from '~/composables/useEnumLabels'
 import { UI_ACTION_ICONS } from '~/lib/ui-icons'
 
 const { t } = useI18n()
+const localePath = useLocalePath()
 const auth = useAuthStore()
 const { genderLabel } = useEnumLabels()
 
@@ -235,7 +236,7 @@ async function onRemoveAvatar() {
 </script>
 
 <template>
-  <section class="mx-auto max-w-lg">
+  <section class="ui-page-container">
     <div class="flex items-center justify-between gap-3">
       <h1 class="ui-page-title">{{ $t('profile.title') }}</h1>
       <div v-if="auth.user && !isEditing">
@@ -478,6 +479,52 @@ async function onRemoveAvatar() {
         {{ $t('profile.privacyHint') }}
       </p>
     </form>
+
+    <div v-if="auth.user" class="mt-8">
+      <h2 class="ui-section-title">{{ $t('profile.feedSection') }}</h2>
+      <ul class="mt-3 flex list-none flex-col gap-2">
+        <li>
+          <NuxtLink :to="localePath('/app/my-posts')" class="ui-list-link">
+            <Icon :icon="UI_ACTION_ICONS.send" class="ui-icon-md shrink-0 text-primary-600" aria-hidden="true" />
+            <div class="min-w-0 flex-1">
+              <p class="ui-list-link-title">{{ $t('auth.myPosts') }}</p>
+              <p class="ui-list-link-meta">{{ $t('profile.myPostsHint') }}</p>
+            </div>
+            <Icon :icon="UI_ACTION_ICONS.chevron" class="ui-icon-sm shrink-0 text-(--ui-text-muted)" aria-hidden="true" />
+          </NuxtLink>
+        </li>
+        <li>
+          <NuxtLink :to="localePath('/app/saved')" class="ui-list-link">
+            <Icon :icon="UI_ACTION_ICONS.bookmark" class="ui-icon-md shrink-0 text-primary-600" aria-hidden="true" />
+            <div class="min-w-0 flex-1">
+              <p class="ui-list-link-title">{{ $t('auth.saved') }}</p>
+              <p class="ui-list-link-meta">{{ $t('profile.savedHint') }}</p>
+            </div>
+            <Icon :icon="UI_ACTION_ICONS.chevron" class="ui-icon-sm shrink-0 text-(--ui-text-muted)" aria-hidden="true" />
+          </NuxtLink>
+        </li>
+        <li>
+          <NuxtLink :to="localePath('/app/my-listings')" class="ui-list-link">
+            <Icon :icon="UI_ACTION_ICONS.star" class="ui-icon-md shrink-0 text-primary-600" aria-hidden="true" />
+            <div class="min-w-0 flex-1">
+              <p class="ui-list-link-title">{{ $t('auth.myListings') }}</p>
+              <p class="ui-list-link-meta">{{ $t('profile.myListingsHint') }}</p>
+            </div>
+            <Icon :icon="UI_ACTION_ICONS.chevron" class="ui-icon-sm shrink-0 text-(--ui-text-muted)" aria-hidden="true" />
+          </NuxtLink>
+        </li>
+        <li>
+          <NuxtLink :to="localePath('/app/liked-pets')" class="ui-list-link">
+            <Icon :icon="UI_ACTION_ICONS.heart" class="ui-icon-md shrink-0 text-primary-600" aria-hidden="true" />
+            <div class="min-w-0 flex-1">
+              <p class="ui-list-link-title">{{ $t('auth.likedPets') }}</p>
+              <p class="ui-list-link-meta">{{ $t('profile.likedPetsHint') }}</p>
+            </div>
+            <Icon :icon="UI_ACTION_ICONS.chevron" class="ui-icon-sm shrink-0 text-(--ui-text-muted)" aria-hidden="true" />
+          </NuxtLink>
+        </li>
+      </ul>
+    </div>
 
     <ImageCropModal
       v-model="isAvatarCropOpen"

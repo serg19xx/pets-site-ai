@@ -3,6 +3,7 @@ export const UI_NAV_ICONS = {
   animals: 'lucide:paw-print',
   feed: 'lucide:newspaper',
   learn: 'lucide:book-open',
+  marketplace: 'lucide:store',
 } as const
 
 export const UI_ACTION_ICONS = {
@@ -23,4 +24,8 @@ export const UI_ACTION_ICONS = {
   remove: 'lucide:x',
   star: 'lucide:star',
   heart: 'lucide:heart',
+  bookmark: 'lucide:bookmark',
+  image: 'lucide:image',
+  send: 'lucide:send',
+  message: 'lucide:message-circle',
 } as const

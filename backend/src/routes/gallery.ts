@@ -3,7 +3,7 @@ import type { FastifyPluginAsync } from 'fastify'
 import { AppError } from '../lib/errors.js'
 import { getOptionalUserId, getUserId } from '../plugins/jwt-auth.js'
 import { getPublicMemberProfile } from '../services/gallery-members.js'
-import { getGalleryPetById, listGalleryPets } from '../services/gallery-pets.js'
+import { getGalleryPetById, listGalleryPets, listLikedGalleryPets } from '../services/gallery-pets.js'
 import { getPetLikeStatus, togglePetLike } from '../services/pet-likes.js'
 import { errorResponseSchema } from '../schemas/auth.js'
 import { petLikeStatusSchema } from '../schemas/likes.js'
@@ -39,6 +39,7 @@ export const galleryRoutes: FastifyPluginAsync = async (app) => {
   app.get(
     '/gallery/pets',
     {
+      onRequest: [app.authenticateOptional],
       schema: {
         tags: ['gallery'],
         summary: 'Public pet gallery',
@@ -54,7 +55,31 @@ export const galleryRoutes: FastifyPluginAsync = async (app) => {
       const q = request.query as Record<string, unknown>
       const limit = parseGalleryLimit(q.limit)
       const offset = parseGalleryOffset(q.offset)
-      return listGalleryPets(limit, offset)
+      const userId = getOptionalUserId(request)
+      return listGalleryPets(limit, offset, userId)
+    },
+  )
+
+  app.get(
+    '/gallery/pets/liked',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['gallery'],
+        summary: 'Liked pets for current member',
+        description: 'Members only. Returns gallery pets liked by the current user.',
+        security: [{ bearerAuth: [] }],
+        response: {
+          200: galleryPetsResponseSchema,
+          401: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const q = request.query as Record<string, unknown>
+      const limit = parseGalleryLimit(q.limit)
+      const offset = parseGalleryOffset(q.offset)
+      return listLikedGalleryPets(getUserId(request), limit, offset)
     },
   )
 

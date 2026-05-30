@@ -16,6 +16,7 @@ Single workspace for the **Nuxt 3 web app**, **Node/Fastify API**, **n8n-related
 | `docs/postgres-client.md` | DBeaver / GUI clients and `psql` — connect to local Postgres |
 | `docs/api.md` | OpenAPI / Swagger UI URLs and notes for integrators |
 | `docs/product-vision.md` | Product decisions: no roles, consultations catalog, lite consultant cabinet (later) |
+| `docs/marketplace-notifications.md` | Listing inquiry email/SMS; **Twilio deferred** (SMS stub logs to API console until configured) |
 
 ## n8n
 

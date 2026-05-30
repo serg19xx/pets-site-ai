@@ -52,7 +52,7 @@ function speciesLine(pet: Pet) {
 </script>
 
 <template>
-  <section class="mx-auto max-w-2xl">
+  <section class="ui-page-container">
     <div class="flex flex-wrap items-center justify-between gap-3">
       <h1 class="ui-page-title">{{ $t('myPets.title') }}</h1>
       <NuxtLink

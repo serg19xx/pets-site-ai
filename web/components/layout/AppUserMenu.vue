@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { nextTick, onUnmounted, ref, watch } from 'vue'
-import { onClickOutside } from '@vueuse/core'
 
 import UserAvatar from '~/components/UserAvatar.vue'
 import { UI_ACTION_ICONS } from '~/lib/ui-icons'
@@ -46,22 +45,32 @@ function unbindPositionListeners() {
   window.removeEventListener('scroll', updateMenuPosition, true)
 }
 
-onClickOutside([rootRef, menuRef], () => {
+function onDocumentPointerDown(event: PointerEvent) {
+  const target = event.target as Node | null
+  if (!target) {
+    return
+  }
+  if (rootRef.value?.contains(target) || menuRef.value?.contains(target)) {
+    return
+  }
   isOpen.value = false
-})
+}
 
 watch(isOpen, async (open) => {
   if (open) {
     await nextTick()
     updateMenuPosition()
     bindPositionListeners()
+    window.addEventListener('pointerdown', onDocumentPointerDown, true)
   } else {
     unbindPositionListeners()
+    window.removeEventListener('pointerdown', onDocumentPointerDown, true)
   }
 })
 
 onUnmounted(() => {
   unbindPositionListeners()
+  window.removeEventListener('pointerdown', onDocumentPointerDown, true)
 })
 
 function toggleMenu() {
@@ -101,7 +110,7 @@ function signOut() {
     <div
       v-show="isOpen"
       ref="menuRef"
-      class="ui-menu ui-header-user-menu fixed z-[100] w-48"
+      class="ui-menu ui-header-user-menu fixed z-100 w-48"
       :style="menuPosition"
       role="menu"
     >
@@ -123,9 +132,54 @@ function signOut() {
         <Icon :icon="UI_ACTION_ICONS.pets" class="ui-icon-sm" aria-hidden="true" />
         {{ t('auth.myPets') }}
       </NuxtLink>
+      <NuxtLink
+        :to="localePath('/app/my-posts')"
+        class="ui-menu-item"
+        role="menuitem"
+        @click="closeMenu"
+      >
+        <Icon :icon="UI_ACTION_ICONS.send" class="ui-icon-sm" aria-hidden="true" />
+        {{ t('auth.myPosts') }}
+      </NuxtLink>
+      <NuxtLink
+        :to="localePath('/app/my-listings')"
+        class="ui-menu-item"
+        role="menuitem"
+        @click="closeMenu"
+      >
+        <Icon :icon="UI_ACTION_ICONS.star" class="ui-icon-sm" aria-hidden="true" />
+        {{ t('auth.myListings') }}
+      </NuxtLink>
+      <NuxtLink
+        :to="localePath('/app/marketplace-inquiries')"
+        class="ui-menu-item"
+        role="menuitem"
+        @click="closeMenu"
+      >
+        <Icon :icon="UI_ACTION_ICONS.message" class="ui-icon-sm" aria-hidden="true" />
+        {{ t('auth.listingMessages') }}
+      </NuxtLink>
+      <NuxtLink
+        :to="localePath('/app/saved')"
+        class="ui-menu-item"
+        role="menuitem"
+        @click="closeMenu"
+      >
+        <Icon :icon="UI_ACTION_ICONS.bookmark" class="ui-icon-sm" aria-hidden="true" />
+        {{ t('auth.saved') }}
+      </NuxtLink>
+      <NuxtLink
+        :to="localePath('/app/liked-pets')"
+        class="ui-menu-item"
+        role="menuitem"
+        @click="closeMenu"
+      >
+        <Icon :icon="UI_ACTION_ICONS.heart" class="ui-icon-sm" aria-hidden="true" />
+        {{ t('auth.likedPets') }}
+      </NuxtLink>
       <button
         type="button"
-        class="ui-menu-item ui-menu-item-danger w-full border-t border-[var(--ui-border)]"
+        class="ui-menu-item ui-menu-item-danger w-full border-t border-(--ui-border)"
         role="menuitem"
         @click="signOut"
       >

@@ -61,6 +61,7 @@ export async function fetchPetBreeds(speciesId: number): Promise<{ breeds: PetBr
 export async function fetchGalleryPets(params?: {
   limit?: number
   offset?: number
+  accessToken?: string
 }): Promise<{ pets: GalleryPet[]; total: number }> {
   const search = new URLSearchParams()
   if (params?.limit !== undefined) {
@@ -71,7 +72,40 @@ export async function fetchGalleryPets(params?: {
   }
   const qs = search.toString()
   const path = `/api/gallery/pets${qs ? `?${qs}` : ''}`
-  const response = await fetch(apiUrl(path))
+  const headers: HeadersInit = {}
+  if (params?.accessToken) {
+    headers.Authorization = `Bearer ${params.accessToken}`
+  }
+  const response = await fetch(apiUrl(path), { headers })
+  const body = await parseJson<{
+    pets: GalleryPet[]
+    total: number
+  } & ApiErrorBody>(response)
+  if (!response.ok) {
+    throw new ApiError(body.message ?? 'Request failed', response.status, body.code)
+  }
+  return body
+}
+
+export async function fetchLikedGalleryPets(
+  accessToken: string,
+  params?: {
+    limit?: number
+    offset?: number
+  },
+): Promise<{ pets: GalleryPet[]; total: number }> {
+  const search = new URLSearchParams()
+  if (params?.limit !== undefined) {
+    search.set('limit', String(params.limit))
+  }
+  if (params?.offset !== undefined) {
+    search.set('offset', String(params.offset))
+  }
+  const qs = search.toString()
+  const path = `/api/gallery/pets/liked${qs ? `?${qs}` : ''}`
+  const response = await fetch(apiUrl(path), {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  })
   const body = await parseJson<{
     pets: GalleryPet[]
     total: number

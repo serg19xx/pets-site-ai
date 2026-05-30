@@ -52,7 +52,7 @@ echo "Running database migrations..."
 echo "Starting backend and Nuxt..."
 (cd "${ROOT}/backend" && npm run dev) &
 pids+=($!)
-(cd "${ROOT}/web" && NUXT_TELEMETRY_DISABLED=1 npm run dev) &
+(cd "${ROOT}/web" && NUXT_TELEMETRY_DISABLED=1 npm run dev -- --host 0.0.0.0) &
 pids+=($!)
 
 echo "Waiting..."

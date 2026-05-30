@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { fetchPetLikeStatus, togglePetLike } from '~/lib/pet-likes-api'
 import { ApiError } from '~/lib/auth-api'
-import { UI_ACTION_ICONS } from '~/lib/ui-icons'
 import { useAuthStore } from '~/stores/auth'
 
 const props = defineProps<{
@@ -19,20 +18,15 @@ const isToggling = ref(false)
 const loadError = ref('')
 
 const labelName = computed(() => props.petName?.trim() || String(props.petId))
+const canToggle = computed(() => Boolean(auth.accessToken))
 
 async function loadStatus() {
   const token = auth.accessToken
-  if (!token) {
-    liked.value = false
-    count.value = 0
-    isLoading.value = false
-    return
-  }
   isLoading.value = true
   loadError.value = ''
   try {
     const status = await fetchPetLikeStatus(props.petId, token)
-    liked.value = status.liked
+    liked.value = Boolean(token) && status.liked
     count.value = status.count
   } catch (err) {
     loadError.value =
@@ -76,7 +70,9 @@ watch(
 )
 
 const ariaLabel = computed(() =>
-  liked.value
+  !canToggle.value
+    ? t('pet.likeCountAria', { name: labelName.value, count: count.value })
+    : liked.value
     ? t('pet.unlikeAria', { name: labelName.value })
     : t('pet.likeAria', { name: labelName.value }),
 )
@@ -88,16 +84,27 @@ const ariaLabel = computed(() =>
       type="button"
       class="ui-like-btn"
       :class="{ 'ui-like-btn--active': liked }"
-      :disabled="isLoading || isToggling"
+      :disabled="isLoading || isToggling || !canToggle"
       :aria-pressed="liked"
       :aria-label="ariaLabel"
       @click="onToggle"
     >
-      <Icon
-        :icon="UI_ACTION_ICONS.heart"
+      <svg
+        viewBox="0 0 24 24"
         class="ui-like-btn-icon"
+        :class="{ 'ui-like-btn-icon--active': liked }"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
-      />
+      >
+        <path
+          d="M19.5 12.5721L12 20L4.5 12.5721C3.0052 11.0921 2.75 8.79606 3.87868 7.01777C5.34777 4.70223 8.53553 4.19491 10.6716 5.96447L12 7.06531L13.3284 5.96447C15.4645 4.19491 18.6522 4.70223 20.1213 7.01777C21.25 8.79606 20.9948 11.0921 19.5 12.5721Z"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
       <span v-if="count > 0" class="ui-like-btn-count">{{ count }}</span>
       <span class="sr-only">{{ liked ? $t('pet.unlike') : $t('pet.like') }}</span>
     </button>

@@ -71,8 +71,18 @@ export const config = {
   uploadsDir: readEnv('UPLOADS_DIR') ?? join(backendRoot, 'uploads'),
   uploadsPublicPrefix: '/api/uploads',
   uploadMaxBytes: Number(readEnv('UPLOAD_MAX_BYTES') ?? String(5 * 1024 * 1024)),
+  uploadVideoMaxBytes: Number(
+    readEnv('UPLOAD_VIDEO_MAX_BYTES') ?? String(50 * 1024 * 1024),
+  ),
+  feedMaxMediaPerPost: Number(readEnv('FEED_MAX_MEDIA_PER_POST') ?? '10'),
+  marketplaceMaxImagesPerListing: Number(
+    readEnv('MARKETPLACE_MAX_IMAGES_PER_LISTING') ?? '5',
+  ),
+  twilioAccountSid: readEnv('TWILIO_ACCOUNT_SID'),
+  twilioAuthToken: readEnv('TWILIO_AUTH_TOKEN'),
+  twilioFromNumber: readEnv('TWILIO_FROM_NUMBER'),
 }
 
-for (const subdir of ['avatars', 'pets', join('pets', 'gallery')]) {
+for (const subdir of ['avatars', 'pets', join('pets', 'gallery'), 'posts', 'listings']) {
   mkdirSync(join(config.uploadsDir, subdir), { recursive: true })
 }

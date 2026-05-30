@@ -1,6 +1,13 @@
 # User uploads (avatars & pet photos)
 
-Uploaded images are **files on disk**, not in PostgreSQL. The database only stores relative paths (e.g. `avatars/user-7-abc.jpg`, `pets/gallery/pet-45-abc.jpg`). If the file is missing, the UI shows a broken image while the row still exists.
+Uploaded images and videos are **files on disk**, not in PostgreSQL. The database only stores relative paths (e.g. `avatars/user-7-abc.jpg`, `pets/gallery/pet-45-abc.jpg`, `posts/post-12-abc.mp4`). If the file is missing, the UI shows a broken asset while the row still exists.
+
+| Content | Folder |
+|---------|--------|
+| Profile avatars | `avatars/` |
+| Pet gallery | `pets/gallery/` |
+| Feed post media | `posts/` |
+| Marketplace listing photos | `listings/` |
 
 ## Where files live
 

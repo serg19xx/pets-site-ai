@@ -7,8 +7,8 @@ import { config } from '../config.js'
 export async function registerUploads(app: FastifyInstance) {
   await app.register(multipart, {
     limits: {
-      fileSize: config.uploadMaxBytes,
-      files: 1,
+      fileSize: config.uploadVideoMaxBytes,
+      files: Math.max(config.feedMaxMediaPerPost, config.marketplaceMaxImagesPerListing),
     },
   })
 

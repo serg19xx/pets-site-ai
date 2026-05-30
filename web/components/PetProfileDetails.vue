@@ -3,9 +3,19 @@ import { formatPetAge } from '~/lib/pet-age'
 import type { GalleryPet } from '~/types/gallery'
 import type { Pet } from '~/types/pet'
 
-const props = defineProps<{
-  pet: Pet | GalleryPet
-}>()
+const props = withDefaults(
+  defineProps<{
+    pet: Pet | GalleryPet
+    showDetails?: boolean
+    showGreeting?: boolean
+    showAbout?: boolean
+  }>(),
+  {
+    showDetails: true,
+    showGreeting: true,
+    showAbout: true,
+  },
+)
 
 const { locale, t } = useI18n()
 const { petSexLabel } = useEnumLabels()
@@ -17,7 +27,7 @@ const breedLabel = computed(() => props.pet.breed?.label ?? t('myPets.notSpecifi
 
 <template>
   <section class="ui-pet-profile">
-    <dl class="ui-pet-details">
+    <dl v-if="showDetails" class="ui-pet-details">
       <div class="ui-pet-details-row">
         <dt>{{ $t('myPets.species') }}</dt>
         <dd>{{ pet.species.label }}</dd>
@@ -40,11 +50,11 @@ const breedLabel = computed(() => props.pet.breed?.label ?? t('myPets.notSpecifi
       </div>
     </dl>
 
-    <blockquote v-if="pet.greeting" class="ui-pet-greeting">
+    <blockquote v-if="showGreeting && pet.greeting" class="ui-pet-greeting">
       <p>{{ pet.greeting }}</p>
     </blockquote>
 
-    <div v-if="pet.description" class="ui-pet-description">
+    <div v-if="showAbout && pet.description" class="ui-pet-description">
       <h2 class="ui-section-title">{{ $t('pet.about') }}</h2>
       <p class="ui-prose whitespace-pre-wrap">{{ pet.description }}</p>
     </div>

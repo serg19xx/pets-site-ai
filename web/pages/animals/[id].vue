@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PetMemberActions from '~/components/PetMemberActions.vue'
+import LikeButton from '~/components/LikeButton.vue'
 import PetAvatar from '~/components/PetAvatar.vue'
 import PetPhotoGallery from '~/components/PetPhotoGallery.vue'
 import PetMemberLink from '~/components/PetMemberLink.vue'
@@ -115,7 +115,7 @@ usePageSeo({
 </script>
 
 <template>
-  <section class="mx-auto max-w-lg">
+  <section class="ui-page-container">
     <div class="mb-4">
       <NuxtLink
         :to="localePath('/')"
@@ -135,27 +135,77 @@ usePageSeo({
       {{ errorMessage }}
     </p>
 
-    <article v-else-if="pet">
-      <button
-        v-if="viewerPhotos.length > 0"
-        type="button"
-        class="ui-media-frame ui-media-frame--clickable"
-        :aria-label="$t('pet.openPhoto')"
-        @click="openViewer(0)"
-      >
-        <PetAvatar :pet="pet" size="fill" />
-      </button>
-      <div v-else class="ui-media-frame">
-        <PetAvatar :pet="pet" size="fill" />
+    <article v-else-if="pet" class="ui-pet-page">
+      <div class="ui-pet-page-grid">
+        <div class="ui-pet-hero-card">
+          <div class="ui-pet-hero-head">
+            <div class="ui-pet-hero-title">
+              <h1 class="ui-h1">{{ pet.name }}</h1>
+              <p class="ui-pet-hero-subtitle">{{ subtitle }}</p>
+            </div>
+            <LikeButton :pet-id="pet.id" :pet-name="pet.name" />
+          </div>
+
+          <div class="ui-pet-hero-media ui-pet-hero-media--square">
+            <button
+              v-if="viewerPhotos.length > 0"
+              type="button"
+              class="ui-media-frame ui-media-frame--clickable h-full w-full"
+              :aria-label="$t('pet.openPhoto')"
+              @click="openViewer(0)"
+            >
+              <PetAvatar :pet="pet" size="fill" />
+            </button>
+            <div v-else class="ui-media-frame h-full w-full">
+              <PetAvatar :pet="pet" size="fill" />
+            </div>
+          </div>
+
+          <div v-if="pet.greeting" class="ui-pet-hero-greeting">
+            <p class="ui-pet-hero-greeting-label">{{ $t('pet.greetingLabel') }}</p>
+            <blockquote class="ui-pet-greeting">
+              <p>{{ pet.greeting }}</p>
+            </blockquote>
+          </div>
+        </div>
+
+        <div
+          v-if="pet.description"
+          class="ui-pet-page-about-desktop ui-pet-description"
+        >
+          <h2 class="ui-section-title">{{ $t('pet.about') }}</h2>
+          <p class="ui-prose mt-3 whitespace-pre-wrap">{{ pet.description }}</p>
+        </div>
+
+        <div
+          v-if="pet.member"
+          class="hidden items-center gap-3 lg:col-span-2 lg:flex"
+          :class="pet.description ? 'lg:justify-end' : 'lg:justify-between'"
+        >
+          <h2 v-if="!pet.description" class="ui-section-title">{{ $t('pet.about') }}</h2>
+          <PetMemberLink :member="pet.member" />
+        </div>
       </div>
 
-      <header class="mt-4">
-        <h1 class="ui-h1">{{ pet.name }}</h1>
-        <p class="ui-page-subtitle mt-1">{{ subtitle }}</p>
-        <PetMemberLink v-if="pet.member" :member="pet.member" />
-      </header>
+      <PetMemberLink
+        v-if="pet.member"
+        :member="pet.member"
+        class="lg:hidden"
+      />
 
-      <PetProfileDetails :pet="pet" class="mt-6" />
+      <PetProfileDetails
+        :pet="pet"
+        :show-greeting="false"
+        :show-about="false"
+      />
+
+      <div
+        v-if="pet.description"
+        class="ui-pet-page-about-mobile ui-pet-description"
+      >
+        <h2 class="ui-section-title">{{ $t('pet.about') }}</h2>
+        <p class="ui-prose mt-3 whitespace-pre-wrap">{{ pet.description }}</p>
+      </div>
 
       <PetPhotoGallery :photos="pet.photos ?? []" :title="pet.name" />
 
@@ -165,8 +215,6 @@ usePageSeo({
         :initial-index="lightboxIndex"
         :title="pet.name"
       />
-
-      <PetMemberActions :pet-id="pet.id" :pet-name="pet.name" class="mt-6" />
     </article>
   </section>
 </template>

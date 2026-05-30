@@ -32,3 +32,4 @@ npm-debug.log*
 # User/pet uploads (keep folder structure only)
 backend/uploads/**/*
 !backend/uploads/**/.gitkeep
+!backend/uploads/posts/.gitkeep

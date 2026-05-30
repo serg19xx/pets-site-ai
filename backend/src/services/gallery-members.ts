@@ -21,7 +21,13 @@ export const PET_GALLERY_SELECT = `
   p.sex,
   cover_pp.path AS avatar_path,
   p.description,
-  p.greeting
+  p.greeting,
+  false AS liked,
+  COALESCE((
+    SELECT COUNT(*)::int
+    FROM pet_likes pl
+    WHERE pl.pet_id = p.id
+  ), 0) AS like_count
 `
 
 export interface GalleryMemberJoinRow {

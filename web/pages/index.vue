@@ -18,7 +18,7 @@ usePageSeo({
 </script>
 
 <template>
-  <section>
+  <section class="ui-page-container">
     <header class="mb-4">
       <h1 class="ui-page-title">{{ $t('home.title') }}</h1>
       <p class="ui-page-subtitle mt-1">

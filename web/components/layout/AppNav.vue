@@ -8,6 +8,7 @@ const route = useRoute()
 const navItems = computed(() => [
   { path: localePath('/'), label: t('nav.animals'), icon: UI_NAV_ICONS.animals },
   { path: localePath('/feed'), label: t('nav.feed'), icon: UI_NAV_ICONS.feed },
+  { path: localePath('/marketplace'), label: t('nav.marketplace'), icon: UI_NAV_ICONS.marketplace },
   { path: localePath('/learn'), label: t('nav.learn'), icon: UI_NAV_ICONS.learn },
 ])
 

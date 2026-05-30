@@ -13,6 +13,7 @@ const MAX_LIMIT = 60
 export async function listGalleryPets(
   limit: number,
   offset: number,
+  viewerUserId?: number,
 ): Promise<{ pets: ReturnType<typeof mapGalleryPetRow>[]; total: number }> {
   const safeLimit = Math.min(Math.max(1, limit), MAX_LIMIT)
   const safeOffset = Math.max(0, offset)
@@ -20,8 +21,32 @@ export async function listGalleryPets(
   const countR = await pool.query<{ c: string }>('SELECT COUNT(*)::text AS c FROM pets')
   const total = Number(countR.rows[0]?.c ?? 0)
 
+  const likedSelect =
+    viewerUserId === undefined
+      ? 'false AS liked'
+      : `EXISTS(
+          SELECT 1
+          FROM pet_likes plv
+          WHERE plv.pet_id = p.id AND plv.user_id = $3
+        ) AS liked`
   const r = await pool.query<GalleryRow>(
-    `SELECT ${PET_GALLERY_SELECT}
+    `SELECT
+      p.id,
+      p.name,
+      ps.slug AS species_slug,
+      ps.label AS species_label,
+      pb.label AS breed_label,
+      p.date_of_birth,
+      p.sex,
+      cover_pp.path AS avatar_path,
+      p.description,
+      p.greeting,
+      ${likedSelect},
+      COALESCE((
+        SELECT COUNT(*)::int
+        FROM pet_likes plc
+        WHERE plc.pet_id = p.id
+      ), 0) AS like_count
     FROM pets p
     INNER JOIN pet_species ps ON ps.id = p.species_id
     LEFT JOIN pet_breeds pb ON pb.id = p.breed_id
@@ -31,11 +56,57 @@ export async function listGalleryPets(
       p.updated_at DESC,
       p.id DESC
     LIMIT $1 OFFSET $2`,
-    [safeLimit, safeOffset],
+    viewerUserId === undefined ? [safeLimit, safeOffset] : [safeLimit, safeOffset, viewerUserId],
   )
 
   const pets = r.rows.map((row) => mapGalleryPetRow(row, []))
 
+  return { pets, total }
+}
+
+export async function listLikedGalleryPets(
+  userId: number,
+  limit: number,
+  offset: number,
+): Promise<{ pets: ReturnType<typeof mapGalleryPetRow>[]; total: number }> {
+  const safeLimit = Math.min(Math.max(1, limit), MAX_LIMIT)
+  const safeOffset = Math.max(0, offset)
+
+  const countR = await pool.query<{ c: string }>(
+    'SELECT COUNT(*)::text AS c FROM pet_likes WHERE user_id = $1',
+    [userId],
+  )
+  const total = Number(countR.rows[0]?.c ?? 0)
+
+  const r = await pool.query<GalleryRow>(
+    `SELECT
+      p.id,
+      p.name,
+      ps.slug AS species_slug,
+      ps.label AS species_label,
+      pb.label AS breed_label,
+      p.date_of_birth,
+      p.sex,
+      cover_pp.path AS avatar_path,
+      p.description,
+      p.greeting,
+      true AS liked,
+      COALESCE((
+        SELECT COUNT(*)::int
+        FROM pet_likes plc
+        WHERE plc.pet_id = p.id
+      ), 0) AS like_count
+    FROM pet_likes pl
+    INNER JOIN pets p ON p.id = pl.pet_id
+    INNER JOIN pet_species ps ON ps.id = p.species_id
+    LEFT JOIN pet_breeds pb ON pb.id = p.breed_id
+    LEFT JOIN pet_photos cover_pp ON cover_pp.id = p.cover_photo_id
+    WHERE pl.user_id = $1
+    ORDER BY pl.created_at DESC, pl.pet_id DESC
+    LIMIT $2 OFFSET $3`,
+    [userId, safeLimit, safeOffset],
+  )
+  const pets = r.rows.map((row) => mapGalleryPetRow(row, []))
   return { pets, total }
 }
 

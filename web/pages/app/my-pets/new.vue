@@ -229,7 +229,7 @@ async function confirmDelete() {
 </script>
 
 <template>
-  <section class="mx-auto max-w-lg">
+  <section class="ui-page-container">
     <div class="mb-4">
       <NuxtLink
         :to="localePath('/app/my-pets')"

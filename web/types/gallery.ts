@@ -18,6 +18,8 @@ export interface GalleryPet {
   avatarUrl: string | null
   description: string | null
   greeting: string | null
+  liked: boolean
+  likeCount: number
   /** Present on GET /api/gallery/pets/:id only. */
   member?: PublicMember
   photos: GalleryPetPhoto[]
