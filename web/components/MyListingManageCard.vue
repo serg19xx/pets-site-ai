@@ -23,16 +23,12 @@ const emit = defineEmits<{
 }>()
 
 const auth = useAuthStore()
-const { t, locale } = useI18n()
+const { t } = useI18n()
+const { formatIso } = useDateTime()
 const isSaving = ref(false)
 const isDeleting = ref(false)
 const errorMessage = ref('')
-const createdLabel = computed(() =>
-  new Date(props.listing.createdAt).toLocaleString(locale.value, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }),
-)
+const createdLabel = computed(() => formatIso(props.listing.createdAt))
 
 async function persistListing(submit: ListingFormSubmit) {
   const token = auth.accessToken

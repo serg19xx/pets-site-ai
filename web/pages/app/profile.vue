@@ -441,6 +441,14 @@ async function onRemoveAvatar() {
         </div>
 
         <div class="text-sm">
+          <p class="ui-field-label">{{ $t('profile.timezone') }}</p>
+          <p class="mt-0.5 font-medium">
+            {{ auth.user.timezone || $t('profile.timezonePending') }}
+          </p>
+          <p class="ui-caption mt-0.5">{{ $t('profile.timezoneHint') }}</p>
+        </div>
+
+        <div class="text-sm">
           <p class="ui-field-label">
             {{ $t('profile.phone') }}
             <span v-if="!isEditing" class="font-normal">{{ hiddenLabel(auth.user.showPhone) }}</span>

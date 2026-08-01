@@ -14,6 +14,7 @@ import {
   sessionUserSchema,
   tokenBodySchema,
   updateProfileBodySchema,
+  updateTimezoneBodySchema,
 } from '../schemas/auth.js'
 import { changePassword } from '../services/change-password.js'
 import { requestPasswordReset } from '../services/forgot-password.js'
@@ -23,6 +24,7 @@ import { completeMagicLogin } from '../services/magic-login.js'
 import { registerUser } from '../services/register-user.js'
 import { removeUserAvatar, uploadUserAvatar } from '../services/upload-user-avatar.js'
 import { updateProfile } from '../services/update-profile.js'
+import { updateUserTimezone } from '../services/update-timezone.js'
 import { verifyEmailByToken } from '../services/verify-email.js'
 import { parseGender } from '../services/register-user.js'
 
@@ -65,6 +67,10 @@ interface UpdateProfileBody {
   showPhone: boolean
   showGender: boolean
   showDateOfBirth: boolean
+}
+
+interface UpdateTimezoneBody {
+  timezone: string
 }
 
 export const authRoutes: FastifyPluginAsync = async (app) => {
@@ -185,6 +191,31 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         showGender: body.showGender,
         showDateOfBirth: body.showDateOfBirth,
       })
+      return { user }
+    },
+  )
+
+  app.patch<{ Body: UpdateTimezoneBody }>(
+    '/auth/timezone',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['auth'],
+        summary: 'Sync IANA timezone from the client',
+        description:
+          'Soft-launch auto-sync: stores the browser timezone for display and future notifications.',
+        security: [{ bearerAuth: [] }],
+        body: updateTimezoneBodySchema,
+        response: {
+          200: profileResponseSchema,
+          400: errorResponseSchema,
+          401: errorResponseSchema,
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const user = await updateUserTimezone(getUserId(request), request.body.timezone)
       return { user }
     },
   )

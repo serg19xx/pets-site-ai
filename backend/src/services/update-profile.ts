@@ -1,6 +1,6 @@
 import { pool } from '../db/pool.js'
 import { AppError } from '../lib/errors.js'
-import { mapProfileRow, normalizeNickname } from '../lib/map-user.js'
+import { mapProfileRow, normalizeNickname, PROFILE_RETURNING } from '../lib/map-user.js'
 import type { UserGender, UserProfile } from '../types/user.js'
 import { USER_GENDERS } from '../types/user.js'
 
@@ -48,9 +48,10 @@ export async function updateProfile(input: UpdateProfileInput): Promise<UserProf
       email: string
       gender: UserGender
       date_of_birth: Date
-    phone: string | null
-    avatar_path: string | null
-    show_full_name: boolean
+      phone: string | null
+      avatar_path: string | null
+      timezone: string | null
+      show_full_name: boolean
       show_nickname: boolean
       show_email: boolean
       show_phone: boolean
@@ -71,9 +72,7 @@ export async function updateProfile(input: UpdateProfileInput): Promise<UserProf
            show_date_of_birth = $12,
            updated_at = NOW()
        WHERE id = $1
-       RETURNING id, full_name, nickname, email, gender, date_of_birth, phone, avatar_path,
-                 show_full_name, show_nickname, show_email, show_phone,
-                 show_gender, show_date_of_birth`,
+       RETURNING ${PROFILE_RETURNING}`,
       [
         input.userId,
         fullName,

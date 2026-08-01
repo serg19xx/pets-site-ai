@@ -8,15 +8,11 @@ const props = defineProps<{
 
 const { locale, t } = useI18n()
 const localePath = useLocalePath()
+const { formatIso } = useDateTime()
 
 const coverImage = computed(() => props.listing.media[0] ?? null)
 
-const createdLabel = computed(() =>
-  new Date(props.listing.createdAt).toLocaleString(locale.value, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }),
-)
+const createdLabel = computed(() => formatIso(props.listing.createdAt))
 
 const priceLabel = computed(() => {
   if (props.listing.priceAmount === null) {

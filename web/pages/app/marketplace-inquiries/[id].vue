@@ -13,10 +13,11 @@ definePageMeta({
   ssr: false,
 })
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const localePath = useLocalePath()
 const route = useRoute()
 const auth = useAuthStore()
+const { formatIso } = useDateTime()
 
 const inquiryId = computed(() => Number(route.params.id))
 const thread = ref<MarketplaceInquiryThread | null>(null)
@@ -38,10 +39,7 @@ const otherParty = computed(() => {
 })
 
 function formatTime(iso: string) {
-  return new Date(iso).toLocaleString(locale.value, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  })
+  return formatIso(iso)
 }
 
 async function loadThread(options?: { silent?: boolean }) {

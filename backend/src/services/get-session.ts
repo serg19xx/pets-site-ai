@@ -13,6 +13,7 @@ export async function getSessionForUser(userId: number): Promise<Omit<AuthSessio
     gender: UserGender
     date_of_birth: Date
     phone: string | null
+    timezone: string | null
     show_full_name: boolean
     show_nickname: boolean
     show_email: boolean

@@ -27,8 +27,10 @@ export interface ProfilePrivacy {
   showDateOfBirth: boolean
 }
 
-export interface UserProfile extends PublicUser, ProfilePrivacy {}
-
+export interface UserProfile extends PublicUser, ProfilePrivacy {
+  /** IANA timezone; null until auto-synced from the browser. */
+  timezone: string | null
+}
 export const GENDER_LABELS: Record<UserGender, string> = {
   male: 'Male',
   female: 'Female',

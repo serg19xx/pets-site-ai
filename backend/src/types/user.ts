@@ -22,8 +22,10 @@ export interface ProfilePrivacy {
   showDateOfBirth: boolean
 }
 
-export interface UserProfile extends PublicUser, ProfilePrivacy {}
-
+export interface UserProfile extends PublicUser, ProfilePrivacy {
+  /** IANA timezone; null until the client syncs it (soft-launch auto-detect). */
+  timezone: string | null
+}
 export function resolveDisplayName(fullName: string, nickname: string): string {
   const nick = nickname.trim()
   return nick || fullName.trim()

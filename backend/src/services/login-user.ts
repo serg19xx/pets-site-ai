@@ -23,6 +23,7 @@ export async function loginUser(
     gender: 'male' | 'female' | 'other' | 'prefer_not_to_say'
     date_of_birth: Date
     phone: string | null
+    timezone: string | null
     show_full_name: boolean
     show_nickname: boolean
     show_email: boolean

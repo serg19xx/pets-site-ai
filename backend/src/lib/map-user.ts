@@ -13,6 +13,7 @@ type UserRow = {
 }
 
 type ProfileRow = UserRow & {
+  timezone: string | null
   show_full_name: boolean
   show_nickname: boolean
   show_email: boolean
@@ -50,6 +51,7 @@ export function mapUserRow(row: UserRow): PublicUser {
 export function mapProfileRow(row: ProfileRow): UserProfile {
   return {
     ...mapUserRow(row),
+    timezone: row.timezone ?? null,
     showFullName: row.show_full_name,
     showNickname: row.show_nickname,
     showEmail: row.show_email,
@@ -61,8 +63,15 @@ export function mapProfileRow(row: ProfileRow): UserProfile {
 
 export const PROFILE_SELECT = `
   u.id, u.full_name, u.nickname, u.email, u.gender, u.date_of_birth, u.phone, u.avatar_path,
+  u.timezone,
   u.show_full_name, u.show_nickname, u.show_email, u.show_phone,
   u.show_gender, u.show_date_of_birth
+`
+
+/** Columns for UPDATE … RETURNING on users (no table alias). */
+export const PROFILE_RETURNING = `
+  id, full_name, nickname, email, gender, date_of_birth, phone, avatar_path, timezone,
+  show_full_name, show_nickname, show_email, show_phone, show_gender, show_date_of_birth
 `
 
 export function normalizeEmail(email: string): string {

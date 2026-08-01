@@ -20,8 +20,9 @@ const emit = defineEmits<{
   updated: [post: FeedPost]
 }>()
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const auth = useAuthStore()
+const { formatIso } = useDateTime()
 
 const postState = ref<FeedPost>({ ...props.post })
 const isEditing = ref(false)
@@ -35,12 +36,7 @@ const comments = ref<FeedComment[]>([])
 const commentsLoaded = ref(false)
 const isLoadingComments = ref(false)
 
-const timeLabel = computed(() =>
-  new Date(postState.value.createdAt).toLocaleString(locale.value, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }),
-)
+const timeLabel = computed(() => formatIso(postState.value.createdAt))
 
 const previewMedia = computed(() => postState.value.media[0] ?? null)
 

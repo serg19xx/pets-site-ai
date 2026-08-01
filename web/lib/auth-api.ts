@@ -174,6 +174,17 @@ export async function updateProfile(
   })
 }
 
+export async function syncTimezone(
+  accessToken: string,
+  timezone: string,
+): Promise<{ user: UserProfile }> {
+  return requestApi('/api/auth/timezone', {
+    method: 'PATCH',
+    accessToken,
+    body: JSON.stringify({ timezone }),
+  })
+}
+
 export async function changePassword(
   accessToken: string,
   newPassword: string,

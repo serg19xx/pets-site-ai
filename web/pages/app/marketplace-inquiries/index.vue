@@ -12,9 +12,10 @@ definePageMeta({
 
 type InboxFilter = 'all' | 'customer' | 'seller'
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const localePath = useLocalePath()
 const auth = useAuthStore()
+const { formatIso } = useDateTime()
 
 const filter = ref<InboxFilter>('all')
 const inquiries = ref<MarketplaceInquirySummary[]>([])
@@ -43,10 +44,7 @@ function lastMessagePreview(item: MarketplaceInquirySummary): string {
 }
 
 function formatTime(iso: string) {
-  return new Date(iso).toLocaleString(locale.value, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  })
+  return formatIso(iso)
 }
 
 function emptyStateKey(): 'emptyAll' | 'emptySent' | 'emptyReceived' {

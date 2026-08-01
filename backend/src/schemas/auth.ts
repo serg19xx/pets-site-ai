@@ -82,10 +82,12 @@ export const userProfileSchema = {
   type: 'object',
   properties: {
     ...publicUserSchema.properties,
+    timezone: { type: ['string', 'null'] },
     ...profilePrivacyProperties,
   },
   required: [
     ...publicUserSchema.required,
+    'timezone',
     'showFullName',
     'showNickname',
     'showEmail',
@@ -93,6 +95,15 @@ export const userProfileSchema = {
     'showGender',
     'showDateOfBirth',
   ],
+} as const
+
+export const updateTimezoneBodySchema = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['timezone'],
+  properties: {
+    timezone: { type: 'string', minLength: 1, maxLength: 64 },
+  },
 } as const
 
 export const updateProfileBodySchema = {

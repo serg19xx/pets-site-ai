@@ -9,6 +9,7 @@ const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const route = useRoute()
 const auth = useAuthStore()
+const { formatIso } = useDateTime()
 const listingId = computed(() => Number(route.params.id))
 
 definePageMeta({
@@ -23,10 +24,7 @@ const createdLabel = computed(() => {
   if (!listing.value) {
     return ''
   }
-  return new Date(listing.value.createdAt).toLocaleString(locale.value, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  })
+  return formatIso(listing.value.createdAt)
 })
 
 const mediaGridClass = computed(() =>

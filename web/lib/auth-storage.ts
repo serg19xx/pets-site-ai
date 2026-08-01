@@ -22,6 +22,7 @@ function normalizeUser(raw: unknown): UserProfile | null {
     ...row,
     id,
     email,
+    timezone: typeof row.timezone === 'string' ? row.timezone : null,
   } as UserProfile
 }
 

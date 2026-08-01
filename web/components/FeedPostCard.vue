@@ -20,9 +20,10 @@ const emit = defineEmits<{
   update: [post: FeedPost]
 }>()
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const localePath = useLocalePath()
 const auth = useAuthStore()
+const { formatIso } = useDateTime()
 
 const postState = ref<FeedPost>({ ...props.post })
 const comments = ref<FeedComment[]>([])
@@ -47,13 +48,7 @@ const authorInitial = computed(() => {
   return name ? name.charAt(0).toUpperCase() : '?'
 })
 
-const timeLabel = computed(() => {
-  const date = new Date(postState.value.createdAt)
-  return date.toLocaleString(locale.value, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  })
-})
+const timeLabel = computed(() => formatIso(postState.value.createdAt))
 
 const mediaGridClass = computed(() =>
   postState.value.media.length > 1 ? 'ui-feed-post-media-grid--multi' : '',

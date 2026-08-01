@@ -2,7 +2,7 @@ import type { MultipartFile } from '@fastify/multipart'
 
 import { pool } from '../db/pool.js'
 import { AppError } from '../lib/errors.js'
-import { mapProfileRow } from '../lib/map-user.js'
+import { mapProfileRow, PROFILE_RETURNING } from '../lib/map-user.js'
 import { deleteUploadIfExists, saveImageUpload } from '../lib/uploads.js'
 import type { UserGender, UserProfile } from '../types/user.js'
 
@@ -15,6 +15,7 @@ type ProfileDbRow = {
   date_of_birth: Date
   phone: string | null
   avatar_path: string | null
+  timezone: string | null
   show_full_name: boolean
   show_nickname: boolean
   show_email: boolean
@@ -22,11 +23,6 @@ type ProfileDbRow = {
   show_gender: boolean
   show_date_of_birth: boolean
 }
-
-const PROFILE_RETURNING = `
-  id, full_name, nickname, email, gender, date_of_birth, phone, avatar_path,
-  show_full_name, show_nickname, show_email, show_phone, show_gender, show_date_of_birth
-`
 
 export async function uploadUserAvatar(
   userId: number,
