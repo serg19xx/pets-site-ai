@@ -1,5 +1,8 @@
 node_modules
 dist
+uploads/*
+!uploads/.gitkeep
 .env
-*.log
+.env.*
+!.env.example
 .DS_Store

@@ -116,23 +116,12 @@ onMounted(() => {
           </select>
         </label>
       </div>
-      <div class="mt-4 rounded-lg border border-dashed border-(--ui-border) p-3">
-        <p class="text-sm font-medium text-stone-800 dark:text-stone-200">
-          {{ $t('marketplace.futureFiltersTitle') }}
-        </p>
-        <div class="mt-2 flex flex-wrap gap-2">
-          <span class="ui-btn-secondary ui-btn-sm opacity-70">
-            {{ $t('marketplace.futureFilterCategory') }}
-          </span>
-          <span class="ui-btn-secondary ui-btn-sm opacity-70">
-            {{ $t('marketplace.futureFilterPrice') }}
-          </span>
-          <span class="ui-btn-secondary ui-btn-sm opacity-70">
-            {{ $t('marketplace.futureFilterBenefit') }}
-          </span>
-        </div>
-        <p class="ui-caption mt-2">{{ $t('marketplace.futureFiltersHint') }}</p>
-      </div>
+      <UnderConstructionPanel
+        class="mt-4"
+        compact
+        :title="$t('marketplace.futureFiltersTitle')"
+        :purpose="$t('marketplace.futureFiltersPurpose')"
+      />
     </div>
 
     <p v-if="isLoading" class="ui-loading">{{ $t('common.loading') }}</p>

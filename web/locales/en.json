@@ -51,7 +51,11 @@
     },
     "learn": {
       "title": "Learn — Pet Friends",
-      "description": "Guides and articles about caring for pets on Pet Friends."
+      "description": "Guides, articles, and specialist consultations planned for Pet Friends (under construction)."
+    },
+    "consultations": {
+      "title": "Consultations — Pet Friends",
+      "description": "Specialist catalog and booking planned for Pet Friends (under construction)."
     },
     "login": {
       "title": "Log in — Pet Friends",
@@ -109,10 +113,23 @@
     "latestListingsEmpty": "No marketplace listings yet.",
     "latestListingsError": "Could not load marketplace listings."
   },
+  "underConstruction": {
+    "badge": "Under construction",
+    "feedback": "Tell us what you would like to see here — your feedback shapes the next release."
+  },
   "learn": {
     "title": "Learn",
-    "subtitle": "Educational content will appear here."
+    "subtitle": "Guides, articles, and specialist consultations — planned for a later release.",
+    "articlesTitle": "Articles & guides",
+    "articlesPurpose": "Care, training, health, and breeding practice from clinics, specialists, and experienced members. Verified publishers will share structured knowledge here — not ads in the feed.",
+    "consultationsTitle": "Consultations",
+    "consultationsPurpose": "Find vets, behaviorists, trainers, and other specialists. Browse a public catalog, open a consultant profile, and request advice or a booking when this area launches."
   },
+  "consultations": {
+    "title": "Consultations",
+    "subtitle": "Specialist catalog and booking — coming in a later release."
+  },
+
   "marketplace": {
     "title": "Marketplace",
     "subtitle": "Community listings for buying, selling, exchanging, and pet services.",
@@ -139,11 +156,9 @@
     "sortBy": "Sort",
     "sortNewest": "Date: newest first",
     "sortOldest": "Date: oldest first",
-    "futureFiltersTitle": "Upcoming filters (placeholders)",
-    "futureFilterCategory": "Category (soon)",
-    "futureFilterPrice": "Price range (soon)",
-    "futureFilterBenefit": "Benefits / promoted (soon)",
-    "futureFiltersHint": "We will add business ranking and advanced filters here.",
+    "futureFiltersTitle": "More filters & ranking",
+    "futureFiltersPurpose": "Category, price range, and promoted / benefit listings. Business and breeder ranking will land here so serious sellers are easier to find.",
+
     "publish": "Publish listing",
     "publishNow": "Publish",
     "saveDraft": "Save",
@@ -276,8 +291,10 @@
     "joinTitle": "Join Pet Friends",
     "joinText": "Sign up to like posts, comment, and share your pets.",
     "createAccount": "Create account",
-    "tipsPlaceholder": "Tips and suggestions will appear here."
+    "tipsTitle": "Tips for this page",
+    "tipsPurpose": "Contextual tips and short recommendations based on where you are in the app — for example how to complete a pet profile or improve a listing."
   },
+
   "auth": {
     "logIn": "Log in",
     "logOut": "Log out",

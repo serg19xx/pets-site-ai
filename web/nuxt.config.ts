@@ -46,7 +46,7 @@ export default defineNuxtConfig({
     server: {
       proxy: {
         '/api': {
-          target: 'http://127.0.0.1:8080',
+          target: apiInternal,
           changeOrigin: true,
         },
       },
@@ -76,7 +76,7 @@ export default defineNuxtConfig({
   nitro: {
     devProxy: {
       '/api': {
-        target: 'http://127.0.0.1:8080/api',
+        target: `${apiInternal}/api`,
         changeOrigin: true,
       },
     },
@@ -84,13 +84,14 @@ export default defineNuxtConfig({
   routeRules: {
     // Proxy API in preview/production (devProxy only applies to `nuxt dev`)
     '/api/**': { proxy: `${apiInternal}/api/**` },
-    '/': { prerender: true },
+    // Home hits the live gallery API — do not prerender at image build time.
+    '/': { ssr: true },
     '/feed': { ssr: false },
     '/marketplace': { ssr: false },
     '/marketplace/**': { ssr: false },
     '/learn': { prerender: true },
     '/login': { prerender: true },
-    '/fr': { prerender: true },
+    '/fr': { ssr: true },
     '/fr/feed': { ssr: false },
     '/fr/marketplace': { ssr: false },
     '/fr/marketplace/**': { ssr: false },

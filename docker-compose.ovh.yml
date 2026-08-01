@@ -1,0 +1,75 @@
+# OVH soft-launch stack: joins existing Caddy `web-network`.
+# Usage on server (/home/ubuntu/www/pb.websmith-shop.com):
+#   docker compose -f docker-compose.ovh.yml --env-file .env.production up -d --build
+
+name: pets
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: pets-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pets}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-pets}
+    volumes:
+      - pets_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-pets} -d ${POSTGRES_DB:-pets}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - web-network
+
+  api:
+    build: ./backend
+    container_name: pets-api
+    restart: unless-stopped
+    environment:
+      PORT: 8080
+      DATABASE_URL: postgresql://${POSTGRES_USER:-pets}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-pets}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      FRONTEND_URL: ${FRONTEND_URL:-https://pb.websmith-shop.com}
+      AUTH_SIGNUP_DELIVERY: ${AUTH_SIGNUP_DELIVERY:-password}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      EMAIL_FROM: ${EMAIL_FROM:-PETS <onboarding@resend.dev>}
+      UPLOADS_DIR: /app/uploads
+    volumes:
+      - ./backend/uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - web-network
+
+  web:
+    build:
+      context: ./web
+      args:
+        NUXT_PUBLIC_SITE_URL: ${FRONTEND_URL:-https://pb.websmith-shop.com}
+        NUXT_API_INTERNAL: http://pets-api:8080
+    container_name: pets-web
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+      NUXT_PUBLIC_SITE_URL: ${FRONTEND_URL:-https://pb.websmith-shop.com}
+      NUXT_API_INTERNAL: http://pets-api:8080
+    depends_on:
+      - api
+    networks:
+      - web-network
+
+volumes:
+  pets_postgres_data:
+
+networks:
+  web-network:
+    external: true

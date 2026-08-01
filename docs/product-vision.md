@@ -2,6 +2,24 @@
 
 Living document for decisions we should not forget while building v1.
 
+## Audience (now vs later)
+
+**Today (MVP):** the product behaves as a club for **animal lovers / pet owners** — gallery, feed, marketplace, inquiries.
+
+**Later (same platform, wider club):** the audience expands without splitting into separate “sites”:
+
+| Audience | Intent |
+|----------|--------|
+| Pet lovers / owners | Social + pets + classifieds (current core) |
+| Breeders | Lines, litters, matching, specialized listings — expands app surface |
+| Businesses | Clinics, pet shops, kennels, groomers, hotels, schools, … |
+| Consultants / specialists | Advise owners and breeders (often clinic-linked) |
+| Knowledge publishers | Blogs/articles: care, treatment, prophylaxis, training, breeding practice |
+| Advertisers & sponsors | Paid placements; optional “fee as investment/sponsorship” model |
+| Club members as advertisers | Members can also buy/earn promo for their own offers |
+
+**Principle:** each participant **adds capabilities** to the account (profiles, publish rights, billing), rather than choosing one exclusive role at signup. Full write-up: [audience-and-capabilities.md](./audience-and-capabilities.md).
+
 ## Auth & users (v1)
 
 - **No registration roles** (no cat/dog lover, shop, clinic as user types).
@@ -9,6 +27,7 @@ Living document for decisions we should not forget while building v1.
 - **Guest:** browse (feed, animals, comments, public learn/consultations catalog).
 - **Logged in:** like, comment, post, marketplace, ads, profile edit.
 - **Login:** email + password; nickname display-only; email change with verification later.
+- **Later:** attach breeder / business / consultant / publisher / advertiser capabilities to the same user (see audience doc).
 
 ## Community feed (`/feed`)
 
@@ -44,23 +63,34 @@ Deferred for feed (separate Facebook-style types): **Stories**, **Live video**, 
 
 API prefix: `/api/feed/…`. Media files under `uploads/posts/`.
 
-## Not roles — separate products later
+## Not roles — capabilities and surfaces later
 
-| Participant | Purpose | UI |
-|-------------|---------|-----|
-| Regular user | Social + marketplace + consultations discovery | Main site (`AppShell`) |
-| **Consultant** (vet behavior, training, etc.) | Feedback, bookings, light workload | **Lite cabinet** later (`/consult` or subdomain) — inbox, schedule, profile, settings only |
-| **Advertiser** | Pay for ads; minimal site usage | Separate billing/cabinet later |
-| **Certified clinic / instructor** | Verified health/education content | Verification badge + publish rights, not a “site role” |
+| Capability | Purpose | UI direction |
+|------------|---------|--------------|
+| Regular member (lover/owner) | Social + marketplace + discovery | Main site (`AppShell`) |
+| **Breeder** | Breeding program presence, litters, matching | Profile + tools on main site / cabinet later |
+| **Business** (clinic, shop, kennel, …) | Org presence, services, trust | Business profile + service tools later |
+| **Consultant** (vet, behavior, training, …) | Advise owners/breeders; bookings / Q&A | **Lite cabinet** later (`/consult` or subdomain) — inbox, schedule, profile, settings |
+| **Knowledge publisher** | Articles/blogs on care, treatment, prophylaxis, expertise | Learn / articles with verification badge + publish rights |
+| **Advertiser / sponsor** | Paid or sponsorship placements (external or member) | Billing / campaign cabinet later; members may use the same tools |
 
-Implement as **separate tables/flags** (e.g. `consultant_profiles`, `verified_providers`), not a `role` enum on `users`.
+Implement as **separate tables/flags** (e.g. `breeder_profiles`, `business_profiles`, `consultant_profiles`, `verified_publishers`, ad entitlements), **not** a `role` enum on `users`. See [audience-and-capabilities.md](./audience-and-capabilities.md).
 
-## Main site: “Our consultations” (public)
+## Knowledge & consultations (public, later)
 
-- Route idea: `/consultations` (nav TBD: 4th tab or under Learn).
+### Learn / articles
+
+- Clinics, specialists, and other verified contributors publish educational content (care, treatment, disease prevention, training, breeding practice).
+- Distinct from casual feed posts; verification and moderation matter.
+- Route may live under `/learn` (today a stub) or a dedicated articles section.
+
+### Consultations catalog
+
+- Route idea: `/consultations` (nav TBD: under Learn or own tab).
 - **Catalog:** sections/categories + search.
 - User picks a consultant → public profile `/consultations/:id`.
 - Actions (message, book) require login.
+- Audience: owners **and** breeders seeking professional advice.
 - Consultants manage replies in **lite cabinet**, not in full feed UI.
 
 ## UI structure (current)
@@ -86,7 +116,11 @@ Implement as **separate tables/flags** (e.g. `consultant_profiles`, `verified_pr
 ## Deferred
 
 - Marketplace inquiry **SMS via Twilio** (production); until then console/backup email only.
+- Breeder / business / consultant / publisher **capability profiles** (see audience doc).
+- Learn articles + verified professional publishing.
+- Consultations catalog + consultant lite cabinet.
+- Ads, member boosts, sponsorship / “fee as investment” billing models.
 - Color palette / login icon recolor (SVG or themed asset).
-- Supabase / VPS deploy when multi-user testing needed.
+- Supabase / **OVH Cloud VPS** deploy when inviting testers (Caddy TLS). See [deploy-ovh-caddy.md](./deploy-ovh-caddy.md).
 - n8n on VPS; workflow exports in `agents/n8n/`.
 - Feed: repost, share, report, notifications, rich link previews.

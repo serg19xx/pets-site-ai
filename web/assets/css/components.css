@@ -260,13 +260,23 @@
     @apply mt-1;
   }
 
+  /*
+   * Shared control chrome. Native <select> often shrinks to content unless we
+   * force block + 100% width + min-width:0 (flex/grid parents).
+   */
   .ui-input,
   .ui-select,
   .ui-textarea {
-    @apply w-full rounded-[var(--radius-control)] border border-[var(--ui-border-strong)]
-           bg-[var(--ui-surface)] px-3 py-2 text-sm text-stone-900
+    @apply box-border block w-full min-w-0 max-w-full
+           rounded-[var(--radius-control)] border border-[var(--ui-border-strong)]
+           bg-[var(--ui-surface)] px-3 py-2 text-sm leading-normal text-stone-900
            placeholder:text-stone-400 dark:bg-stone-950 dark:text-stone-100
            dark:placeholder:text-stone-500;
+  }
+
+  .ui-select {
+    @apply appearance-none bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat pr-10;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2378716c'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
   }
 
   .ui-textarea {
@@ -274,6 +284,11 @@
   }
 
   .ui-select:disabled {
+    @apply opacity-60;
+  }
+
+  .ui-input:disabled,
+  .ui-textarea:disabled {
     @apply opacity-60;
   }
 
@@ -322,6 +337,35 @@
     @apply rounded-[var(--radius-card)] border border-dashed border-[var(--ui-border-strong)]
            bg-[var(--ui-surface-inset)] px-6 py-10 text-center text-sm
            text-[var(--ui-text-muted)] dark:bg-stone-900/50;
+  }
+
+  .ui-under-construction {
+    @apply rounded-[var(--radius-card)] border border-dashed border-[var(--ui-border-strong)]
+           bg-[var(--ui-surface-inset)] px-6 py-8 dark:bg-stone-900/50;
+  }
+
+  .ui-under-construction--compact {
+    @apply px-4 py-4;
+  }
+
+  .ui-under-construction-badge {
+    @apply text-xs font-semibold uppercase tracking-wide text-[var(--ui-text-muted)];
+  }
+
+  .ui-under-construction-title {
+    @apply mt-2 text-lg font-semibold text-stone-900 dark:text-stone-100;
+  }
+
+  .ui-under-construction--compact .ui-under-construction-title {
+    @apply text-sm;
+  }
+
+  .ui-under-construction-purpose {
+    @apply mt-2 text-sm leading-relaxed text-stone-700 dark:text-stone-300;
+  }
+
+  .ui-under-construction-feedback {
+    @apply mt-3 text-sm text-[var(--ui-text-muted)];
   }
 
   /* Feedback */

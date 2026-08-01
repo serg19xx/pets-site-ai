@@ -41,8 +41,11 @@ const signUpTo = computed(() => {
       </NuxtLink>
     </div>
 
-    <p v-else class="ui-caption">
-      {{ $t('aside.tipsPlaceholder') }}
-    </p>
+    <UnderConstructionPanel
+      v-else
+      compact
+      :title="$t('aside.tipsTitle')"
+      :purpose="$t('aside.tipsPurpose')"
+    />
   </aside>
 </template>

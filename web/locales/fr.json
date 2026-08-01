@@ -51,7 +51,11 @@
     },
     "learn": {
       "title": "Apprendre — Pet Friends",
-      "description": "Guides et articles sur les soins aux animaux sur Pet Friends."
+      "description": "Guides, articles et consultations de spécialistes prévus sur Pet Friends (en construction)."
+    },
+    "consultations": {
+      "title": "Consultations — Pet Friends",
+      "description": "Catalogue de spécialistes et réservation prévus sur Pet Friends (en construction)."
     },
     "login": {
       "title": "Connexion — Pet Friends",
@@ -109,10 +113,23 @@
     "latestListingsEmpty": "Aucune annonce marketplace pour l'instant.",
     "latestListingsError": "Impossible de charger les annonces marketplace."
   },
+  "underConstruction": {
+    "badge": "En construction",
+    "feedback": "Dites-nous ce que vous aimeriez voir ici — vos retours guident la prochaine version."
+  },
   "learn": {
     "title": "Apprendre",
-    "subtitle": "Du contenu éducatif apparaîtra ici."
+    "subtitle": "Guides, articles et consultations de spécialistes — prévus pour une version ultérieure.",
+    "articlesTitle": "Articles et guides",
+    "articlesPurpose": "Soins, éducation, santé et élevage : contenus de cliniques, spécialistes et membres expérimentés. Les éditeurs vérifiés publieront ici des connaissances structurées — pas de publicité dans le fil.",
+    "consultationsTitle": "Consultations",
+    "consultationsPurpose": "Trouver vétérinaires, comportementalistes, éducateurs et autres spécialistes. Parcourir un catalogue public, ouvrir un profil et demander un conseil ou une réservation lorsque cette zone sera disponible."
   },
+  "consultations": {
+    "title": "Consultations",
+    "subtitle": "Catalogue de spécialistes et réservation — à venir dans une version ultérieure."
+  },
+
   "marketplace": {
     "title": "Marketplace",
     "subtitle": "Annonces communautaires pour vendre, acheter, échanger ou proposer des services.",
@@ -139,11 +156,8 @@
     "sortBy": "Tri",
     "sortNewest": "Date : plus récent d'abord",
     "sortOldest": "Date : plus ancien d'abord",
-    "futureFiltersTitle": "Filtres à venir (placeholders)",
-    "futureFilterCategory": "Catégorie (bientôt)",
-    "futureFilterPrice": "Fourchette de prix (bientôt)",
-    "futureFilterBenefit": "Avantages / sponsorisé (bientôt)",
-    "futureFiltersHint": "Le classement métier et des filtres avancés seront ajoutés ici.",
+    "futureFiltersTitle": "Plus de filtres et classement",
+    "futureFiltersPurpose": "Catégorie, fourchette de prix et annonces mises en avant. Le classement des entreprises et éleveurs arrivera ici pour faciliter la recherche de vendeurs sérieux.",
     "publish": "Publier l'annonce",
     "publishNow": "Publier",
     "saveDraft": "Enregistrer",
@@ -276,7 +290,8 @@
     "joinTitle": "Rejoindre Pet Friends",
     "joinText": "Inscrivez-vous pour aimer, commenter et partager vos animaux.",
     "createAccount": "Créer un compte",
-    "tipsPlaceholder": "Des conseils et suggestions apparaîtront ici."
+    "tipsTitle": "Conseils pour cette page",
+    "tipsPurpose": "Astuces et courtes recommandations selon l'endroit où vous êtes dans l'application — par exemple comment compléter un profil animal ou améliorer une annonce."
   },
   "auth": {
     "logIn": "Connexion",
