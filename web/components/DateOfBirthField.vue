@@ -1,8 +1,10 @@
 <script setup lang="ts">
 /**
  * Date of birth via year/month/day selects.
- * Avoids native <input type="date"> on mobile, where the calendar popup
- * often opens and closes immediately (esp. with labels / DevTools / some WebViews).
+ *
+ * Native <input type="date"> opened-then-closed instantly on our mobile shell
+ * (calendar icon tap). Label decoupling did not fix it. See
+ * docs/mobile-date-input.md before restoring type="date".
  */
 const model = defineModel<string>({ default: '' })
 
