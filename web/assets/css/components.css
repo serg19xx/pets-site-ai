@@ -275,33 +275,13 @@
   }
 
   /*
-   * Mobile browsers toggle the native date picker closed if the control is
-   * nested in a <label> (icon tap = open + label activation = close). Keep
-   * date inputs outside labels; give the calendar icon a reliable hit area.
+   * Prefer label[for] + input, not nesting type=date inside <label>.
+   * DevTools mobile emulation can fake open-then-close on the calendar;
+   * real phones were fine (see docs/mobile-date-input.md).
    */
   .ui-input[type='date'] {
     @apply min-h-11;
     color-scheme: light dark;
-  }
-
-  .ui-dob-field {
-    @apply w-full;
-  }
-
-  .ui-dob-grid {
-    @apply grid grid-cols-3 gap-2;
-  }
-
-  .ui-dob-part {
-    @apply block min-w-0;
-  }
-
-  .ui-dob-part > .ui-caption {
-    @apply mb-1 block;
-  }
-
-  .ui-dob-part > .ui-select {
-    @apply mt-0;
   }
 
   .ui-select {

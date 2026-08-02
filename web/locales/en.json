@@ -344,12 +344,6 @@
     "passwordMismatch": "New passwords do not match.",
     "passwordTooShort": "New password must be at least 8 characters."
   },
-  "dateOfBirthField": {
-    "year": "Year",
-    "month": "Month",
-    "day": "Day",
-    "nativeTestHint": "Native calendar (temporary test on a real phone):"
-  },
   "profile": {
     "title": "Profile",
     "loading": "Loading profile…",

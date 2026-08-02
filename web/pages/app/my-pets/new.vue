@@ -325,21 +325,15 @@ async function confirmDelete() {
       </div>
 
       <div>
-        <p id="pet-date-of-birth-label" class="ui-label-spaced">
+        <label class="ui-label-spaced" for="pet-date-of-birth">
           {{ $t('profile.dateOfBirth') }}
-        </p>
-        <DateOfBirthField
+        </label>
+        <input
           id="pet-date-of-birth"
           v-model="dateOfBirth"
-          required
-        />
-        <!-- Temporary: compare native picker on a real phone. Remove after check. -->
-        <p class="ui-caption mt-3">{{ $t('dateOfBirthField.nativeTestHint') }}</p>
-        <input
-          id="pet-date-of-birth-native-test"
-          v-model="dateOfBirth"
           type="date"
-          class="ui-input mt-1"
+          required
+          class="ui-input"
         />
       </div>
 
