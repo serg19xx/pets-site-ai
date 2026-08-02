@@ -339,6 +339,14 @@ async function confirmDelete() {
           v-model="dateOfBirth"
           required
         />
+        <!-- Temporary: compare native picker on a real phone. Remove after check. -->
+        <p class="ui-caption mt-3">{{ $t('dateOfBirthField.nativeTestHint') }}</p>
+        <input
+          id="pet-edit-date-of-birth-native-test"
+          v-model="dateOfBirth"
+          type="date"
+          class="ui-input mt-1"
+        />
       </div>
 
       <div>

@@ -347,7 +347,8 @@
   "dateOfBirthField": {
     "year": "Year",
     "month": "Month",
-    "day": "Day"
+    "day": "Day",
+    "nativeTestHint": "Native calendar (temporary test on a real phone):"
   },
   "profile": {
     "title": "Profile",
