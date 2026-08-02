@@ -13,6 +13,15 @@ We keep native date inputs. Prefer:
 
 Do **not** wrap the control inside `<label>…<input type="date" /></label>` (label nesting can still cause toggle quirks on some browsers).
 
+## iOS width quirk
+
+Safari sizes `type="date"` to the formatted value (narrow chip). Force full width in CSS:
+
+- `.ui-input[type='date']` → `width: 100%`, `-webkit-appearance: none`
+- `::-webkit-date-and-time-value { text-align: left }`
+
+Selects already use `appearance-none` + full width; date must match that contract.
+
 ## Symptom we saw
 
 In DevTools mobile layout, tapping the calendar icon opened the native picker and closed it immediately. Year/month/day selects were a temporary workaround for that tooling false positive.

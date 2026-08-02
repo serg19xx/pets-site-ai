@@ -269,28 +269,49 @@
   .ui-textarea {
     @apply box-border block w-full min-w-0 max-w-full
            rounded-[var(--radius-control)] border border-[var(--ui-border-strong)]
-           bg-[var(--ui-surface)] px-3 py-2 text-sm leading-normal text-stone-900
+           bg-[var(--ui-surface)] px-3 py-2.5 text-sm leading-normal text-stone-900
            placeholder:text-stone-400 dark:bg-stone-950 dark:text-stone-100
            dark:placeholder:text-stone-500;
   }
 
   /*
-   * Prefer label[for] + input, not nesting type=date inside <label>.
-   * DevTools mobile emulation can fake open-then-close on the calendar;
-   * real phones were fine (see docs/mobile-date-input.md).
+   * iOS Safari sizes type=date to the formatted value (narrow chip) unless we
+   * force full width + reset WebKit appearance. Keep calendar indicator.
+   * Prefer label[for] + input (not nesting). DevTools mobile can fake
+   * open-then-close; real phones OK — docs/mobile-date-input.md.
    */
-  .ui-input[type='date'] {
-    @apply min-h-11;
+  .ui-input[type='date'],
+  .ui-input[type='time'],
+  .ui-input[type='datetime-local'] {
+    @apply min-h-11 w-full max-w-full;
     color-scheme: light dark;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .ui-input[type='date']::-webkit-date-and-time-value {
+    text-align: left;
+    min-height: 1.5rem;
+  }
+
+  .ui-input[type='date']::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 1;
   }
 
   .ui-select {
-    @apply appearance-none bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat pr-10;
+    @apply min-h-11 appearance-none bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat pr-10;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2378716c'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
   }
 
   .ui-textarea {
     @apply min-h-[6rem] resize-y leading-relaxed;
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    .ui-textarea {
+      @apply resize-none;
+    }
   }
 
   .ui-select:disabled {
