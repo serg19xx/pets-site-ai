@@ -20,6 +20,8 @@ Single workspace for the **Nuxt 3 web app**, **Node/Fastify API**, **n8n-related
 | `docs/marketplace-notifications.md` | Listing inquiry email/SMS; **Twilio deferred** (SMS stub logs to API console until configured) |
 | `docs/mvp-stabilization-sprint.md` | Stabilization cycle log: smoke, bug fixes, event logs, next focus |
 | `docs/deploy-ovh-caddy.md` | Soft-launch deploy: OVH Cloud VPS + Caddy TLS + API/web/Postgres |
+| `docs/ui-theme.md` | CSS design theme: tokens + `ui-*` class catalog |
+| `docs/mobile-date-input.md` | Native `type="date"` on mobile / DevTools notes |
 
 ## n8n
 

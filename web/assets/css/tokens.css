@@ -1,6 +1,10 @@
 /**
- * Design tokens — warm gray-brown palette aligned with Pet Friends logo.
+ * Design tokens — change the visual theme here.
+ * Warm gray-brown palette aligned with Pet Friends logo.
  * Primary: chocolate brown outlines (~#6d4c41). Neutrals: warm stone/cream.
+ *
+ * Flow: tokens.css → components.css (.ui-*) → Vue templates.
+ * Catalog: docs/ui-theme.md
  */
 @theme {
   --font-sans:
@@ -25,6 +29,7 @@
 }
 
 :root {
+  /* Surfaces & text */
   --ui-surface: #ffffff;
   --ui-surface-muted: #f5f0eb;
   --ui-surface-inset: #faf7f4;
@@ -34,10 +39,19 @@
   --ui-text-muted: #57534e;
   --ui-text-subtle: #78716c;
   --ui-ring: var(--color-primary-600);
+
+  /* Icons */
   --ui-icon-size-sm: 1rem;
   --ui-icon-size-md: 1.25rem;
   --ui-icon-size-lg: 1.5rem;
   --ui-icon-size-xl: 1.25rem;
+
+  /* Form controls — shared by .ui-input / .ui-select / date */
+  --ui-control-min-height: 2.75rem;
+  --ui-control-padding-x: 0.75rem;
+  --ui-control-padding-y: 0.625rem;
+  --ui-control-font-size: 0.875rem;
+  --ui-focus-ring-width: 2px;
 }
 
 .dark {

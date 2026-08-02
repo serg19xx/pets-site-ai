@@ -22,6 +22,8 @@ Safari sizes `type="date"` to the formatted value (narrow chip). Force full widt
 
 Selects already use `appearance-none` + full width; date must match that contract.
 
+**Height / padding** for date, text inputs, and selects come from theme tokens `--ui-control-min-height`, `--ui-control-padding-*` in [`tokens.css`](../web/assets/css/tokens.css) (see [ui-theme.md](./ui-theme.md)).
+
 ## Symptom we saw
 
 In DevTools mobile layout, tapping the calendar icon opened the native picker and closed it immediately. Year/month/day selects were a temporary workaround for that tooling false positive.

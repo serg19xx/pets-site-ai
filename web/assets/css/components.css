@@ -1,9 +1,12 @@
 /**
  * UI primitives — use in templates instead of long Tailwind strings.
- * Layout/spacing (mt-6, flex, grid) stay as utilities on elements.
+ * Theme tokens: ./tokens.css · Catalog: docs/ui-theme.md
  *
- * Icons: wrap SVG/emoji in <span class="ui-icon ui-icon-md" aria-hidden="true">
- * Buttons/nav with icons: add gap via built-in gap-2 on .ui-btn-* and .ui-nav-item.
+ * TOC: Typography · Lists · Icons · Links · Buttons · Form controls ·
+ * Surfaces · Feedback · Navigation · Shell · Modals · Feature blocks
+ *
+ * Layout/spacing (mt-6, flex, grid) stay as Tailwind utilities on elements.
+ * Icons: <span class="ui-icon ui-icon-md" aria-hidden="true">…
  */
 @layer components {
   /* —— Page layout —— */
@@ -263,27 +266,37 @@
   /*
    * Shared control chrome. Native <select> often shrinks to content unless we
    * force block + 100% width + min-width:0 (flex/grid parents).
+   * Sizing comes from --ui-control-* tokens (tokens.css).
    */
   .ui-input,
   .ui-select,
   .ui-textarea {
     @apply box-border block w-full min-w-0 max-w-full
            rounded-[var(--radius-control)] border border-[var(--ui-border-strong)]
-           bg-[var(--ui-surface)] px-3 py-2.5 text-sm leading-normal text-stone-900
+           bg-[var(--ui-surface)] leading-normal text-stone-900
            placeholder:text-stone-400 dark:bg-stone-950 dark:text-stone-100
            dark:placeholder:text-stone-500;
+    min-height: var(--ui-control-min-height);
+    padding: var(--ui-control-padding-y) var(--ui-control-padding-x);
+    font-size: var(--ui-control-font-size);
+  }
+
+  .ui-textarea {
+    @apply resize-y leading-relaxed;
+    min-height: 6rem;
   }
 
   /*
    * iOS Safari sizes type=date to the formatted value (narrow chip) unless we
    * force full width + reset WebKit appearance. Keep calendar indicator.
-   * Prefer label[for] + input (not nesting). DevTools mobile can fake
-   * open-then-close; real phones OK — docs/mobile-date-input.md.
+   * Prefer label[for] + input (not nesting). Height: --ui-control-min-height.
+   * See docs/mobile-date-input.md and docs/ui-theme.md.
    */
   .ui-input[type='date'],
   .ui-input[type='time'],
   .ui-input[type='datetime-local'] {
-    @apply min-h-11 w-full max-w-full;
+    @apply w-full max-w-full;
+    min-height: var(--ui-control-min-height);
     color-scheme: light dark;
     -webkit-appearance: none;
     appearance: none;
@@ -291,7 +304,8 @@
 
   .ui-input[type='date']::-webkit-date-and-time-value {
     text-align: left;
-    min-height: 1.5rem;
+    min-height: 1.25rem;
+    line-height: 1.25rem;
   }
 
   .ui-input[type='date']::-webkit-calendar-picker-indicator {
@@ -300,12 +314,10 @@
   }
 
   .ui-select {
-    @apply min-h-11 appearance-none bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat pr-10;
+    @apply appearance-none bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat;
+    min-height: var(--ui-control-min-height);
+    padding-right: 2.5rem;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2378716c'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
-  }
-
-  .ui-textarea {
-    @apply min-h-[6rem] resize-y leading-relaxed;
   }
 
   @media (hover: none) and (pointer: coarse) {
