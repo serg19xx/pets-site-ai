@@ -342,6 +342,11 @@
     "passwordMismatch": "Les nouveaux mots de passe ne correspondent pas.",
     "passwordTooShort": "Le nouveau mot de passe doit comporter au moins 8 caractères."
   },
+  "dateOfBirthField": {
+    "year": "Année",
+    "month": "Mois",
+    "day": "Jour"
+  },
   "profile": {
     "title": "Profil",
     "loading": "Chargement du profil…",

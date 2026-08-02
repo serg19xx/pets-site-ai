@@ -181,15 +181,13 @@ const heading = computed(() =>
           </select>
         </label>
         <div>
-          <label class="ui-label-spaced" for="auth-date-of-birth">
+          <p id="auth-date-of-birth-label" class="ui-label-spaced">
             {{ $t('profile.dateOfBirth') }}
-          </label>
-          <input
+          </p>
+          <DateOfBirthField
             id="auth-date-of-birth"
             v-model="dateOfBirth"
-            type="date"
             required
-            class="ui-input"
           />
         </div>
         <label class="ui-field">

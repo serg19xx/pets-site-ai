@@ -409,11 +409,10 @@ async function onRemoveAvatar() {
           </p>
           <p v-if="!isEditing" class="font-medium">{{ auth.user.dateOfBirth }}</p>
           <template v-else>
-            <input
+            <DateOfBirthField
+              id="profile-date-of-birth"
               v-model="dateOfBirth"
-              type="date"
               required
-              class="ui-input"
             />
             <label class="ui-checkbox-label">
               <input v-model="showDateOfBirth" type="checkbox" class="ui-checkbox" />
