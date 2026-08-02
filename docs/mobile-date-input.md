@@ -4,7 +4,9 @@
 
 On the Add pet form (mobile layout), tapping the calendar icon on `Date of birth` opened the native picker and **closed it immediately**. Selecting a date was effectively impossible.
 
-Desktop wide layout was fine or less noticeable.
+**Observed in browser mobile emulation only** (not verified on a physical phone at the time). Desktop wide layout was fine or less noticeable.
+
+Treat DevTools device mode as a **suspect false positive** until re-tested on real iOS Safari / Android Chrome.
 
 ## What we tried
 
