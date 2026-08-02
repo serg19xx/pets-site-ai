@@ -180,15 +180,18 @@ const heading = computed(() =>
             </option>
           </select>
         </label>
-        <label class="ui-field">
-          {{ $t('profile.dateOfBirth') }}
+        <div>
+          <label class="ui-label-spaced" for="auth-date-of-birth">
+            {{ $t('profile.dateOfBirth') }}
+          </label>
           <input
+            id="auth-date-of-birth"
             v-model="dateOfBirth"
             type="date"
             required
             class="ui-input"
           />
-        </label>
+        </div>
         <label class="ui-field">
           {{ $t('profile.phone') }}
           <input

@@ -325,15 +325,16 @@ async function confirmDelete() {
       </div>
 
       <div>
-        <label class="ui-field">
+        <label class="ui-label-spaced" for="pet-date-of-birth">
           {{ $t('profile.dateOfBirth') }}
-          <input
-            v-model="dateOfBirth"
-            type="date"
-            required
-            class="ui-input"
-          />
         </label>
+        <input
+          id="pet-date-of-birth"
+          v-model="dateOfBirth"
+          type="date"
+          required
+          class="ui-input"
+        />
       </div>
 
       <div>
