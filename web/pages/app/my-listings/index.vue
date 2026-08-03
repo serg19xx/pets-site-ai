@@ -10,7 +10,7 @@ import type { MarketplaceListing } from '~/types/marketplace'
 
 definePageMeta({
   layout: 'app',
-  middleware: 'auth',
+  middleware: ['auth', 'block-admin'],
   ssr: false,
 })
 

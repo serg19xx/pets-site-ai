@@ -10,7 +10,7 @@ import type { Pet } from '~/types/pet'
 
 definePageMeta({
   layout: 'app',
-  middleware: 'auth',
+  middleware: ['auth', 'block-admin'],
 })
 
 const { t } = useI18n()

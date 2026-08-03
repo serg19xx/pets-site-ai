@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type {
-  CreateMarketplaceListingPayload,
   ListingFormSubmit,
   MarketplaceListing,
+  MarketplaceListingFormPayload,
 } from '~/types/marketplace'
 import { MARKETPLACE_MAX_PHOTOS } from '~/types/marketplace'
 import { UI_ACTION_ICONS } from '~/lib/ui-icons'
@@ -114,8 +114,8 @@ watch(
   { immediate: true },
 )
 
-function buildPayload(status: MarketplaceListing['status']): CreateMarketplaceListingPayload {
-  const payload: CreateMarketplaceListingPayload = {
+function buildPayload(status: MarketplaceListing['status']): MarketplaceListingFormPayload {
+  const payload: MarketplaceListingFormPayload = {
     type: type.value,
     title: fieldText(title.value),
     description: fieldText(description.value),

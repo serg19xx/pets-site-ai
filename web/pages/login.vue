@@ -12,6 +12,7 @@ const localePath = useLocalePath()
 const auth = useAuthStore()
 const route = useRoute()
 const router = useRouter()
+const config = useRuntimeConfig()
 
 usePageSeo({
   title: computed(() => t('meta.login.title')),
@@ -37,6 +38,13 @@ onMounted(() => {
     void router.replace({ path: localePath('/login') })
   }
   auth.hydrateFromStorage()
+  if (auth.user?.isAdmin) {
+    auth.signOut()
+  }
+  if (route.query.adminOnly === '1') {
+    const adminUrl = String(config.public.adminUrl || 'http://localhost:3001')
+    formError.value = t('auth.adminUseAdminApp', { url: adminUrl })
+  }
   isReady.value = true
 })
 

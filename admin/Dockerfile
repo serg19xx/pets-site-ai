@@ -1,0 +1,35 @@
+FROM node:22-alpine AS build
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+RUN npm ci
+
+COPY . .
+
+ARG NUXT_PUBLIC_SITE_URL=https://pb.websmith-shop.com
+ARG NUXT_PUBLIC_ADMIN_URL=https://admin.pb.websmith-shop.com
+ARG NUXT_API_INTERNAL=http://api:8080
+ENV NUXT_PUBLIC_SITE_URL=$NUXT_PUBLIC_SITE_URL
+ENV NUXT_PUBLIC_ADMIN_URL=$NUXT_PUBLIC_ADMIN_URL
+ENV NUXT_API_INTERNAL=$NUXT_API_INTERNAL
+ENV NUXT_TELEMETRY_DISABLED=1
+
+RUN npm run build
+
+FROM node:22-alpine
+WORKDIR /app
+ENV NODE_ENV=production
+ENV HOST=0.0.0.0
+ENV PORT=3001
+ENV NUXT_TELEMETRY_DISABLED=1
+
+ARG NUXT_PUBLIC_SITE_URL=https://pb.websmith-shop.com
+ARG NUXT_PUBLIC_ADMIN_URL=https://admin.pb.websmith-shop.com
+ARG NUXT_API_INTERNAL=http://api:8080
+ENV NUXT_PUBLIC_SITE_URL=$NUXT_PUBLIC_SITE_URL
+ENV NUXT_PUBLIC_ADMIN_URL=$NUXT_PUBLIC_ADMIN_URL
+ENV NUXT_API_INTERNAL=$NUXT_API_INTERNAL
+
+COPY --from=build /app/.output ./.output
+EXPOSE 3001
+CMD ["node", ".output/server/index.mjs"]

@@ -1,4 +1,5 @@
 import { pool } from '../db/pool.js'
+import { config } from '../config.js'
 import { AppError } from '../lib/errors.js'
 import { mapProfileRow, normalizeEmail, PROFILE_SELECT } from '../lib/map-user.js'
 import { verifyPassword } from '../lib/password.js'
@@ -7,6 +8,7 @@ import type { AuthSession } from '../types/auth.js'
 export interface LoginInput {
   email: string
   password: string
+  audience?: 'admin' | 'member'
 }
 
 export async function loginUser(
@@ -14,6 +16,7 @@ export async function loginUser(
   signToken: (payload: { sub: number; email: string }) => string,
 ): Promise<AuthSession> {
   const email = normalizeEmail(input.email)
+  const audience = input.audience === 'admin' ? 'admin' : 'member'
 
   const result = await pool.query<{
     id: string
@@ -60,6 +63,18 @@ export async function loginUser(
   }
 
   const user = mapProfileRow(row)
+
+  if (audience === 'member' && user.isAdmin) {
+    throw new AppError(
+      403,
+      `Admin accounts cannot use the member site. Sign in at ${config.adminUrl}`,
+      'ADMIN_USE_ADMIN_APP',
+    )
+  }
+  if (audience === 'admin' && !user.isAdmin) {
+    throw new AppError(403, 'This account is not an admin.', 'FORBIDDEN')
+  }
+
   const accessToken = signToken({ sub: user.id, email: user.email })
 
   return {

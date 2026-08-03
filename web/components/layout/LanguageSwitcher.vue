@@ -1,6 +1,5 @@
 <script setup lang="ts">
-const { locale, t } = useI18n()
-const switchLocalePath = useSwitchLocalePath()
+const { locale, t, setLocale } = useI18n()
 
 const opposite = computed(() => {
   if (locale.value === 'fr') {
@@ -20,7 +19,7 @@ const opposite = computed(() => {
 })
 
 async function toggleLanguage() {
-  await navigateTo(switchLocalePath(opposite.value.code))
+  await setLocale(opposite.value.code)
 }
 </script>
 

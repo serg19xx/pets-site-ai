@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import { createHmac } from 'node:crypto'
 import { mkdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -43,6 +44,24 @@ export const config = {
   jwtSecret,
   jwtExpiresIn: readEnv('JWT_EXPIRES_IN') ?? '7d',
   frontendUrl: (readEnv('FRONTEND_URL') ?? 'http://localhost:3000').replace(/\/$/, ''),
+  /** Soft-launch admin UI (separate Nuxt app). */
+  adminUrl: (readEnv('ADMIN_URL') ?? 'http://localhost:3001').replace(/\/$/, ''),
+  /**
+   * Shared soft-launch invite code for /invite registration & join.
+   * Defaults to a stable HMAC of JWT_SECRET so email links work without extra env.
+   */
+  betaInviteToken:
+    readEnv('BETA_INVITE_TOKEN') ??
+    createHmac('sha256', jwtSecret).update('pets-beta-invite-v1').digest('base64url'),
+  betaTesterCapacity: Number(readEnv('BETA_TESTER_CAPACITY') ?? '20'),
+  /**
+   * Comma-separated emails that can list/reply to all feedback tickets.
+   * Example: ADMIN_EMAILS=you@example.com,ops@example.com
+   */
+  adminEmails: (readEnv('ADMIN_EMAILS') ?? '')
+    .split(',')
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean),
   /** After signup: email temporary password (default) or a one-time sign-in link. */
   authSignupDelivery: parseSignupDelivery(readEnv('AUTH_SIGNUP_DELIVERY')),
   emailFrom: readEnv('EMAIL_FROM') ?? 'PETS <onboarding@resend.dev>',
@@ -83,6 +102,13 @@ export const config = {
   twilioFromNumber: readEnv('TWILIO_FROM_NUMBER'),
 }
 
-for (const subdir of ['avatars', 'pets', join('pets', 'gallery'), 'posts', 'listings']) {
+for (const subdir of [
+  'avatars',
+  'pets',
+  join('pets', 'gallery'),
+  'posts',
+  'listings',
+  'feedback',
+]) {
   mkdirSync(join(config.uploadsDir, subdir), { recursive: true })
 }

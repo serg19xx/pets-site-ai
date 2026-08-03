@@ -4,8 +4,10 @@ import Fastify from 'fastify'
 import { registerOpenApi } from './openapi.js'
 import { registerJwtAuth } from './plugins/jwt-auth.js'
 import { registerUploads } from './plugins/uploads.js'
+import { adminRoutes } from './routes/admin.js'
 import { authRoutes, registerAuthErrorHandler } from './routes/auth.js'
 import { feedRoutes } from './routes/feed.js'
+import { feedbackRoutes } from './routes/feedback.js'
 import { galleryRoutes } from './routes/gallery.js'
 import { healthRoutes } from './routes/health.js'
 import { marketplaceInquiryRoutes } from './routes/marketplace-inquiries.js'
@@ -24,6 +26,8 @@ export async function buildServer() {
   await app.register(feedRoutes, { prefix: '/api' })
   await app.register(marketplaceRoutes, { prefix: '/api' })
   await app.register(marketplaceInquiryRoutes, { prefix: '/api' })
+  await app.register(feedbackRoutes, { prefix: '/api' })
+  await app.register(adminRoutes, { prefix: '/api' })
   await app.register(authRoutes, { prefix: '/api' })
   await app.register(petsRoutes, { prefix: '/api' })
   return app

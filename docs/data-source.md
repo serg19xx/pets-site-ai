@@ -3,8 +3,9 @@
 ## Current setup
 
 - **PostgreSQL in Docker** (`docker-compose.yml`) is a **local dev** database. The server listens on the host port you map (default `5432`).
+- **OVH production Postgres** is a different database. Local rows are never synced on deploy — only schema migrations (or an explicit data task). See [deploy-ovh-caddy.md](deploy-ovh-caddy.md#local-vs-production-data-important).
 - The SPA does **not** connect to Postgres directly; only the **backend** (or serverless functions) should use a DB connection string.
-- To inspect or edit data from your machine with **DBeaver** (or similar), use the host connection settings described in **[postgres-client.md](postgres-client.md)**.
+- To inspect or edit data from your machine with **DBeaver** (or similar), use the host connection settings described in **[postgres-client.md](postgres-client.md)**. For production, use SSH tunnel to OVH (not the local Docker DB).
 
 ## Rule: one configuration surface
 

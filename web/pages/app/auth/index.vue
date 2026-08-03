@@ -44,8 +44,18 @@ function setMode(next: AuthMode) {
   registerSuccess.value = ''
   resetMessage.value = ''
   formError.value = ''
-  void router.replace({ path: localePath('/app/auth'), query: { mode: next } })
+  const invite =
+    typeof route.query.invite === 'string' ? route.query.invite : undefined
+  void router.replace({
+    path: localePath('/app/auth'),
+    query: { mode: next, ...(invite ? { invite } : {}) },
+  })
 }
+
+const betaInvite = computed(() => {
+  const value = route.query.invite
+  return typeof value === 'string' && value.trim() ? value.trim() : null
+})
 
 async function handleRegister() {
   formError.value = ''
@@ -59,6 +69,7 @@ async function handleRegister() {
       dateOfBirth: dateOfBirth.value,
       phone: phone.value.trim() || undefined,
       email: email.value,
+      ...(betaInvite.value ? { betaInvite: betaInvite.value } : {}),
     })
     registerSuccess.value = result.message
     await navigateTo(localePath('/login'))
@@ -125,6 +136,12 @@ const heading = computed(() =>
         <NuxtLink :to="localePath('/login')" class="ui-link">
           {{ $t('auth.logIn') }}
         </NuxtLink>
+      </p>
+      <p
+        v-if="mode === 'register' && betaInvite"
+        class="mt-3 rounded-(--radius-control) border border-(--ui-border) bg-(--ui-surface-inset) px-3 py-2 text-sm text-stone-800 dark:text-stone-200"
+      >
+        {{ $t('invite.registerBanner') }}
       </p>
 
       <p

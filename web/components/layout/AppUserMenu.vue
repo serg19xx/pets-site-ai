@@ -227,6 +227,16 @@ watch(isOpen, (open) => {
         </span>
       </NuxtLink>
       <NuxtLink
+        v-if="auth.user?.isBetaTester && !auth.user?.isAdmin"
+        :to="localePath('/app/feedback')"
+        class="ui-menu-item"
+        role="menuitem"
+        @click="closeMenu"
+      >
+        <Icon :icon="UI_ACTION_ICONS.send" class="ui-icon-sm" aria-hidden="true" />
+        {{ t('auth.feedback') }}
+      </NuxtLink>
+      <NuxtLink
         :to="localePath('/app/saved')"
         class="ui-menu-item"
         role="menuitem"

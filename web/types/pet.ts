@@ -3,8 +3,8 @@ export const PET_SEXES = ['male', 'female', 'unknown'] as const
 export type PetSex = (typeof PET_SEXES)[number]
 
 export const PET_SEX_LABELS: Record<PetSex, string> = {
-  male: 'Male',
-  female: 'Female',
+  male: 'Boy',
+  female: 'Girl',
   unknown: 'Unknown',
 }
 

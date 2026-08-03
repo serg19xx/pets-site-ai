@@ -11,6 +11,8 @@ export interface PublicUser {
   dateOfBirth: string
   phone: string | null
   avatarUrl: string | null
+  isBetaTester: boolean
+  isAdmin: boolean
 }
 
 export interface ProfilePrivacy {

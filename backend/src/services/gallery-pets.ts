@@ -1,4 +1,5 @@
 import { pool } from '../db/pool.js'
+import { adminUsersExclusion } from '../lib/admin.js'
 import { mapGalleryPetRow, type GalleryRow } from '../lib/map-gallery-pet.js'
 import {
   mapMemberFromDetailRow,
@@ -18,7 +19,14 @@ export async function listGalleryPets(
   const safeLimit = Math.min(Math.max(1, limit), MAX_LIMIT)
   const safeOffset = Math.max(0, offset)
 
-  const countR = await pool.query<{ c: string }>('SELECT COUNT(*)::text AS c FROM pets')
+  const excludeForCount = adminUsersExclusion('u.email', 1)
+  const countR = await pool.query<{ c: string }>(
+    `SELECT COUNT(*)::text AS c
+     FROM pets p
+     INNER JOIN users u ON u.id = p.user_id
+     WHERE TRUE${excludeForCount.clause}`,
+    excludeForCount.params,
+  )
   const total = Number(countR.rows[0]?.c ?? 0)
 
   const likedSelect =
@@ -29,6 +37,17 @@ export async function listGalleryPets(
           FROM pet_likes plv
           WHERE plv.pet_id = p.id AND plv.user_id = $3
         ) AS liked`
+
+  const excludeForList =
+    viewerUserId === undefined
+      ? adminUsersExclusion('u.email', 3)
+      : adminUsersExclusion('u.email', 4)
+
+  const listParams: unknown[] =
+    viewerUserId === undefined
+      ? [safeLimit, safeOffset, ...excludeForList.params]
+      : [safeLimit, safeOffset, viewerUserId, ...excludeForList.params]
+
   const r = await pool.query<GalleryRow>(
     `SELECT
       p.id,
@@ -48,15 +67,17 @@ export async function listGalleryPets(
         WHERE plc.pet_id = p.id
       ), 0) AS like_count
     FROM pets p
+    INNER JOIN users u ON u.id = p.user_id
     INNER JOIN pet_species ps ON ps.id = p.species_id
     LEFT JOIN pet_breeds pb ON pb.id = p.breed_id
     LEFT JOIN pet_photos cover_pp ON cover_pp.id = p.cover_photo_id
+    WHERE TRUE${excludeForList.clause}
     ORDER BY
       (p.cover_photo_id IS NOT NULL) DESC,
       p.updated_at DESC,
       p.id DESC
     LIMIT $1 OFFSET $2`,
-    viewerUserId === undefined ? [safeLimit, safeOffset] : [safeLimit, safeOffset, viewerUserId],
+    listParams,
   )
 
   const pets = r.rows.map((row) => mapGalleryPetRow(row, []))
@@ -113,6 +134,7 @@ export async function listLikedGalleryPets(
 export async function getGalleryPetById(
   id: number,
 ): Promise<ReturnType<typeof mapGalleryPetRow> | null> {
+  const exclude = adminUsersExclusion('u.email', 2)
   const r = await pool.query<GalleryDetailRow>(
     `SELECT
       ${PET_GALLERY_SELECT},
@@ -122,8 +144,8 @@ export async function getGalleryPetById(
     INNER JOIN pet_species ps ON ps.id = p.species_id
     LEFT JOIN pet_breeds pb ON pb.id = p.breed_id
     LEFT JOIN pet_photos cover_pp ON cover_pp.id = p.cover_photo_id
-    WHERE p.id = $1`,
-    [id],
+    WHERE p.id = $1${exclude.clause}`,
+    [id, ...exclude.params],
   )
   const row = r.rows[0]
   if (!row) {

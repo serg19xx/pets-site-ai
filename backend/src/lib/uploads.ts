@@ -1,5 +1,5 @@
 import { createWriteStream } from 'node:fs'
-import { mkdir, unlink } from 'node:fs/promises'
+import { mkdir, unlink, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { pipeline } from 'node:stream/promises'
 import { randomBytes } from 'node:crypto'
@@ -10,7 +10,7 @@ import { config } from '../config.js'
 import { AppError } from './errors.js'
 
 /** Subfolders under uploads/ — `pets` reserved for animal photos. */
-export type UploadCategory = 'avatars' | 'pets'
+export type UploadCategory = 'avatars' | 'pets' | 'feedback'
 
 const ALLOWED_MIME = new Set([
   'image/jpeg',
@@ -54,7 +54,9 @@ export async function saveImageUpload(
   }
 
   const ext = EXT_BY_MIME[mime] ?? '.jpg'
-  const relativePath = `${category}/${category === 'avatars' ? 'user' : 'pet'}-${ownerId}-${randomBytes(6).toString('hex')}${ext}`
+  const ownerPrefix =
+    category === 'avatars' ? 'user' : category === 'feedback' ? 'fb' : 'pet'
+  const relativePath = `${category}/${ownerPrefix}-${ownerId}-${randomBytes(6).toString('hex')}${ext}`
   const absolutePath = resolveUploadAbsolutePath(relativePath)
 
   const stream = file.file
@@ -63,6 +65,36 @@ export async function saveImageUpload(
   }
 
   await pipeline(stream, createWriteStream(absolutePath))
+
+  return relativePath
+}
+
+/** Prefer this for multipart handlers that must drain each part before the next. */
+export async function saveImageBuffer(
+  category: UploadCategory,
+  buffer: Buffer,
+  mime: string,
+  ownerId: number,
+): Promise<string> {
+  if (!ALLOWED_MIME.has(mime)) {
+    throw new AppError(
+      400,
+      'Only JPEG, PNG, WebP, or GIF images are allowed',
+      'INVALID_FILE_TYPE',
+    )
+  }
+
+  const ext = EXT_BY_MIME[mime] ?? '.jpg'
+  const ownerPrefix =
+    category === 'avatars' ? 'user' : category === 'feedback' ? 'fb' : 'pet'
+  const relativePath = `${category}/${ownerPrefix}-${ownerId}-${randomBytes(6).toString('hex')}${ext}`
+
+  await ensureUploadParentDir(relativePath)
+  try {
+    await writeFile(resolveUploadAbsolutePath(relativePath), buffer)
+  } catch {
+    throw new AppError(500, 'Could not save uploaded file', 'UPLOAD_FAILED')
+  }
 
   return relativePath
 }

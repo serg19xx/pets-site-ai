@@ -14,6 +14,7 @@ type ProfileDbRow = {
   phone: string | null
   avatar_path: string | null
   timezone: string | null
+  is_beta_tester: boolean
   show_full_name: boolean
   show_nickname: boolean
   show_email: boolean

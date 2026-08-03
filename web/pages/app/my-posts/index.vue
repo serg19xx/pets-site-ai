@@ -8,7 +8,7 @@ import type { FeedPost } from '~/types/feed'
 
 definePageMeta({
   layout: 'app',
-  middleware: 'auth',
+  middleware: ['auth', 'block-admin'],
 })
 
 const { t } = useI18n()

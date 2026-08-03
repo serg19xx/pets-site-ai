@@ -15,6 +15,9 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-pets}
     volumes:
       - pets_postgres_data:/var/lib/postgresql/data
+    # Localhost only — for DBeaver via SSH tunnel (not public)
+    ports:
+      - "127.0.0.1:5432:5432"
     healthcheck:
       test:
         [
@@ -36,7 +39,10 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-pets}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-pets}
       JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      ADMIN_EMAILS: ${ADMIN_EMAILS:-}
+      BETA_INVITE_TOKEN: ${BETA_INVITE_TOKEN:-}
       FRONTEND_URL: ${FRONTEND_URL:-https://pb.websmith-shop.com}
+      ADMIN_URL: ${ADMIN_URL:-https://admin.pb.websmith-shop.com}
       AUTH_SIGNUP_DELIVERY: ${AUTH_SIGNUP_DELIVERY:-password}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       EMAIL_FROM: ${EMAIL_FROM:-PETS <onboarding@resend.dev>}
@@ -54,6 +60,7 @@ services:
       context: ./web
       args:
         NUXT_PUBLIC_SITE_URL: ${FRONTEND_URL:-https://pb.websmith-shop.com}
+        NUXT_PUBLIC_ADMIN_URL: ${ADMIN_URL:-https://admin.pb.websmith-shop.com}
         NUXT_API_INTERNAL: http://pets-api:8080
     container_name: pets-web
     restart: unless-stopped
@@ -61,6 +68,27 @@ services:
       HOST: 0.0.0.0
       PORT: 3000
       NUXT_PUBLIC_SITE_URL: ${FRONTEND_URL:-https://pb.websmith-shop.com}
+      NUXT_PUBLIC_ADMIN_URL: ${ADMIN_URL:-https://admin.pb.websmith-shop.com}
+      NUXT_API_INTERNAL: http://pets-api:8080
+    depends_on:
+      - api
+    networks:
+      - web-network
+
+  admin:
+    build:
+      context: ./admin
+      args:
+        NUXT_PUBLIC_SITE_URL: ${FRONTEND_URL:-https://pb.websmith-shop.com}
+        NUXT_PUBLIC_ADMIN_URL: ${ADMIN_URL:-https://admin.pb.websmith-shop.com}
+        NUXT_API_INTERNAL: http://pets-api:8080
+    container_name: pets-admin
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3001
+      NUXT_PUBLIC_SITE_URL: ${FRONTEND_URL:-https://pb.websmith-shop.com}
+      NUXT_PUBLIC_ADMIN_URL: ${ADMIN_URL:-https://admin.pb.websmith-shop.com}
       NUXT_API_INTERNAL: http://pets-api:8080
     depends_on:
       - api

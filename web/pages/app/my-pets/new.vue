@@ -24,10 +24,10 @@ import {
 
 definePageMeta({
   layout: 'app',
-  middleware: 'auth',
+  middleware: ['auth', 'block-admin'],
 })
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const { petSexLabel } = useEnumLabels()
 const auth = useAuthStore()
@@ -105,22 +105,27 @@ async function hydrateFromPet(pet: Pet) {
   description.value = pet.description ?? ''
 }
 
-async function loadEditPage() {
+async function loadEditPage(options: { soft?: boolean } = {}) {
   if (!auth.accessToken) {
     return
   }
-  isLoading.value = true
+  const soft = Boolean(options.soft && speciesOptions.value.length > 0)
+  if (!soft) {
+    isLoading.value = true
+  }
   formError.value = ''
   try {
     await loadSpecies()
     if (isNew.value) {
-      name.value = ''
-      breedId.value = null
-      dateOfBirth.value = ''
-      sex.value = 'unknown'
-      localPet.value = null
-      const first = speciesOptions.value[0]
-      speciesId.value = first?.id ?? null
+      if (!soft) {
+        name.value = ''
+        breedId.value = null
+        dateOfBirth.value = ''
+        sex.value = 'unknown'
+        localPet.value = null
+        const first = speciesOptions.value[0]
+        speciesId.value = first?.id ?? null
+      }
       if (speciesId.value !== null) {
         await loadBreedsForSpecies(speciesId.value)
       }
@@ -144,9 +149,13 @@ async function loadEditPage() {
   }
 }
 
-onMounted(loadEditPage)
+onMounted(() => {
+  void loadEditPage()
+})
 
-watch(() => route.fullPath, loadEditPage)
+watch(locale, () => {
+  void loadEditPage({ soft: true })
+})
 
 async function savePet() {
   formError.value = ''

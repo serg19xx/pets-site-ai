@@ -4,6 +4,9 @@ import { AppError } from '../lib/errors.js'
 import { getUserId } from '../plugins/jwt-auth.js'
 import {
   authSessionSchema,
+  betaJoinBodySchema,
+  betaJoinResponseSchema,
+  betaStatusResponseSchema,
   changePasswordBodySchema,
   errorResponseSchema,
   forgotPasswordBodySchema,
@@ -17,6 +20,7 @@ import {
   updateTimezoneBodySchema,
 } from '../schemas/auth.js'
 import { changePassword } from '../services/change-password.js'
+import { getBetaStatus, joinBetaTester } from '../services/beta-invite.js'
 import { requestPasswordReset } from '../services/forgot-password.js'
 import { getSessionForUser } from '../services/get-session.js'
 import { loginUser } from '../services/login-user.js'
@@ -35,11 +39,13 @@ interface RegisterBody {
   dateOfBirth: string
   phone?: string
   email: string
+  betaInvite?: string
 }
 
 interface LoginBody {
   email: string
   password: string
+  audience?: 'admin' | 'member'
 }
 
 interface ChangePasswordBody {
@@ -105,9 +111,50 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         dateOfBirth: body.dateOfBirth,
         phone: body.phone?.trim() || null,
         email: body.email,
+        betaInvite: body.betaInvite?.trim() || null,
       })
 
       return reply.status(201).send(result)
+    },
+  )
+
+  app.get(
+    '/auth/beta-status',
+    {
+      schema: {
+        tags: ['auth'],
+        summary: 'Founding beta tester capacity and invite token',
+        response: {
+          200: betaStatusResponseSchema,
+        },
+      },
+    },
+    async () => getBetaStatus(),
+  )
+
+  app.post<{ Body: { betaInvite: string; acceptedTerms: boolean } }>(
+    '/auth/beta-join',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['auth'],
+        summary: 'Join founding beta tester group (existing account)',
+        security: [{ bearerAuth: [] }],
+        body: betaJoinBodySchema,
+        response: {
+          200: betaJoinResponseSchema,
+          400: errorResponseSchema,
+          401: errorResponseSchema,
+          409: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      return joinBetaTester({
+        userId: getUserId(request),
+        betaInvite: request.body.betaInvite,
+        acceptedTerms: request.body.acceptedTerms,
+      })
     },
   )
 
@@ -130,6 +177,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         {
           email: request.body.email,
           password: request.body.password.trim(),
+          audience: request.body.audience,
         },
         (payload) => app.jwt.sign(payload),
       )

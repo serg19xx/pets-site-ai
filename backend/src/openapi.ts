@@ -37,6 +37,14 @@ export async function registerOpenApi(app: FastifyInstance) {
           name: 'pets',
           description: 'User pets, species and breed catalog',
         },
+        {
+          name: 'feedback',
+          description: 'Beta tester bug reports and improvement ideas',
+        },
+        {
+          name: 'admin',
+          description: 'Site admin (users, moderation helpers)',
+        },
       ],
       components: {
         securitySchemes: {

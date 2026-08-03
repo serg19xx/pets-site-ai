@@ -167,11 +167,11 @@ async function removeComment(commentId: number) {
         />
       </div>
       <div class="min-w-0 flex-1">
-        <p class="text-xs text-[var(--ui-text-muted)]">{{ timeLabel }}</p>
+        <p class="text-xs text-(--ui-text-muted)">{{ timeLabel }}</p>
         <p v-if="!isEditing && postState.body" class="mt-1 line-clamp-3 text-sm whitespace-pre-wrap">
           {{ postState.body }}
         </p>
-        <p v-else-if="!isEditing && !postState.body" class="mt-1 text-sm text-[var(--ui-text-muted)]">
+        <p v-else-if="!isEditing && !postState.body" class="mt-1 text-sm text-(--ui-text-muted)">
           {{ $t('cabinetPosts.mediaOnly') }}
         </p>
         <textarea
@@ -191,7 +191,7 @@ async function removeComment(commentId: number) {
       {{ formError }}
     </p>
 
-    <div class="mt-3 flex flex-wrap gap-2 border-t border-[var(--ui-border)] pt-3">
+    <div class="mt-3 flex flex-wrap gap-2 border-t border-(--ui-border) pt-3">
       <template v-if="isEditing">
         <button type="button" class="ui-btn-ghost ui-btn-sm" @click="cancelEdit">
           {{ $t('common.cancel') }}
@@ -226,18 +226,18 @@ async function removeComment(commentId: number) {
       </template>
     </div>
 
-    <div v-if="commentsOpen" class="mt-3 border-t border-[var(--ui-border)] pt-3">
-      <p v-if="isLoadingComments" class="text-sm text-[var(--ui-text-muted)]">
+    <div v-if="commentsOpen" class="mt-3 border-t border-(--ui-border) pt-3">
+      <p v-if="isLoadingComments" class="text-sm text-(--ui-text-muted)">
         {{ $t('common.loading') }}
       </p>
-      <p v-else-if="comments.length === 0" class="text-sm text-[var(--ui-text-muted)]">
+      <p v-else-if="comments.length === 0" class="text-sm text-(--ui-text-muted)">
         {{ $t('feed.noComments') }}
       </p>
       <ul v-else class="list-none space-y-2">
         <li
           v-for="comment in comments"
           :key="comment.id"
-          class="flex items-start justify-between gap-2 rounded-lg bg-[var(--ui-surface-inset)] p-2 text-sm"
+          class="flex items-start justify-between gap-2 rounded-lg bg-(--ui-surface-inset) p-2 text-sm"
         >
           <div class="min-w-0">
             <p class="font-medium">{{ comment.author.displayName }}</p>

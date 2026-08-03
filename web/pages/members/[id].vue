@@ -12,7 +12,7 @@ const localePath = useLocalePath()
 const route = useRoute()
 const memberId = computed(() => Number(route.params.id))
 
-const { data: profile, error: loadError, pending: isLoading } = await useAsyncData(
+const { data: profile, error: loadError, pending } = await useAsyncData(
   () => `gallery-member-${memberId.value}-${locale.value}`,
   async () => {
     const id = memberId.value
@@ -26,6 +26,7 @@ const { data: profile, error: loadError, pending: isLoading } = await useAsyncDa
 
 const member = computed(() => profile.value?.member)
 const pets = computed(() => profile.value?.pets ?? [])
+const isLoading = computed(() => pending.value && !member.value)
 
 const memberInitial = computed(() => {
   const name = member.value?.displayName.trim() ?? ''

@@ -18,7 +18,7 @@ const siteUrl = String(config.public.siteUrl).replace(/\/$/, '')
 const route = useRoute()
 const petId = computed(() => Number(route.params.id))
 
-const { data: pet, error: loadError, pending: isLoading } = await useAsyncData(
+const { data: pet, error: loadError, pending } = await useAsyncData(
   () => `gallery-pet-${petId.value}-${locale.value}`,
   async () => {
     const id = petId.value
@@ -30,6 +30,8 @@ const { data: pet, error: loadError, pending: isLoading } = await useAsyncData(
   },
   { watch: [petId, locale] },
 )
+
+const isLoading = computed(() => pending.value && !pet.value)
 
 const subtitle = computed(() => {
   const p = pet.value

@@ -44,6 +44,8 @@ If these URLs return **404**, the running API is probably an **old Docker image*
 
 SQL files in `backend/migrations/`, sorted by name. Applied once; names recorded in `schema_migrations`.
 
+**Local and production databases are independent.** Deploying the API applies new migration files on the server only — it does **not** copy local rows. Prefer schema/DDL migrations; data changes on production only via an explicit migration or a one-off request. Do not put destructive seed/demo inserts in new migrations.
+
 | File | Contents |
 |------|----------|
 | `001_initial.sql` | Example `items` table |

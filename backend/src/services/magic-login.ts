@@ -46,6 +46,13 @@ export async function completeMagicLogin(
   )
 
   const user = mapProfileRow(row)
+  if (user.isAdmin) {
+    throw new AppError(
+      403,
+      'Admin accounts cannot use the member site.',
+      'ADMIN_USE_ADMIN_APP',
+    )
+  }
   const accessToken = signToken({ sub: user.id, email: user.email })
 
   return {

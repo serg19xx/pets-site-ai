@@ -58,8 +58,15 @@ export interface UpdateMarketplaceListingPayload {
 
 export const MARKETPLACE_MAX_PHOTOS = 5
 
+/** Form payload: create fields + optional inquiry notify settings (edit). */
+export type MarketplaceListingFormPayload = CreateMarketplaceListingPayload &
+  Pick<
+    UpdateMarketplaceListingPayload,
+    'inquiryNotifyEmail' | 'inquiryNotifySms' | 'inquirySmsPhone'
+  >
+
 export interface ListingFormSubmit {
-  payload: CreateMarketplaceListingPayload
+  payload: MarketplaceListingFormPayload
   newFiles: File[]
   removedMediaIds: number[]
 }

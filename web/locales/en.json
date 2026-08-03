@@ -36,8 +36,8 @@
     "prefer_not_to_say": "Prefer not to say"
   },
   "petSex": {
-    "male": "Male",
-    "female": "Female",
+    "male": "Boy",
+    "female": "Girl",
     "unknown": "Unknown"
   },
   "meta": {
@@ -60,6 +60,10 @@
     "login": {
       "title": "Log in — Pet Friends",
       "description": "Sign in to manage your pets and profile on Pet Friends."
+    },
+    "invite": {
+      "title": "Beta testers — Pet Friends",
+      "description": "Join the founding Pet Friends beta tester group. Limited spots for early testers."
     },
     "pet": {
       "title": "Pet — Pet Friends",
@@ -292,7 +296,37 @@
     "joinText": "Sign up to like posts, comment, and share your pets.",
     "createAccount": "Create account",
     "tipsTitle": "Tips for this page",
-    "tipsPurpose": "Contextual tips and short recommendations based on where you are in the app — for example how to complete a pet profile or improve a listing."
+    "tipsPurpose": "Contextual tips and short recommendations based on where you are in the app — for example how to complete a pet profile or improve a listing.",
+    "betaTitle": "Become a founding tester",
+    "betaText": "Help shape Pet Friends and earn future bonus points or complimentary services. Limited to {capacity} founding testers.",
+    "betaCta": "View invite"
+  },
+
+  "invite": {
+    "title": "Founding beta testers",
+    "eyebrow": "Soft launch invite",
+    "lead": "Pet Friends is a community for pet lovers — browse animals, share updates in the feed, and use the marketplace. We are inviting a small founding group to test the product and tell us what to improve.",
+    "whyTitle": "Why we need you",
+    "whyBody": "Real usage finds bugs, confusing flows, and missing features faster than we can alone. Your feedback guides what we build next.",
+    "privacyTitle": "Confidentiality & safety",
+    "privacyBody": "Treat other members’ personal data (names, contacts, photos, private messages) as confidential. Do not share it outside Pet Friends. If you find a security issue, report it to us privately — do not publish exploits.",
+    "rewardsTitle": "Paid services & points (coming later)",
+    "rewardsBody": "Pet Friends will offer paid services such as promoted listings and ads, plus a points system for discounts. Points can be bought or earned through activity in the product.",
+    "benefitTitle": "What founding testers get",
+    "benefitBody": "Depending on your testing activity, we plan to grant monthly bonus points and/or complimentary access to some paid services once those features launch. This is a soft-launch thank-you for active participation — not employment, not cash compensation, and not a guaranteed amount.",
+    "spots": "{remaining} of {capacity} founding spots left",
+    "spotsFull": "All {capacity} founding tester spots are taken. You can still join Pet Friends as a regular member.",
+    "acceptLabel": "I have read and accept the beta tester terms above",
+    "registerCta": "Create account as a tester",
+    "loginCta": "I already have an account — log in",
+    "joinCta": "Join as a founding tester",
+    "joining": "Joining…",
+    "alreadyTester": "You are already in the founding beta tester group. Thank you!",
+    "joinSuccess": "Welcome — you are now a founding beta tester.",
+    "mustAccept": "Please accept the terms to continue.",
+    "loadError": "Could not load invite status.",
+    "regularRegister": "Register without beta (regular member)",
+    "registerBanner": "You are joining as a founding beta tester. Spots are limited."
   },
 
   "auth": {
@@ -303,10 +337,12 @@
     "myPosts": "My posts",
     "myListings": "My listings",
     "listingMessages": "Listing messages",
+    "feedback": "Beta feedback",
     "saved": "Saved posts",
     "likedPets": "Liked pets",
     "loginTitle": "Log in",
     "loginSubtitle": "Sign in to manage your pets and profile.",
+    "adminUseAdminApp": "Admin accounts cannot use this site. Open the admin console: {url}",
     "signedInAs": "Signed in as {name}.",
     "goToGallery": "Go to gallery",
     "signOut": "Sign out",
@@ -471,5 +507,76 @@
     "galleryPhotoError": "Could not upload gallery photo.",
     "galleryPhotoDeleteError": "Could not remove gallery photo.",
     "galleryLoadError": "Could not load gallery photos."
+  },
+
+  "feedback": {
+    "title": "Beta feedback",
+    "subtitle": "Report bugs or suggest improvements. We reply in the same thread.",
+    "newCta": "New message",
+    "newTitle": "Send feedback",
+    "newSubtitle": "Choose a bug report (with context) or a short improvement idea.",
+    "backToProfile": "← Back to profile",
+    "backToList": "← Back to feedback",
+    "betaOnly": "Feedback is for founding beta testers.",
+    "betaInviteLink": "Open invite",
+    "scopeMine": "My messages",
+    "scopeAll": "All messages",
+    "empty": "No feedback yet. Send the first one.",
+    "loadError": "Could not load feedback.",
+    "sendError": "Could not send. Try again.",
+    "invalidId": "Invalid feedback id.",
+    "typeLabel": "Message type",
+    "type": {
+      "bug": "Bug",
+      "improvement": "Improvement"
+    },
+    "bugHint": "Describe what went wrong. We automatically attach page, device, OS and browser. Add console text or a screenshot when useful.",
+    "improvementHint": "Write your idea freely — no technical snapshot needed.",
+    "messageLabel": "Your message",
+    "bugPlaceholder": "What happened? What did you expect?",
+    "improvementPlaceholder": "What would make Pet Friends better?",
+    "contextTitle": "Environment snapshot",
+    "contextAuto": "Collected automatically from this browser.",
+    "context": {
+      "page": "Page",
+      "device": "Device",
+      "os": "OS",
+      "browser": "Browser"
+    },
+    "device": {
+      "desktop": "Computer",
+      "mobile": "Phone",
+      "tablet": "Tablet",
+      "unknown": "Unknown"
+    },
+    "consoleLabel": "Console / terminal text (optional)",
+    "consolePlaceholder": "Paste error messages from the browser console or terminal…",
+    "screenshotLabel": "Screenshot (optional)",
+    "screenshotAlt": "Bug screenshot",
+    "identityHint": "Sent as {name} ({email}).",
+    "submit": "Send feedback",
+    "ticketTitle": "Feedback #{id}",
+    "fromAuthor": "From {name} · {email}",
+    "statusLabel": "Status",
+    "status": {
+      "open": "Open",
+      "closed": "Closed"
+    },
+    "threadTitle": "Conversation",
+    "noReplies": "No replies yet.",
+    "replyLabel": "Reply",
+    "replyPlaceholder": "Write a reply…",
+    "reply": "Send reply",
+    "replyCount": "{count} replies",
+    "replyClosed": "This ticket is closed. Replies are only allowed while it is open.",
+    "adminBadge": "team",
+    "fabLabel": "Feedback"
+  },
+
+  "operator": {
+    "title": "Operator account",
+    "subtitle": "This login is for the admin console, not the member app.",
+    "body": "Use the separate admin application to handle feedback tickets and users. Creating pets and posts is disabled here.",
+    "openAdmin": "Open admin console"
   }
 }

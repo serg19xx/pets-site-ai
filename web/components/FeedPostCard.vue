@@ -170,7 +170,7 @@ async function submitComment() {
         >
           {{ postState.author.displayName }}
         </NuxtLink>
-        <p class="text-xs text-[var(--ui-text-muted)]">{{ timeLabel }}</p>
+        <p class="text-xs text-(--ui-text-muted)">{{ timeLabel }}</p>
       </div>
     </header>
 
@@ -264,7 +264,7 @@ async function submitComment() {
     </p>
 
     <section v-if="commentsOpen" class="ui-feed-comments">
-      <p v-if="comments.length === 0 && commentsLoaded" class="text-sm text-[var(--ui-text-muted)]">
+      <p v-if="comments.length === 0 && commentsLoaded" class="text-sm text-(--ui-text-muted)">
         {{ $t('feed.noComments') }}
       </p>
       <ul v-else class="list-none">

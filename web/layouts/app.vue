@@ -3,6 +3,7 @@ import AppAside from '~/components/layout/AppAside.vue'
 import AppBottomNav from '~/components/layout/AppBottomNav.vue'
 import AppHeader from '~/components/layout/AppHeader.vue'
 import AppNav from '~/components/layout/AppNav.vue'
+import FeedbackFab from '~/components/FeedbackFab.vue'
 </script>
 
 <template>
@@ -20,5 +21,6 @@ import AppNav from '~/components/layout/AppNav.vue'
     </div>
 
     <AppBottomNav />
+    <FeedbackFab />
   </div>
 </template>

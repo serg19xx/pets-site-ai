@@ -1,4 +1,5 @@
 import { pool } from '../db/pool.js'
+import { isAdminEmail } from '../lib/admin.js'
 import { mapPublicMember, type PublicMemberRow } from '../lib/map-public-member.js'
 import { mapGalleryPetRow, type GalleryRow } from '../lib/map-gallery-pet.js'
 
@@ -42,20 +43,21 @@ export interface GalleryMemberJoinRow {
 export type GalleryDetailRow = GalleryRow & GalleryMemberJoinRow
 
 export async function getPublicMemberProfile(userId: number) {
-  const userR = await pool.query<PublicMemberRow>(
+  const userR = await pool.query<PublicMemberRow & { email: string }>(
     `SELECT
       id,
       full_name,
       nickname,
       avatar_path,
       show_full_name,
-      show_nickname
+      show_nickname,
+      email
     FROM users
     WHERE id = $1`,
     [userId],
   )
   const userRow = userR.rows[0]
-  if (!userRow) {
+  if (!userRow || isAdminEmail(userRow.email)) {
     return null
   }
 

@@ -7,6 +7,7 @@ import { normalizeEmail } from '../lib/map-user.js'
 import type { UserGender } from '../types/user.js'
 import { USER_GENDERS } from '../types/user.js'
 import { issueAuthToken } from './auth-tokens.js'
+import { claimBetaTesterSeat, isValidBetaInvite } from './beta-invite.js'
 import { deleteUserById } from './delete-user.js'
 import {
   buildMagicLoginUrl,
@@ -21,6 +22,8 @@ export interface RegisterInput {
   dateOfBirth: string
   phone: string | null
   email: string
+  /** Soft-launch invite from /invite; when valid, marks the user as a founding beta tester. */
+  betaInvite?: string | null
 }
 
 function logDevPassword(email: string, temporaryPassword: string): void {
@@ -117,6 +120,12 @@ export async function registerUser(input: RegisterInput): Promise<{ message: str
   const phone = input.phone?.trim() ? input.phone.trim() : null
   const temporaryPassword = generateTemporaryPassword()
   const passwordHash = await hashPassword(temporaryPassword)
+  const wantsBeta = Boolean(input.betaInvite?.trim())
+  const inviteValid = isValidBetaInvite(input.betaInvite)
+
+  if (wantsBeta && !inviteValid) {
+    throw new AppError(400, 'Invalid or missing invite', 'INVALID_INVITE')
+  }
 
   const client = await pool.connect()
   let userId: number
@@ -170,6 +179,10 @@ export async function registerUser(input: RegisterInput): Promise<{ message: str
        VALUES ($1, $2, TRUE)`,
       [user.id, passwordHash],
     )
+
+    if (inviteValid) {
+      await claimBetaTesterSeat(client, userId)
+    }
 
     await client.query('COMMIT')
   } catch (error) {

@@ -31,6 +31,8 @@ const {
 )
 
 const posts = computed(() => feedData.value?.posts ?? [])
+/** Keep feed visible while locale refresh runs (same UX as gallery). */
+const showLoading = computed(() => isLoading.value && posts.value.length === 0)
 const loadError = computed(() => {
   if (!feedError.value) {
     return ''
@@ -71,7 +73,7 @@ function onPostUpdate(updated: FeedPost) {
 
     <FeedComposer class="mt-6" @published="onPublished" />
 
-    <p v-if="isLoading" class="ui-loading mt-8">{{ $t('common.loading') }}</p>
+    <p v-if="showLoading" class="ui-loading mt-8">{{ $t('common.loading') }}</p>
     <p
       v-else-if="loadError"
       class="ui-alert-error mt-8"

@@ -8,6 +8,14 @@ export interface RegisterPayload {
   dateOfBirth: string
   phone?: string
   email: string
+  betaInvite?: string
+}
+
+export interface BetaStatus {
+  acceptedCount: number
+  capacity: number
+  open: boolean
+  inviteToken: string
 }
 
 export interface AuthSession {
@@ -96,13 +104,30 @@ export async function registerUser(
   })
 }
 
+export async function fetchBetaStatus(): Promise<BetaStatus> {
+  return requestApi('/api/auth/beta-status', {
+    method: 'GET',
+  })
+}
+
+export async function joinBetaTester(
+  accessToken: string,
+  payload: { betaInvite: string; acceptedTerms: true },
+): Promise<{ message: string; isBetaTester: boolean }> {
+  return requestApi('/api/auth/beta-join', {
+    method: 'POST',
+    accessToken,
+    body: JSON.stringify(payload),
+  })
+}
+
 export async function loginUser(
   email: string,
   password: string,
 ): Promise<AuthSession> {
   return requestApi('/api/auth/login', {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, audience: 'member' }),
   })
 }
 

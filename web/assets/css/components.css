@@ -40,11 +40,11 @@
   }
 
   .ui-page-subtitle {
-    @apply text-sm text-[var(--ui-text-muted)];
+    @apply text-sm text-(--ui-text-muted);
   }
 
   .ui-lead {
-    @apply text-base text-[var(--ui-text-muted)];
+    @apply text-base text-(--ui-text-muted);
   }
 
   .ui-body {
@@ -52,15 +52,15 @@
   }
 
   .ui-caption {
-    @apply text-xs text-[var(--ui-text-subtle)];
+    @apply text-xs text-(--ui-text-subtle);
   }
 
   .ui-hint {
-    @apply text-xs font-normal text-[var(--ui-text-subtle)];
+    @apply text-xs font-normal text-(--ui-text-subtle);
   }
 
   .ui-overline {
-    @apply text-xs font-medium uppercase tracking-wider text-[var(--ui-text-subtle)];
+    @apply text-xs font-medium uppercase tracking-wider text-(--ui-text-subtle);
   }
 
   /* —— Prose (articles, learn page) —— */
@@ -108,7 +108,7 @@
   }
 
   .ui-list-divider {
-    @apply divide-y divide-[var(--ui-border)];
+    @apply divide-y divide-(--ui-border);
   }
 
   /* —— Icons (SVG, img, or emoji) —— */
@@ -117,15 +117,15 @@
   }
 
   .ui-icon-sm {
-    @apply size-[var(--ui-icon-size-sm)] text-base;
+    @apply size-(--ui-icon-size-sm) text-base;
   }
 
   .ui-icon-md {
-    @apply size-[var(--ui-icon-size-md)] text-lg;
+    @apply size-(--ui-icon-size-md) text-lg;
   }
 
   .ui-icon-lg {
-    @apply size-[var(--ui-icon-size-lg)] text-xl;
+    @apply size-(--ui-icon-size-lg) text-xl;
   }
 
   .ui-icon-xl {
@@ -155,19 +155,19 @@
   }
 
   .ui-link-muted {
-    @apply text-sm text-[var(--ui-text-muted)] hover:text-stone-900 dark:hover:text-stone-100;
+    @apply text-sm text-(--ui-text-muted) hover:text-stone-900 dark:hover:text-stone-100;
   }
 
   .ui-link-back {
-    @apply mb-4 inline-flex items-center gap-1 text-sm text-[var(--ui-text-muted)] hover:text-stone-900 dark:hover:text-stone-100;
+    @apply mb-4 inline-flex items-center gap-1 text-sm text-(--ui-text-muted) hover:text-stone-900 dark:hover:text-stone-100;
   }
 
   /* Buttons */
   .ui-btn {
-    @apply inline-flex items-center justify-center rounded-[var(--radius-control)] font-medium
+    @apply inline-flex items-center justify-center rounded-(--radius-control) font-medium
            transition-colors focus-visible:outline-none focus-visible:ring-2
-           focus-visible:ring-[var(--ui-ring)] focus-visible:ring-offset-2
-           focus-visible:ring-offset-[var(--ui-surface-muted)] dark:focus-visible:ring-offset-stone-950
+           focus-visible:ring-(--ui-ring) focus-visible:ring-offset-2
+           focus-visible:ring-offset-(--ui-surface-muted) dark:focus-visible:ring-offset-stone-950
            disabled:pointer-events-none disabled:opacity-60;
   }
 
@@ -192,56 +192,56 @@
   }
 
   .ui-btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-control)] font-medium
+    @apply inline-flex items-center justify-center gap-2 rounded-(--radius-control) font-medium
            transition-colors focus-visible:outline-none focus-visible:ring-2
-           focus-visible:ring-[var(--ui-ring)] focus-visible:ring-offset-2
-           focus-visible:ring-offset-[var(--ui-surface-muted)] dark:focus-visible:ring-offset-stone-950
+           focus-visible:ring-(--ui-ring) focus-visible:ring-offset-2
+           focus-visible:ring-offset-(--ui-surface-muted) dark:focus-visible:ring-offset-stone-950
            disabled:pointer-events-none disabled:opacity-60
            bg-primary-600 text-white hover:bg-primary-700;
   }
 
   .ui-btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-control)] font-medium
+    @apply inline-flex items-center justify-center gap-2 rounded-(--radius-control) font-medium
            transition-colors focus-visible:outline-none focus-visible:ring-2
-           focus-visible:ring-[var(--ui-ring)] focus-visible:ring-offset-2
-           focus-visible:ring-offset-[var(--ui-surface-muted)] dark:focus-visible:ring-offset-stone-950
+           focus-visible:ring-(--ui-ring) focus-visible:ring-offset-2
+           focus-visible:ring-offset-(--ui-surface-muted) dark:focus-visible:ring-offset-stone-950
            disabled:pointer-events-none disabled:opacity-60
-           border border-[var(--ui-border-strong)] bg-[var(--ui-surface)] text-stone-700
-           hover:bg-[var(--ui-surface-muted)] dark:text-stone-200 dark:hover:bg-stone-800;
+           border border-(--ui-border-strong) bg-(--ui-surface) text-stone-700
+           hover:bg-(--ui-surface-muted) dark:text-stone-200 dark:hover:bg-stone-800;
   }
 
   .ui-btn-danger {
-    @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-control)] font-medium
+    @apply inline-flex items-center justify-center gap-2 rounded-(--radius-control) font-medium
            transition-colors focus-visible:outline-none focus-visible:ring-2
-           focus-visible:ring-[var(--ui-ring)] focus-visible:ring-offset-2
-           focus-visible:ring-offset-[var(--ui-surface-muted)] dark:focus-visible:ring-offset-stone-950
+           focus-visible:ring-(--ui-ring) focus-visible:ring-offset-2
+           focus-visible:ring-offset-(--ui-surface-muted) dark:focus-visible:ring-offset-stone-950
            disabled:pointer-events-none disabled:opacity-60
            border border-rose-300 text-rose-700 hover:bg-rose-50
            dark:border-rose-800 dark:text-rose-300 dark:hover:bg-rose-950/30;
   }
 
   .ui-btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-control)] font-medium
+    @apply inline-flex items-center justify-center gap-2 rounded-(--radius-control) font-medium
            transition-colors focus-visible:outline-none focus-visible:ring-2
-           focus-visible:ring-[var(--ui-ring)] focus-visible:ring-offset-2
-           focus-visible:ring-offset-[var(--ui-surface-muted)] dark:focus-visible:ring-offset-stone-950
+           focus-visible:ring-(--ui-ring) focus-visible:ring-offset-2
+           focus-visible:ring-offset-(--ui-surface-muted) dark:focus-visible:ring-offset-stone-950
            disabled:pointer-events-none disabled:opacity-60
-           border border-[var(--ui-border-strong)] text-stone-700
-           hover:bg-[var(--ui-surface-muted)] dark:text-stone-200 dark:hover:bg-stone-800;
+           border border-(--ui-border-strong) text-stone-700
+           hover:bg-(--ui-surface-muted) dark:text-stone-200 dark:hover:bg-stone-800;
   }
 
   /* Icon-only control (toolbar, crop modal tools) */
   .ui-icon-btn {
-    @apply inline-flex items-center justify-center rounded-[var(--radius-control)]
-           border border-[var(--ui-border-strong)] text-stone-700
-           transition-colors hover:bg-[var(--ui-surface-muted)]
+    @apply inline-flex items-center justify-center rounded-(--radius-control)
+           border border-(--ui-border-strong) text-stone-700
+           transition-colors hover:bg-(--ui-surface-muted)
            dark:text-stone-200 dark:hover:bg-stone-800;
   }
 
   .ui-icon-btn-sm {
-    @apply inline-flex size-9 items-center justify-center rounded-[var(--radius-control)]
-           border border-[var(--ui-border-strong)] text-stone-700 transition-colors
-           hover:bg-[var(--ui-surface-muted)] dark:text-stone-200 dark:hover:bg-stone-800;
+    @apply inline-flex size-9 items-center justify-center rounded-(--radius-control)
+           border border-(--ui-border-strong) text-stone-700 transition-colors
+           hover:bg-(--ui-surface-muted) dark:text-stone-200 dark:hover:bg-stone-800;
   }
 
   /* Form controls */
@@ -272,8 +272,8 @@
   .ui-select,
   .ui-textarea {
     @apply box-border block w-full min-w-0 max-w-full
-           rounded-[var(--radius-control)] border border-[var(--ui-border-strong)]
-           bg-[var(--ui-surface)] leading-normal text-stone-900
+           rounded-(--radius-control) border border-(--ui-border-strong)
+           bg-(--ui-surface) leading-normal text-stone-900
            placeholder:text-stone-400 dark:bg-stone-950 dark:text-stone-100
            dark:placeholder:text-stone-500;
     min-height: var(--ui-control-min-height);
@@ -314,7 +314,7 @@
   }
 
   .ui-select {
-    @apply appearance-none bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat;
+    @apply appearance-none bg-size-[1rem] bg-position-[right_0.75rem_center] bg-no-repeat;
     min-height: var(--ui-control-min-height);
     padding-right: 2.5rem;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2378716c'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
@@ -345,23 +345,23 @@
 
   /* Surfaces */
   .ui-card {
-    @apply rounded-[var(--radius-card)] border border-[var(--ui-border)] bg-[var(--ui-surface)]
+    @apply rounded-(--radius-card) border border-(--ui-border) bg-(--ui-surface)
            p-5 shadow-sm dark:shadow-none;
   }
 
   .ui-card-lg {
-    @apply rounded-[var(--radius-card)] border border-[var(--ui-border)] bg-[var(--ui-surface)]
+    @apply rounded-(--radius-card) border border-(--ui-border) bg-(--ui-surface)
            p-6 shadow-sm dark:shadow-none;
   }
 
   .ui-card-muted {
-    @apply rounded-[var(--radius-control)] border border-[var(--ui-border)]
-           bg-[var(--ui-surface-inset)] p-4 dark:bg-stone-900;
+    @apply rounded-(--radius-control) border border-(--ui-border)
+           bg-(--ui-surface-inset) p-4 dark:bg-stone-900;
   }
 
   .ui-panel {
-    @apply rounded-[var(--radius-card)] border border-[var(--ui-border)]
-           bg-[var(--ui-surface-inset)] p-4 dark:border-stone-700 dark:bg-stone-900;
+    @apply rounded-(--radius-card) border border-(--ui-border)
+           bg-(--ui-surface-inset) p-4 dark:border-stone-700 dark:bg-stone-900;
   }
 
   .ui-panel-title {
@@ -373,18 +373,18 @@
   }
 
   .ui-empty-text {
-    @apply mt-1 text-sm text-[var(--ui-text-subtle)];
+    @apply mt-1 text-sm text-(--ui-text-subtle);
   }
 
   .ui-empty {
-    @apply rounded-[var(--radius-card)] border border-dashed border-[var(--ui-border-strong)]
-           bg-[var(--ui-surface-inset)] px-6 py-10 text-center text-sm
-           text-[var(--ui-text-muted)] dark:bg-stone-900/50;
+    @apply rounded-(--radius-card) border border-dashed border-(--ui-border-strong)
+           bg-(--ui-surface-inset) px-6 py-10 text-center text-sm
+           text-(--ui-text-muted) dark:bg-stone-900/50;
   }
 
   .ui-under-construction {
-    @apply rounded-[var(--radius-card)] border border-dashed border-[var(--ui-border-strong)]
-           bg-[var(--ui-surface-inset)] px-6 py-8 dark:bg-stone-900/50;
+    @apply rounded-(--radius-card) border border-dashed border-(--ui-border-strong)
+           bg-(--ui-surface-inset) px-6 py-8 dark:bg-stone-900/50;
   }
 
   .ui-under-construction--compact {
@@ -392,7 +392,7 @@
   }
 
   .ui-under-construction-badge {
-    @apply text-xs font-semibold uppercase tracking-wide text-[var(--ui-text-muted)];
+    @apply text-xs font-semibold uppercase tracking-wide text-(--ui-text-muted);
   }
 
   .ui-under-construction-title {
@@ -408,26 +408,26 @@
   }
 
   .ui-under-construction-feedback {
-    @apply mt-3 text-sm text-[var(--ui-text-muted)];
+    @apply mt-3 text-sm text-(--ui-text-muted);
   }
 
   /* Feedback */
   .ui-alert {
-    @apply rounded-[var(--radius-control)] px-3 py-2 text-sm;
+    @apply rounded-(--radius-control) px-3 py-2 text-sm;
   }
 
   .ui-alert-error {
-    @apply rounded-[var(--radius-control)] bg-rose-50 px-3 py-2 text-sm text-rose-800
+    @apply rounded-(--radius-control) bg-rose-50 px-3 py-2 text-sm text-rose-800
            dark:bg-rose-950/50 dark:text-rose-200;
   }
 
   .ui-alert-success {
-    @apply rounded-[var(--radius-control)] bg-primary-50 px-3 py-2 text-sm text-primary-800
+    @apply rounded-(--radius-control) bg-primary-50 px-3 py-2 text-sm text-primary-800
            dark:bg-primary-950/50 dark:text-primary-200;
   }
 
   .ui-alert-warning {
-    @apply rounded-[var(--radius-control)] bg-amber-50 px-3 py-2 text-sm text-amber-900
+    @apply rounded-(--radius-control) bg-amber-50 px-3 py-2 text-sm text-amber-900
            dark:bg-amber-950/40 dark:text-amber-100;
   }
 
@@ -446,7 +446,7 @@
   }
 
   .ui-bottom-nav {
-    @apply fixed inset-x-0 bottom-0 z-40 border-t border-[var(--ui-border)] bg-[var(--ui-surface)]/95 backdrop-blur
+    @apply fixed inset-x-0 bottom-0 z-40 border-t border-(--ui-border) bg-(--ui-surface)/95 backdrop-blur
            dark:bg-stone-950/95;
   }
 
@@ -456,7 +456,7 @@
 
   .ui-bottom-nav-item {
     @apply flex flex-1 flex-col items-center justify-center gap-0.5 text-xs font-medium
-           text-[var(--ui-text-muted)] transition-colors;
+           text-(--ui-text-muted) transition-colors;
   }
 
   .ui-bottom-nav-item-active {
@@ -465,8 +465,8 @@
 
   /* —— Menus (dropdowns) —— */
   .ui-menu {
-    @apply list-none overflow-hidden rounded-[var(--radius-card)] border border-[var(--ui-border)]
-           bg-[var(--ui-surface)] shadow-lg dark:shadow-none;
+    @apply list-none overflow-hidden rounded-(--radius-card) border border-(--ui-border)
+           bg-(--ui-surface) shadow-lg dark:shadow-none;
   }
 
   .ui-menu-item {
@@ -480,8 +480,8 @@
 
   /* —— List rows (pets, gallery cards as links) —— */
   .ui-list-link {
-    @apply flex items-center gap-4 rounded-[var(--radius-card)] border border-[var(--ui-border)]
-           bg-[var(--ui-surface)] p-4 shadow-sm transition
+    @apply flex items-center gap-4 rounded-(--radius-card) border border-(--ui-border)
+           bg-(--ui-surface) p-4 shadow-sm transition
            hover:border-primary-200 hover:bg-primary-50/30
            dark:hover:border-primary-900 dark:hover:bg-primary-950/20;
   }
@@ -491,12 +491,12 @@
   }
 
   .ui-list-link-meta {
-    @apply text-sm text-[var(--ui-text-subtle)];
+    @apply text-sm text-(--ui-text-subtle);
   }
 
   /* —— App shell (layouts) —— */
   .ui-shell {
-    @apply flex min-h-dvh flex-col bg-[var(--ui-surface-muted)] text-[var(--ui-text)]
+    @apply flex min-h-dvh flex-col bg-(--ui-surface-muted) text-(--ui-text)
            dark:bg-stone-950 dark:text-stone-100;
   }
 
@@ -509,8 +509,8 @@
   }
 
   .ui-header {
-    @apply sticky top-0 z-40 overflow-visible border-b border-[var(--ui-border)]
-           bg-[var(--ui-surface)]/95 backdrop-blur dark:bg-stone-950/95;
+    @apply sticky top-0 z-40 overflow-visible border-b border-(--ui-border)
+           bg-(--ui-surface)/95 backdrop-blur dark:bg-stone-950/95;
   }
 
   .ui-header-inner {
@@ -530,8 +530,8 @@
   }
 
   .ui-brand-mark--wide {
-    @apply h-12 w-auto max-w-[8.5rem] object-contain object-left
-           sm:h-14 sm:max-w-[10.5rem];
+    @apply h-12 w-auto max-w-34 object-contain object-left
+           sm:h-14 sm:max-w-42;
   }
 
   .ui-brand-mark--circle {
@@ -556,30 +556,30 @@
   }
 
   .ui-header-icon-btn {
-    @apply flex size-10 items-center justify-center rounded-[var(--radius-control)]
+    @apply flex size-10 items-center justify-center rounded-(--radius-control)
            text-stone-700 transition-colors hover:bg-stone-100
            dark:text-stone-200 dark:hover:bg-stone-800;
   }
 
   .ui-lang-btn {
-    @apply flex h-10 min-w-10 items-center justify-center gap-1.5 rounded-[var(--radius-control)]
+    @apply flex h-10 min-w-10 items-center justify-center gap-1.5 rounded-(--radius-control)
            px-2 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-100
            dark:text-stone-200 dark:hover:bg-stone-800 md:px-2.5;
   }
 
   /* —— Tabs (auth register / reset) —— */
   .ui-tabs {
-    @apply mb-6 flex gap-1 overflow-x-auto rounded-[var(--radius-control)]
+    @apply mb-6 flex gap-1 overflow-x-auto rounded-(--radius-control)
            bg-stone-100 p-1 dark:bg-stone-800;
   }
 
   .ui-tab {
     @apply min-w-0 flex-1 whitespace-nowrap rounded-md px-2 py-2 text-sm font-medium
-           text-[var(--ui-text-muted)] transition-colors;
+           text-(--ui-text-muted) transition-colors;
   }
 
   .ui-tab-active {
-    @apply bg-[var(--ui-surface)] text-stone-900 shadow dark:bg-stone-700 dark:text-stone-100;
+    @apply bg-(--ui-surface) text-stone-900 shadow dark:bg-stone-700 dark:text-stone-100;
   }
 
   /* —— Modal —— */
@@ -588,12 +588,12 @@
   }
 
   .ui-modal {
-    @apply flex w-full max-w-lg flex-col overflow-hidden rounded-[var(--radius-card)]
-           bg-[var(--ui-surface)] shadow-xl;
+    @apply flex w-full max-w-lg flex-col overflow-hidden rounded-(--radius-card)
+           bg-(--ui-surface) shadow-xl;
   }
 
   .ui-modal-header {
-    @apply border-b border-[var(--ui-border)] px-4 py-3;
+    @apply border-b border-(--ui-border) px-4 py-3;
   }
 
   .ui-modal-title {
@@ -601,7 +601,7 @@
   }
 
   .ui-modal-toolbar {
-    @apply flex flex-wrap items-center justify-center gap-2 border-b border-[var(--ui-border)] px-3 py-2;
+    @apply flex flex-wrap items-center justify-center gap-2 border-b border-(--ui-border) px-3 py-2;
   }
 
   .ui-modal-crop-area {
@@ -614,7 +614,7 @@
 
   /* —— Photo lightbox —— */
   .ui-photo-lightbox-backdrop {
-    @apply fixed inset-0 z-[60] flex flex-col bg-black/92 p-3 sm:p-4;
+    @apply fixed inset-0 z-60 flex flex-col bg-black/92 p-3 sm:p-4;
   }
 
   .ui-photo-lightbox-toolbar {
@@ -673,8 +673,8 @@
   }
 
   .ui-pet-hero-card {
-    @apply overflow-hidden rounded-[var(--radius-card)] border border-[var(--ui-border)]
-           bg-[var(--ui-surface)] shadow-sm;
+    @apply overflow-hidden rounded-(--radius-card) border border-(--ui-border)
+           bg-(--ui-surface) shadow-sm;
   }
 
   .ui-pet-hero-head {
@@ -686,11 +686,11 @@
   }
 
   .ui-pet-hero-subtitle {
-    @apply mt-0.5 text-sm text-[var(--ui-text-muted)];
+    @apply mt-0.5 text-sm text-(--ui-text-muted);
   }
 
   .ui-pet-hero-media {
-    @apply relative mt-3 aspect-[4/3] w-full overflow-hidden bg-stone-100
+    @apply relative mt-3 aspect-4/3 w-full overflow-hidden bg-stone-100
            dark:bg-stone-800/80;
   }
 
@@ -708,11 +708,11 @@
   }
 
   .ui-pet-hero-greeting {
-    @apply border-t border-[var(--ui-border)] px-4 py-3;
+    @apply border-t border-(--ui-border) px-4 py-3;
   }
 
   .ui-pet-hero-greeting-label {
-    @apply text-xs font-semibold uppercase tracking-wide text-[var(--ui-text-muted)];
+    @apply text-xs font-semibold uppercase tracking-wide text-(--ui-text-muted);
   }
 
   .ui-pet-hero-greeting .ui-pet-greeting {
@@ -732,8 +732,8 @@
   }
 
   .ui-pet-details {
-    @apply grid gap-3 rounded-[var(--radius-card)] border border-[var(--ui-border)]
-           bg-[var(--ui-surface)] p-4;
+    @apply grid gap-3 rounded-(--radius-card) border border-(--ui-border)
+           bg-(--ui-surface) p-4;
   }
 
   .ui-pet-details-row {
@@ -741,7 +741,7 @@
   }
 
   .ui-pet-details-row dt {
-    @apply text-[var(--ui-text-subtle)];
+    @apply text-(--ui-text-subtle);
   }
 
   .ui-pet-details-row dd {
@@ -749,7 +749,7 @@
   }
 
   .ui-pet-greeting {
-    @apply rounded-[var(--radius-card)] border border-primary-200/80 bg-primary-50/80
+    @apply rounded-(--radius-card) border border-primary-200/80 bg-primary-50/80
            px-4 py-3 text-sm leading-relaxed text-stone-800
            dark:border-primary-900/60 dark:bg-primary-950/40 dark:text-stone-100;
   }
@@ -775,11 +775,11 @@
   }
 
   .ui-pet-member-label {
-    @apply text-[var(--ui-text-muted)];
+    @apply text-(--ui-text-muted);
   }
 
   .ui-pet-member-link {
-    @apply inline-flex items-center gap-1.5 rounded-md text-[var(--ui-text-muted)]
+    @apply inline-flex items-center gap-1.5 rounded-md text-(--ui-text-muted)
            transition-colors hover:text-primary-700 dark:hover:text-primary-300;
   }
 
@@ -792,7 +792,7 @@
   }
 
   .ui-pet-member-actions {
-    @apply flex flex-wrap items-center gap-3 border-t border-[var(--ui-border)] pt-4;
+    @apply flex flex-wrap items-center gap-3 border-t border-(--ui-border) pt-4;
   }
 
   .ui-like-control {
@@ -839,7 +839,7 @@
 
   /* —— Feed —— */
   .ui-feed-composer {
-    @apply rounded-[var(--radius-card)] border border-[var(--ui-border)] bg-[var(--ui-surface)]
+    @apply rounded-(--radius-card) border border-(--ui-border) bg-(--ui-surface)
            p-4 shadow-sm;
   }
 
@@ -848,14 +848,14 @@
   }
 
   .ui-feed-composer-input {
-    @apply min-h-20 flex-1 resize-y rounded-xl border border-[var(--ui-border)] bg-[var(--ui-surface-inset)]
-           px-3 py-2 text-sm text-stone-900 placeholder:text-[var(--ui-text-muted)]
+    @apply min-h-20 flex-1 resize-y rounded-xl border border-(--ui-border) bg-(--ui-surface-inset)
+           px-3 py-2 text-sm text-stone-900 placeholder:text-(--ui-text-muted)
            focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/30
            dark:text-stone-100;
   }
 
   .ui-feed-composer-actions {
-    @apply mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-[var(--ui-border)] pt-3;
+    @apply mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-(--ui-border) pt-3;
   }
 
   .ui-feed-preview-grid {
@@ -867,7 +867,7 @@
   }
 
   .ui-feed-post {
-    @apply rounded-[var(--radius-card)] border border-[var(--ui-border)] bg-[var(--ui-surface)]
+    @apply rounded-(--radius-card) border border-(--ui-border) bg-(--ui-surface)
            shadow-sm;
   }
 
@@ -880,7 +880,7 @@
   }
 
   .ui-feed-post-media {
-    @apply border-y border-[var(--ui-border)];
+    @apply border-y border-(--ui-border);
   }
 
   .ui-feed-post-media-grid {
@@ -892,7 +892,7 @@
   }
 
   .ui-feed-post-media-item {
-    @apply relative aspect-[4/3] overflow-hidden bg-stone-100 dark:bg-stone-800;
+    @apply relative aspect-4/3 overflow-hidden bg-stone-100 dark:bg-stone-800;
   }
 
   .ui-feed-post-media-item img,
@@ -901,12 +901,12 @@
   }
 
   .ui-feed-post-footer {
-    @apply flex flex-wrap items-center gap-1 border-t border-[var(--ui-border)] px-2 py-1;
+    @apply flex flex-wrap items-center gap-1 border-t border-(--ui-border) px-2 py-1;
   }
 
   .ui-feed-action-btn {
     @apply inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium
-           text-[var(--ui-text-muted)] transition-colors
+           text-(--ui-text-muted) transition-colors
            hover:bg-stone-100 hover:text-stone-900
            focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500
            disabled:cursor-not-allowed disabled:opacity-50
@@ -942,7 +942,7 @@
   }
 
   .ui-feed-comments {
-    @apply border-t border-[var(--ui-border)] bg-[var(--ui-surface-inset)] px-4 py-3;
+    @apply border-t border-(--ui-border) bg-(--ui-surface-inset) px-4 py-3;
   }
 
   .ui-feed-comment {
@@ -963,8 +963,8 @@
   }
 
   .ui-gallery-card {
-    @apply flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--ui-border)]
-           bg-[var(--ui-surface)] shadow-sm;
+    @apply flex flex-col overflow-hidden rounded-(--radius-card) border border-(--ui-border)
+           bg-(--ui-surface) shadow-sm;
   }
 
   .ui-gallery-card-link {
@@ -972,11 +972,11 @@
   }
 
   .ui-gallery-card-media {
-    @apply relative aspect-square w-full overflow-hidden bg-[var(--ui-surface-muted)];
+    @apply relative aspect-square w-full overflow-hidden bg-(--ui-surface-muted);
   }
 
   .ui-gallery-grid--profile .ui-gallery-card-media {
-    @apply aspect-[4/3];
+    @apply aspect-4/3;
   }
 
   .ui-gallery-card-media .ui-avatar-ring,
@@ -997,13 +997,13 @@
   }
 
   .ui-gallery-card-meta {
-    @apply text-sm text-[var(--ui-text-subtle)];
+    @apply text-sm text-(--ui-text-subtle);
   }
 
   /* —— Media / avatars —— */
   .ui-media-frame {
-    @apply aspect-square w-full max-w-sm overflow-hidden rounded-[var(--radius-card)]
-           border border-[var(--ui-border)] bg-[var(--ui-surface-muted)];
+    @apply aspect-square w-full max-w-sm overflow-hidden rounded-(--radius-card)
+           border border-(--ui-border) bg-(--ui-surface-muted);
   }
 
   .ui-avatar-ring {
@@ -1036,7 +1036,7 @@
   }
 
   .ui-avatar-header {
-    @apply h-[3.25rem] w-[3.25rem] text-base;
+    @apply h-13 w-13 text-base;
   }
 
   .ui-pet-avatar-sm {
@@ -1066,12 +1066,12 @@
 
   /* —— Form extras —— */
   .ui-checkbox {
-    @apply size-4 rounded border-[var(--ui-border-strong)] text-primary-600
+    @apply size-4 rounded border-(--ui-border-strong) text-primary-600
            focus:ring-primary-500 dark:border-stone-600;
   }
 
   .ui-checkbox-label {
-    @apply mt-2 flex cursor-pointer items-center gap-2 text-xs text-[var(--ui-text-muted)];
+    @apply mt-2 flex cursor-pointer items-center gap-2 text-xs text-(--ui-text-muted);
   }
 
   .ui-field-row {
@@ -1079,7 +1079,7 @@
   }
 
   .ui-field-label {
-    @apply text-[var(--ui-text-muted)];
+    @apply text-(--ui-text-muted);
   }
 
   .ui-field-value {
@@ -1087,7 +1087,7 @@
   }
 
   .ui-form-footer-hint {
-    @apply border-t border-stone-100 pt-4 text-xs text-[var(--ui-text-subtle)]
+    @apply border-t border-stone-100 pt-4 text-xs text-(--ui-text-subtle)
            dark:border-stone-800;
   }
 
@@ -1100,7 +1100,7 @@
   }
 
   .ui-pet-photo-tile {
-    @apply relative aspect-square overflow-hidden rounded-[var(--radius-card)]
+    @apply relative aspect-square overflow-hidden rounded-(--radius-card)
            bg-stone-100 ring-1 ring-stone-200/80 dark:bg-stone-800/80 dark:ring-stone-700;
   }
 
@@ -1114,17 +1114,17 @@
   }
 
   .ui-pet-photo-tile--cover {
-    @apply ring-2 ring-[var(--ui-primary)] ring-offset-2 ring-offset-[var(--ui-surface)]
+    @apply ring-2 ring-(--ui-primary) ring-offset-2 ring-offset-(--ui-surface)
            dark:ring-offset-stone-900;
   }
 
   .ui-pet-photo-cover-badge {
-    @apply pointer-events-none absolute top-1.5 left-1.5 z-20 rounded-full bg-[var(--ui-primary)] px-2 py-0.5
+    @apply pointer-events-none absolute top-1.5 left-1.5 z-20 rounded-full bg-(--ui-primary) px-2 py-0.5
            text-[10px] font-semibold uppercase tracking-wide text-white shadow-sm;
   }
 
   .ui-pet-photo-actions {
-    @apply absolute inset-x-0 bottom-0 z-10 flex justify-center gap-1 bg-gradient-to-t
+    @apply absolute inset-x-0 bottom-0 z-10 flex justify-center gap-1 bg-linear-to-t
            from-black/70 to-transparent px-1.5 pt-6 pb-1.5 opacity-0 transition-opacity
            group-hover:opacity-100;
   }
@@ -1150,15 +1150,15 @@
   }
 
   .ui-loading {
-    @apply text-sm text-[var(--ui-text-subtle)];
+    @apply text-sm text-(--ui-text-subtle);
   }
 
   .ui-alert-lg {
-    @apply rounded-[var(--radius-control)] px-4 py-3 text-sm;
+    @apply rounded-(--radius-control) px-4 py-3 text-sm;
   }
 
   .ui-alert-error-lg {
-    @apply rounded-[var(--radius-control)] bg-rose-50 px-4 py-3 text-sm text-rose-800
+    @apply rounded-(--radius-control) bg-rose-50 px-4 py-3 text-sm text-rose-800
            dark:bg-rose-950/50 dark:text-rose-200;
   }
 
@@ -1171,6 +1171,6 @@
   }
 
   .ui-text-center-muted {
-    @apply text-center text-sm text-[var(--ui-text-muted)];
+    @apply text-center text-sm text-(--ui-text-muted);
   }
 }

@@ -36,9 +36,9 @@
     "prefer_not_to_say": "Préfère ne pas répondre"
   },
   "petSex": {
-    "male": "Mâle",
-    "female": "Femme",
-    "unknown": "Inconnu"
+    "male": "Boy",
+    "female": "Girl",
+    "unknown": "Unknown"
   },
   "meta": {
     "home": {
@@ -60,6 +60,10 @@
     "login": {
       "title": "Connexion — Pet Friends",
       "description": "Connectez-vous pour gérer vos animaux et votre profil sur Pet Friends."
+    },
+    "invite": {
+      "title": "Testeurs bêta — Pet Friends",
+      "description": "Rejoignez le groupe fondateur de testeurs Pet Friends. Places limitées."
     },
     "pet": {
       "title": "Animal — Pet Friends",
@@ -291,8 +295,39 @@
     "joinText": "Inscrivez-vous pour aimer, commenter et partager vos animaux.",
     "createAccount": "Créer un compte",
     "tipsTitle": "Conseils pour cette page",
-    "tipsPurpose": "Astuces et courtes recommandations selon l'endroit où vous êtes dans l'application — par exemple comment compléter un profil animal ou améliorer une annonce."
+    "tipsPurpose": "Astuces et courtes recommandations selon l'endroit où vous êtes dans l'application — par exemple comment compléter un profil animal ou améliorer une annonce.",
+    "betaTitle": "Devenir testeur fondateur",
+    "betaText": "Aidez à façonner Pet Friends et gagnez plus tard des points bonus ou des services offerts. Limité à {capacity} testeurs fondateurs.",
+    "betaCta": "Voir l'invitation"
   },
+
+  "invite": {
+    "title": "Testeurs bêta fondateurs",
+    "eyebrow": "Invitation soft launch",
+    "lead": "Pet Friends est une communauté pour les amoureux des animaux — parcourir les profils, partager dans le fil, utiliser la marketplace. Nous invitons un petit groupe fondateur à tester le produit et à nous dire quoi améliorer.",
+    "whyTitle": "Pourquoi nous avons besoin de vous",
+    "whyBody": "Un usage réel révèle bugs, parcours confus et fonctions manquantes plus vite que nous seuls. Vos retours orientent la suite.",
+    "privacyTitle": "Confidentialité et sécurité",
+    "privacyBody": "Traitez les données personnelles des autres membres (noms, contacts, photos, messages privés) comme confidentielles. Ne les partagez pas hors de Pet Friends. Si vous trouvez un problème de sécurité, signalez-le-nous en privé — ne publiez pas d'exploits.",
+    "rewardsTitle": "Services payants et points (à venir)",
+    "rewardsBody": "Pet Friends proposera des services payants (annonces promues, publicité, etc.) et un système de points pour des rabais. Les points pourront être achetés ou gagnés par l'activité dans le produit.",
+    "benefitTitle": "Ce que reçoivent les testeurs fondateurs",
+    "benefitBody": "Selon votre activité de test, nous prévoyons d'accorder chaque mois des points bonus et/ou un accès offert à certains services payants une fois lancés. C'est un merci soft launch pour une participation active — pas un emploi, pas une compensation en argent, et pas un montant garanti.",
+    "spots": "{remaining} places fondatrices sur {capacity} restantes",
+    "spotsFull": "Les {capacity} places de testeurs fondateurs sont prises. Vous pouvez toujours rejoindre Pet Friends comme membre régulier.",
+    "acceptLabel": "J'ai lu et j'accepte les conditions de testeur bêta ci-dessus",
+    "registerCta": "Créer un compte testeur",
+    "loginCta": "J'ai déjà un compte — me connecter",
+    "joinCta": "Rejoindre les testeurs fondateurs",
+    "joining": "Inscription…",
+    "alreadyTester": "Vous faites déjà partie du groupe de testeurs fondateurs. Merci !",
+    "joinSuccess": "Bienvenue — vous êtes maintenant testeur fondateur.",
+    "mustAccept": "Veuillez accepter les conditions pour continuer.",
+    "loadError": "Impossible de charger le statut de l'invitation.",
+    "regularRegister": "S'inscrire sans bêta (membre régulier)",
+    "registerBanner": "Vous rejoignez le groupe de testeurs fondateurs. Les places sont limitées."
+  },
+
   "auth": {
     "logIn": "Connexion",
     "logOut": "Déconnexion",
@@ -301,10 +336,12 @@
     "myPosts": "Mes publications",
     "myListings": "Mes annonces",
     "listingMessages": "Messages annonces",
+    "feedback": "Retours bêta",
     "saved": "Publications enregistrées",
     "likedPets": "Animaux aimés",
     "loginTitle": "Connexion",
     "loginSubtitle": "Connectez-vous pour gérer vos animaux et votre profil.",
+    "adminUseAdminApp": "Les comptes admin ne peuvent pas utiliser ce site. Ouvrez la console admin : {url}",
     "signedInAs": "Connecté en tant que {name}.",
     "goToGallery": "Voir la galerie",
     "signOut": "Se déconnecter",
@@ -469,5 +506,76 @@
     "galleryPhotoError": "Impossible de téléverser la photo.",
     "galleryPhotoDeleteError": "Impossible de retirer la photo.",
     "galleryLoadError": "Impossible de charger la galerie."
+  },
+
+  "feedback": {
+    "title": "Retours bêta",
+    "subtitle": "Signalez un bug ou proposez une amélioration. Nous répondons dans le même fil.",
+    "newCta": "Nouveau message",
+    "newTitle": "Envoyer un retour",
+    "newSubtitle": "Choisissez un bug (avec contexte) ou une idée d'amélioration.",
+    "backToProfile": "← Retour au profil",
+    "backToList": "← Retour aux retours",
+    "betaOnly": "Les retours sont réservés aux testeurs bêta fondateurs.",
+    "betaInviteLink": "Ouvrir l'invitation",
+    "scopeMine": "Mes messages",
+    "scopeAll": "Tous les messages",
+    "empty": "Aucun retour pour l'instant. Envoyez le premier.",
+    "loadError": "Impossible de charger les retours.",
+    "sendError": "Envoi impossible. Réessayez.",
+    "invalidId": "Identifiant de retour invalide.",
+    "typeLabel": "Type de message",
+    "type": {
+      "bug": "Bug",
+      "improvement": "Amélioration"
+    },
+    "bugHint": "Décrivez le problème. Page, appareil, OS et navigateur sont joints automatiquement. Ajoutez la console ou une capture si utile.",
+    "improvementHint": "Écrivez votre idée librement — pas de snapshot technique.",
+    "messageLabel": "Votre message",
+    "bugPlaceholder": "Que s'est-il passé ? Que pensiez-vous voir ?",
+    "improvementPlaceholder": "Qu'est-ce qui améliorerait Pet Friends ?",
+    "contextTitle": "Instantané d'environnement",
+    "contextAuto": "Collecté automatiquement depuis ce navigateur.",
+    "context": {
+      "page": "Page",
+      "device": "Appareil",
+      "os": "OS",
+      "browser": "Navigateur"
+    },
+    "device": {
+      "desktop": "Ordinateur",
+      "mobile": "Téléphone",
+      "tablet": "Tablette",
+      "unknown": "Inconnu"
+    },
+    "consoleLabel": "Texte console / terminal (optionnel)",
+    "consolePlaceholder": "Collez les erreurs de la console ou du terminal…",
+    "screenshotLabel": "Capture d'écran (optionnelle)",
+    "screenshotAlt": "Capture du bug",
+    "identityHint": "Envoyé en tant que {name} ({email}).",
+    "submit": "Envoyer",
+    "ticketTitle": "Retour #{id}",
+    "fromAuthor": "De {name} · {email}",
+    "statusLabel": "Statut",
+    "status": {
+      "open": "Ouvert",
+      "closed": "Fermé"
+    },
+    "threadTitle": "Conversation",
+    "noReplies": "Pas encore de réponses.",
+    "replyLabel": "Répondre",
+    "replyPlaceholder": "Écrire une réponse…",
+    "reply": "Envoyer la réponse",
+    "replyCount": "{count} réponses",
+    "replyClosed": "Ce ticket est fermé. Les réponses sont possibles uniquement s'il est ouvert.",
+    "adminBadge": "équipe",
+    "fabLabel": "Retour"
+  },
+
+  "operator": {
+    "title": "Compte opérateur",
+    "subtitle": "Cette connexion est pour la console d'administration, pas pour l'application membre.",
+    "body": "Utilisez l'application admin séparée pour traiter les retours et les utilisateurs. La création d'animaux et de publications est désactivée ici.",
+    "openAdmin": "Ouvrir la console admin"
   }
 }

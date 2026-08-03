@@ -48,7 +48,11 @@ export const useAuthStore = defineStore('auth', () => {
   function hydrateFromStorage() {
     const next = loadStored()
     if (next) {
-      user.value = next.user
+      user.value = {
+        ...next.user,
+        isBetaTester: Boolean(next.user.isBetaTester),
+        isAdmin: Boolean(next.user.isAdmin),
+      }
       accessToken.value = next.accessToken
       mustChangePassword.value = next.mustChangePassword
     } else {

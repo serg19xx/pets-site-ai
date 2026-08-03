@@ -13,6 +13,7 @@ export const registerBodySchema = {
     dateOfBirth: { type: 'string', format: 'date' },
     phone: { type: 'string', maxLength: 32 },
     email: { type: 'string', format: 'email', maxLength: 320 },
+    betaInvite: { type: 'string', minLength: 8, maxLength: 128 },
   },
 } as const
 
@@ -23,6 +24,8 @@ export const loginBodySchema = {
   properties: {
     email: { type: 'string', format: 'email', maxLength: 320 },
     password: { type: 'string', minLength: 1, maxLength: 128 },
+    /** admin = operator console; member (default) = main Pet Friends site */
+    audience: { type: 'string', enum: ['admin', 'member'] },
   },
 } as const
 
@@ -74,8 +77,21 @@ export const publicUserSchema = {
     dateOfBirth: { type: 'string', format: 'date' },
     phone: { type: ['string', 'null'] },
     avatarUrl: { type: ['string', 'null'] },
+    isBetaTester: { type: 'boolean' },
+    isAdmin: { type: 'boolean' },
   },
-  required: ['id', 'fullName', 'nickname', 'email', 'gender', 'dateOfBirth', 'phone', 'avatarUrl'],
+  required: [
+    'id',
+    'fullName',
+    'nickname',
+    'email',
+    'gender',
+    'dateOfBirth',
+    'phone',
+    'avatarUrl',
+    'isBetaTester',
+    'isAdmin',
+  ],
 } as const
 
 export const userProfileSchema = {
@@ -104,6 +120,36 @@ export const updateTimezoneBodySchema = {
   properties: {
     timezone: { type: 'string', minLength: 1, maxLength: 64 },
   },
+} as const
+
+export const betaJoinBodySchema = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['betaInvite', 'acceptedTerms'],
+  properties: {
+    betaInvite: { type: 'string', minLength: 8, maxLength: 128 },
+    acceptedTerms: { type: 'boolean' },
+  },
+} as const
+
+export const betaStatusResponseSchema = {
+  type: 'object',
+  properties: {
+    acceptedCount: { type: 'integer' },
+    capacity: { type: 'integer' },
+    open: { type: 'boolean' },
+    inviteToken: { type: 'string' },
+  },
+  required: ['acceptedCount', 'capacity', 'open', 'inviteToken'],
+} as const
+
+export const betaJoinResponseSchema = {
+  type: 'object',
+  properties: {
+    message: { type: 'string' },
+    isBetaTester: { type: 'boolean' },
+  },
+  required: ['message', 'isBetaTester'],
 } as const
 
 export const updateProfileBodySchema = {

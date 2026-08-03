@@ -25,10 +25,10 @@ import {
 
 definePageMeta({
   layout: 'app',
-  middleware: 'auth',
+  middleware: ['auth', 'block-admin'],
 })
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const { petSexLabel } = useEnumLabels()
 const auth = useAuthStore()
@@ -107,13 +107,27 @@ async function hydrateFromPet(pet: Pet) {
   greeting.value = pet.greeting ?? ''
 }
 
-async function loadEditPage() {
+async function loadEditPage(options: { soft?: boolean } = {}) {
   if (!auth.accessToken) {
     return
   }
-  isLoading.value = true
+  const soft = Boolean(options.soft && localPet.value)
+  if (!soft) {
+    isLoading.value = true
+  }
   formError.value = ''
   try {
+    // Locale switch: refresh species/breed labels only — keep form values.
+    if (soft) {
+      const keepBreed = breedId.value
+      await loadSpecies()
+      if (speciesId.value !== null) {
+        await loadBreedsForSpecies(speciesId.value)
+        breedId.value = keepBreed
+      }
+      return
+    }
+
     await loadSpecies()
     if (isNew.value) {
       name.value = ''
@@ -146,9 +160,21 @@ async function loadEditPage() {
   }
 }
 
-onMounted(loadEditPage)
+onMounted(() => {
+  void loadEditPage()
+})
 
-watch(() => route.fullPath, loadEditPage)
+watch(petIdParam, (id, prevId) => {
+  if (id === prevId) {
+    return
+  }
+  localPet.value = null
+  void loadEditPage()
+})
+
+watch(locale, () => {
+  void loadEditPage({ soft: true })
+})
 
 async function savePet() {
   formError.value = ''
