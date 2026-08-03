@@ -38,6 +38,7 @@ const galleryPetItemSchema = {
     avatarUrl: { type: ['string', 'null'] },
     description: { type: ['string', 'null'] },
     greeting: { type: ['string', 'null'] },
+    greetingFr: { type: ['string', 'null'] },
     liked: { type: 'boolean' },
     likeCount: { type: 'integer' },
     photos: {
@@ -62,6 +63,7 @@ const galleryPetItemSchema = {
     'avatarUrl',
     'description',
     'greeting',
+    'greetingFr',
     'liked',
     'likeCount',
     'photos',

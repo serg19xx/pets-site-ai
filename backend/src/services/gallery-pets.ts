@@ -60,6 +60,7 @@ export async function listGalleryPets(
       cover_pp.path AS avatar_path,
       p.description,
       p.greeting,
+      p.greeting_fr,
       ${likedSelect},
       COALESCE((
         SELECT COUNT(*)::int
@@ -111,6 +112,7 @@ export async function listLikedGalleryPets(
       cover_pp.path AS avatar_path,
       p.description,
       p.greeting,
+      p.greeting_fr,
       true AS liked,
       COALESCE((
         SELECT COUNT(*)::int

@@ -6,6 +6,7 @@ import PetMemberLink from '~/components/PetMemberLink.vue'
 import PetProfileDetails from '~/components/PetProfileDetails.vue'
 import PhotoLightbox, { type LightboxPhoto } from '~/components/PhotoLightbox.vue'
 import { ApiError } from '~/lib/auth-api'
+import { pickPetGreeting } from '~/lib/pick-pet-greeting'
 import { UI_ACTION_ICONS } from '~/lib/ui-icons'
 import { fetchGalleryPet } from '~/lib/pets-api'
 import type { GalleryPet } from '~/types/gallery'
@@ -32,6 +33,10 @@ const { data: pet, error: loadError, pending } = await useAsyncData(
 )
 
 const isLoading = computed(() => pending.value && !pet.value)
+
+const displayGreeting = computed(() =>
+  pet.value ? pickPetGreeting(pet.value, locale.value) : null,
+)
 
 const subtitle = computed(() => {
   const p = pet.value
@@ -163,10 +168,10 @@ usePageSeo({
             </div>
           </div>
 
-          <div v-if="pet.greeting" class="ui-pet-hero-greeting">
+          <div v-if="displayGreeting" class="ui-pet-hero-greeting">
             <p class="ui-pet-hero-greeting-label">{{ $t('pet.greetingLabel') }}</p>
             <blockquote class="ui-pet-greeting">
-              <p>{{ pet.greeting }}</p>
+              <p>{{ displayGreeting }}</p>
             </blockquote>
           </div>
         </div>

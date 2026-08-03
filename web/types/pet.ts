@@ -31,6 +31,14 @@ export interface Pet {
   coverPhotoId: number | null
   description: string | null
   greeting: string | null
+  greetingFr: string | null
+  weightKg: number | null
+  color: string | null
+  lengthCm: number | null
+  heightCm: number | null
+  markings: string | null
+  physicalNotes: string | null
+  pedigreeNotes: string | null
   createdAt: string
   updatedAt: string
 }

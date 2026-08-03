@@ -17,6 +17,7 @@ export interface GalleryPet {
   avatarUrl: string | null
   description: string | null
   greeting: string | null
+  greetingFr: string | null
   liked: boolean
   likeCount: number
   member?: PublicMember
@@ -34,6 +35,7 @@ export type GalleryRow = {
   avatar_path: string | null
   description: string | null
   greeting: string | null
+  greeting_fr: string | null
   liked: boolean
   like_count: number
 }
@@ -57,6 +59,7 @@ export function mapGalleryPetRow(
     avatarUrl: row.avatar_path ? buildPublicUploadUrl(row.avatar_path) : null,
     description: row.description,
     greeting: row.greeting,
+    greetingFr: row.greeting_fr,
     liked: row.liked,
     likeCount: Number(row.like_count ?? 0),
     ...(member ? { member } : {}),

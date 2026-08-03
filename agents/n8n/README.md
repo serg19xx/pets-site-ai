@@ -9,7 +9,7 @@ This folder is for **Git-tracked** artifacts tied to that instance:
 
 **Secrets:** keep credentials in n8n on the VPS or in a secret manager; here reference only names and non-sensitive URLs (e.g. public webhook base path if needed).
 
-Suggested layout (optional):
+Suggested layout:
 
 ```
 agents/n8n/
@@ -17,3 +17,10 @@ agents/n8n/
   workflows/         # exported *.json from n8n
   docs/              # runbooks (no secrets)
 ```
+
+## Workflows
+
+| File | Purpose |
+|------|---------|
+| [`workflows/pet-greeting.json`](./workflows/pet-greeting.json) | LLM greeting for pet create / Regenerate |
+| [`docs/pet-greeting.md`](./docs/pet-greeting.md) | Import, credentials, API env, curl test |

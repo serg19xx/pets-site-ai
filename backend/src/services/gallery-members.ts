@@ -23,6 +23,7 @@ export const PET_GALLERY_SELECT = `
   cover_pp.path AS avatar_path,
   p.description,
   p.greeting,
+  p.greeting_fr,
   false AS liked,
   COALESCE((
     SELECT COUNT(*)::int

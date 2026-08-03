@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { formatPetAge } from '~/lib/pet-age'
+import { pickPetGreeting } from '~/lib/pick-pet-greeting'
 import type { GalleryPet } from '~/types/gallery'
 import type { Pet } from '~/types/pet'
 
@@ -23,6 +24,8 @@ const { petSexLabel } = useEnumLabels()
 const ageLabel = computed(() => formatPetAge(props.pet.dateOfBirth, locale.value))
 
 const breedLabel = computed(() => props.pet.breed?.label ?? t('myPets.notSpecified'))
+
+const displayGreeting = computed(() => pickPetGreeting(props.pet, locale.value))
 </script>
 
 <template>
@@ -50,8 +53,8 @@ const breedLabel = computed(() => props.pet.breed?.label ?? t('myPets.notSpecifi
       </div>
     </dl>
 
-    <blockquote v-if="showGreeting && pet.greeting" class="ui-pet-greeting">
-      <p>{{ pet.greeting }}</p>
+    <blockquote v-if="showGreeting && displayGreeting" class="ui-pet-greeting">
+      <p>{{ displayGreeting }}</p>
     </blockquote>
 
     <div v-if="showAbout && pet.description" class="ui-pet-description">

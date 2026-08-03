@@ -72,6 +72,9 @@ export default defineNuxtConfig({
       /** Default header logo: `wide` (horizontal) or `circle`. Override with `?brand=wide|circle`. */
       brandLogo: process.env.NUXT_PUBLIC_BRAND_LOGO ?? 'wide',
       adminUrl: process.env.NUXT_PUBLIC_ADMIN_URL ?? 'http://localhost:3001',
+      /** Show Regenerate greeting button. Off by default (OpenAI cost). */
+      greetingRegenerateEnabled:
+        process.env.NUXT_PUBLIC_GREETING_REGENERATE_ENABLED === 'true',
     },
   },
   nitro: {

@@ -3,6 +3,18 @@ import { ApiError } from '~/lib/auth-api'
 import type { GalleryPet } from '~/types/gallery'
 import type { PublicMember } from '~/types/public-member'
 import type { PetPhoto } from '~/types/pet-photo'
+import type { PetCertificate } from '~/types/pet-certificate'
+import type {
+  PetMedicalPhoto,
+  PetMedicalRecord,
+  UpsertPetMedicalRecordInput,
+} from '~/types/pet-medical'
+import type {
+  ParentCandidate,
+  PetParentRecord,
+  PetParentRole,
+  UpsertPetParentInput,
+} from '~/types/pet-parent'
 import type { Pet, PetBreedListItem, PetSex, PetSpeciesListItem } from '~/types/pet'
 
 async function parseJson<T>(response: Response): Promise<T> {
@@ -14,11 +26,14 @@ interface ApiErrorBody {
   message?: string
 }
 
-function authHeaders(accessToken: string): HeadersInit {
-  return {
-    'Content-Type': 'application/json',
+function authHeaders(accessToken: string, withJsonContentType: boolean): HeadersInit {
+  const headers: Record<string, string> = {
     Authorization: `Bearer ${accessToken}`,
   }
+  if (withJsonContentType) {
+    headers['Content-Type'] = 'application/json'
+  }
+  return headers
 }
 
 async function requestJson<T>(
@@ -26,10 +41,11 @@ async function requestJson<T>(
   init: RequestInit & { accessToken: string },
 ): Promise<T> {
   const { accessToken, ...rest } = init
+  const hasBody = rest.body != null && rest.body !== ''
   const response = await fetch(apiUrl(path), {
     ...rest,
     headers: {
-      ...authHeaders(accessToken),
+      ...authHeaders(accessToken, hasBody),
       ...(rest.headers as Record<string, string> | undefined),
     },
   })
@@ -175,6 +191,13 @@ export interface UpdatePetPayload {
   dateOfBirth?: string
   sex?: PetSex
   description?: string | null
+  weightKg?: number | null
+  color?: string | null
+  lengthCm?: number | null
+  heightCm?: number | null
+  markings?: string | null
+  physicalNotes?: string | null
+  pedigreeNotes?: string | null
 }
 
 export async function updatePet(
@@ -186,6 +209,16 @@ export async function updatePet(
     method: 'PATCH',
     accessToken,
     body: JSON.stringify(payload),
+  })
+}
+
+export async function regeneratePetGreeting(
+  accessToken: string,
+  id: number,
+): Promise<{ pet: Pet }> {
+  return requestJson(`/api/pets/${id}/greeting/regenerate`, {
+    method: 'POST',
+    accessToken,
   })
 }
 
@@ -274,6 +307,271 @@ export async function deletePetPhoto(
     method: 'DELETE',
     headers: { Authorization: `Bearer ${accessToken}` },
   })
+  if (response.status === 204) {
+    return
+  }
+  const body = (await response.json().catch(() => ({}))) as ApiErrorBody
+  throw new ApiError(body.message ?? 'Request failed', response.status, body.code)
+}
+
+export async function getPetParents(
+  accessToken: string,
+  petId: number,
+): Promise<{ dam: PetParentRecord | null; sire: PetParentRecord | null }> {
+  return requestJson(`/api/pets/${petId}/parents`, { method: 'GET', accessToken })
+}
+
+export async function setPetParents(
+  accessToken: string,
+  petId: number,
+  body: {
+    dam?: UpsertPetParentInput | null
+    sire?: UpsertPetParentInput | null
+  },
+): Promise<{ dam: PetParentRecord | null; sire: PetParentRecord | null }> {
+  return requestJson(`/api/pets/${petId}/parents`, {
+    method: 'PUT',
+    accessToken,
+    body: JSON.stringify(body),
+  })
+}
+
+export async function searchParentCandidates(
+  accessToken: string,
+  params: { q: string; excludePetId: number; limit?: number },
+): Promise<{ owned: ParentCandidate[]; site: ParentCandidate[] }> {
+  const qs = new URLSearchParams({
+    q: params.q,
+    excludePetId: String(params.excludePetId),
+  })
+  if (params.limit != null) {
+    qs.set('limit', String(params.limit))
+  }
+  return requestJson(`/api/pets/parent-candidates?${qs}`, {
+    method: 'GET',
+    accessToken,
+  })
+}
+
+export async function uploadExternalParentPhoto(
+  accessToken: string,
+  petId: number,
+  role: PetParentRole,
+  file: File,
+): Promise<{ parent: PetParentRecord }> {
+  const form = new FormData()
+  form.append('file', file)
+  const response = await fetch(apiUrl(`/api/pets/${petId}/parents/${role}/photo`), {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${accessToken}` },
+    body: form,
+  })
+  const body = (await response.json()) as { parent?: PetParentRecord } & ApiErrorBody
+  if (!response.ok) {
+    throw new ApiError(body.message ?? 'Upload failed', response.status, body.code)
+  }
+  if (!body.parent) {
+    throw new ApiError('Invalid server response', response.status)
+  }
+  return { parent: body.parent }
+}
+
+export async function deleteExternalParentPhoto(
+  accessToken: string,
+  petId: number,
+  role: PetParentRole,
+): Promise<{ parent: PetParentRecord }> {
+  return requestJson(`/api/pets/${petId}/parents/${role}/photo`, {
+    method: 'DELETE',
+    accessToken,
+  })
+}
+
+export async function listPetCertificates(
+  accessToken: string,
+  petId: number,
+): Promise<{ certificates: PetCertificate[] }> {
+  return requestJson(`/api/pets/${petId}/certificates`, { method: 'GET', accessToken })
+}
+
+export async function uploadPetCertificate(
+  accessToken: string,
+  petId: number,
+  file: File,
+): Promise<{ certificate: PetCertificate }> {
+  const form = new FormData()
+  form.append('file', file)
+  const response = await fetch(apiUrl(`/api/pets/${petId}/certificates`), {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${accessToken}` },
+    body: form,
+  })
+  const body = (await response.json()) as { certificate?: PetCertificate } & ApiErrorBody
+  if (!response.ok) {
+    throw new ApiError(body.message ?? 'Upload failed', response.status, body.code)
+  }
+  if (!body.certificate) {
+    throw new ApiError('Invalid server response', response.status)
+  }
+  return { certificate: body.certificate }
+}
+
+export async function replacePetCertificateFile(
+  accessToken: string,
+  petId: number,
+  certificateId: number,
+  file: File,
+): Promise<{ certificate: PetCertificate }> {
+  const form = new FormData()
+  form.append('file', file)
+  const response = await fetch(
+    apiUrl(`/api/pets/${petId}/certificates/${certificateId}/file`),
+    {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}` },
+      body: form,
+    },
+  )
+  const body = (await response.json()) as { certificate?: PetCertificate } & ApiErrorBody
+  if (!response.ok) {
+    throw new ApiError(body.message ?? 'Upload failed', response.status, body.code)
+  }
+  if (!body.certificate) {
+    throw new ApiError('Invalid server response', response.status)
+  }
+  return { certificate: body.certificate }
+}
+
+export async function deletePetCertificate(
+  accessToken: string,
+  petId: number,
+  certificateId: number,
+): Promise<void> {
+  const response = await fetch(
+    apiUrl(`/api/pets/${petId}/certificates/${certificateId}`),
+    {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${accessToken}` },
+    },
+  )
+  if (response.status === 204) {
+    return
+  }
+  const body = (await response.json().catch(() => ({}))) as ApiErrorBody
+  throw new ApiError(body.message ?? 'Request failed', response.status, body.code)
+}
+
+export async function listPetMedicalRecords(
+  accessToken: string,
+  petId: number,
+): Promise<{ records: PetMedicalRecord[] }> {
+  return requestJson(`/api/pets/${petId}/medical`, { method: 'GET', accessToken })
+}
+
+export async function createPetMedicalRecord(
+  accessToken: string,
+  petId: number,
+  body: UpsertPetMedicalRecordInput,
+): Promise<{ record: PetMedicalRecord }> {
+  return requestJson(`/api/pets/${petId}/medical`, {
+    method: 'POST',
+    accessToken,
+    body: JSON.stringify(body),
+  })
+}
+
+export async function updatePetMedicalRecord(
+  accessToken: string,
+  petId: number,
+  recordId: number,
+  body: UpsertPetMedicalRecordInput,
+): Promise<{ record: PetMedicalRecord }> {
+  return requestJson(`/api/pets/${petId}/medical/${recordId}`, {
+    method: 'PUT',
+    accessToken,
+    body: JSON.stringify(body),
+  })
+}
+
+export async function deletePetMedicalRecord(
+  accessToken: string,
+  petId: number,
+  recordId: number,
+): Promise<void> {
+  const response = await fetch(apiUrl(`/api/pets/${petId}/medical/${recordId}`), {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${accessToken}` },
+  })
+  if (response.status === 204) {
+    return
+  }
+  const body = (await response.json().catch(() => ({}))) as ApiErrorBody
+  throw new ApiError(body.message ?? 'Request failed', response.status, body.code)
+}
+
+export async function uploadPetMedicalPhoto(
+  accessToken: string,
+  petId: number,
+  recordId: number,
+  file: File,
+): Promise<{ photo: PetMedicalPhoto }> {
+  const form = new FormData()
+  form.append('file', file)
+  const response = await fetch(apiUrl(`/api/pets/${petId}/medical/${recordId}/photos`), {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${accessToken}` },
+    body: form,
+  })
+  const body = (await response.json()) as { photo?: PetMedicalPhoto } & ApiErrorBody
+  if (!response.ok) {
+    throw new ApiError(body.message ?? 'Upload failed', response.status, body.code)
+  }
+  if (!body.photo) {
+    throw new ApiError('Invalid server response', response.status)
+  }
+  return { photo: body.photo }
+}
+
+export async function replacePetMedicalPhotoFile(
+  accessToken: string,
+  petId: number,
+  recordId: number,
+  photoId: number,
+  file: File,
+): Promise<{ photo: PetMedicalPhoto }> {
+  const form = new FormData()
+  form.append('file', file)
+  const response = await fetch(
+    apiUrl(`/api/pets/${petId}/medical/${recordId}/photos/${photoId}/file`),
+    {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}` },
+      body: form,
+    },
+  )
+  const body = (await response.json()) as { photo?: PetMedicalPhoto } & ApiErrorBody
+  if (!response.ok) {
+    throw new ApiError(body.message ?? 'Upload failed', response.status, body.code)
+  }
+  if (!body.photo) {
+    throw new ApiError('Invalid server response', response.status)
+  }
+  return { photo: body.photo }
+}
+
+export async function deletePetMedicalPhoto(
+  accessToken: string,
+  petId: number,
+  recordId: number,
+  photoId: number,
+): Promise<void> {
+  const response = await fetch(
+    apiUrl(`/api/pets/${petId}/medical/${recordId}/photos/${photoId}`),
+    {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${accessToken}` },
+    },
+  )
   if (response.status === 204) {
     return
   }

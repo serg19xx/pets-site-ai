@@ -47,6 +47,10 @@ services:
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       EMAIL_FROM: ${EMAIL_FROM:-PETS <onboarding@resend.dev>}
       UPLOADS_DIR: /app/uploads
+      N8N_PET_GREETING_WEBHOOK_URL: ${N8N_PET_GREETING_WEBHOOK_URL:-}
+      N8N_WEBHOOK_SECRET: ${N8N_WEBHOOK_SECRET:-}
+      N8N_TIMEOUT_MS: ${N8N_TIMEOUT_MS:-20000}
+      GREETING_REGENERATE_ENABLED: ${GREETING_REGENERATE_ENABLED:-false}
     volumes:
       - ./backend/uploads:/app/uploads
     depends_on:

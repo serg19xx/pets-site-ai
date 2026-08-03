@@ -24,6 +24,14 @@ export interface Pet {
   coverPhotoId: number | null
   description: string | null
   greeting: string | null
+  greetingFr: string | null
+  weightKg: number | null
+  color: string | null
+  lengthCm: number | null
+  heightCm: number | null
+  markings: string | null
+  physicalNotes: string | null
+  pedigreeNotes: string | null
   createdAt: string
   updatedAt: string
 }
@@ -41,6 +49,14 @@ type PetRow = {
   cover_photo_id: string | null
   description: string | null
   greeting: string | null
+  greeting_fr: string | null
+  weight_kg: string | null
+  color: string | null
+  length_cm: string | null
+  height_cm: string | null
+  markings: string | null
+  physical_notes: string | null
+  pedigree_notes: string | null
   date_of_birth: Date
   sex: PetSex
   created_at: Date
@@ -53,6 +69,14 @@ function formatDate(d: Date): string {
 
 function formatIso(d: Date): string {
   return d instanceof Date ? d.toISOString() : String(d)
+}
+
+function toNullableNumber(value: string | null): number | null {
+  if (value === null || value === undefined || value === '') {
+    return null
+  }
+  const n = Number(value)
+  return Number.isFinite(n) ? n : null
 }
 
 export function mapPetRow(row: PetRow): Pet {
@@ -78,6 +102,14 @@ export function mapPetRow(row: PetRow): Pet {
         : null,
     description: row.description,
     greeting: row.greeting,
+    greetingFr: row.greeting_fr,
+    weightKg: toNullableNumber(row.weight_kg),
+    color: row.color,
+    lengthCm: toNullableNumber(row.length_cm),
+    heightCm: toNullableNumber(row.height_cm),
+    markings: row.markings,
+    physicalNotes: row.physical_notes,
+    pedigreeNotes: row.pedigree_notes,
     createdAt: formatIso(row.created_at),
     updatedAt: formatIso(row.updated_at),
   }

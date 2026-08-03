@@ -100,6 +100,20 @@ export const config = {
   twilioAccountSid: readEnv('TWILIO_ACCOUNT_SID'),
   twilioAuthToken: readEnv('TWILIO_AUTH_TOKEN'),
   twilioFromNumber: readEnv('TWILIO_FROM_NUMBER'),
+  /**
+   * Optional n8n webhooks (OVH). When unset, API uses local template greetings.
+   * See agents/n8n/docs/pet-greeting.md
+   */
+  n8n: {
+    petGreetingWebhookUrl: readEnv('N8N_PET_GREETING_WEBHOOK_URL'),
+    webhookSecret: readEnv('N8N_WEBHOOK_SECRET'),
+    timeoutMs: Number(readEnv('N8N_TIMEOUT_MS') ?? '20000'),
+  },
+  /**
+   * Owner-triggered greeting regenerate (costs OpenAI). Off by default for beta.
+   * Set GREETING_REGENERATE_ENABLED=true to unlock.
+   */
+  greetingRegenerateEnabled: readEnv('GREETING_REGENERATE_ENABLED') === 'true',
 }
 
 for (const subdir of [

@@ -1,0 +1,156 @@
+{
+  "name": "Petsbook — Pet Greeting",
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "description": "POST webhook → OpenAI → { greeting, greetingFr }. Used by pets-api create/regenerate."
+  },
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "petsbook/pet-greeting",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "petsbook-pet-greeting",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_HEADER_AUTH_CREDENTIAL",
+          "name": "Petsbook Webhook Secret"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\nconst body = raw.body && typeof raw.body === 'object' ? raw.body : raw;\n\nconst name = String(body.name ?? '').trim();\nif (!name) {\n  throw new Error('name is required');\n}\n\nconst speciesLabel = String(body.speciesLabel ?? body.speciesSlug ?? 'pet').trim();\nconst speciesSlug = String(body.speciesSlug ?? '').trim();\nconst breedLabel = body.breedLabel ? String(body.breedLabel).trim() : null;\nconst sex = ['male', 'female', 'unknown'].includes(body.sex) ? body.sex : 'unknown';\nconst description = body.description ? String(body.description).trim().slice(0, 500) : null;\nconst dateOfBirth = body.dateOfBirth ? String(body.dateOfBirth).trim() : null;\nconst ageYears =\n  typeof body.ageYears === 'number' && Number.isFinite(body.ageYears)\n    ? body.ageYears\n    : null;\n\nconst facts = {\n  name,\n  speciesLabel,\n  speciesSlug,\n  breedLabel,\n  sex,\n  description,\n  dateOfBirth,\n  ageYears,\n};\n\nconst system =\n  'You write short first-person greetings as a pet on Petsbook, a pet social network.\\n' +\n  'Produce TWO independent greetings (not a translation of each other): one English, one French (natural Canadian/European French).\\n' +\n  'Rules:\\n' +\n  '- Never mention AI, language models, prompts, or being artificial.\\n' +\n  '- Speak as the pet (I / me / je / moi).\\n' +\n  '- Each greeting: 2–3 short sentences, under 450 characters.\\n' +\n  '- Warm and natural; not corporate or salesy.\\n' +\n  '- Use only the provided facts. Do not invent awards, medical history, or other pets.\\n' +\n  '- Return ONLY valid JSON with exactly these keys (no markdown):\\n' +\n  '{\"greeting\":\"<English greeting>\",\"greetingFr\":\"<French greeting>\"}';\n\nconst openAiBody = {\n  model: 'gpt-4o-mini',\n  temperature: 0.85,\n  max_tokens: 450,\n  response_format: { type: 'json_object' },\n  messages: [\n    { role: 'system', content: system },\n    {\n      role: 'user',\n      content: 'Write both greetings from these facts (JSON):\\n' + JSON.stringify(facts, null, 2),\n    },\n  ],\n};\n\nreturn [{ json: { facts, openAiBody } }];"
+      },
+      "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+      "name": "Prepare prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.openAiBody) }}",
+        "options": {
+          "timeout": 45000
+        }
+      },
+      "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+      "name": "OpenAI Chat",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        0
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "REPLACE_WITH_OPENAI_CREDENTIAL",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const content = String(\n  $input.first().json.choices?.[0]?.message?.content ?? '',\n)\n  .trim()\n  .replace(/^```(?:json)?\\s*/i, '')\n  .replace(/\\s*```$/i, '');\n\nif (!content) {\n  throw new Error('OpenAI returned empty greeting payload');\n}\n\nlet parsed;\ntry {\n  parsed = JSON.parse(content);\n} catch (e) {\n  throw new Error('OpenAI returned non-JSON greeting payload');\n}\n\nfunction clean(value) {\n  return String(value ?? '')\n    .trim()\n    .replace(/^[\\\"'«»]+|[\\\"'«»]+$/g, '');\n}\n\nconst greetingEn = clean(parsed.greeting ?? parsed.greetingEn);\nconst greetingFr = clean(parsed.greetingFr);\n\nif (!greetingEn || !greetingFr) {\n  throw new Error('OpenAI JSON missing greeting / greetingFr');\n}\n\nconst max = 500;\nfunction clip(text) {\n  return text.length <= max ? text : `${text.slice(0, max - 1).trimEnd()}…`;\n}\n\nreturn [{ json: { greeting: clip(greetingEn), greetingFr: clip(greetingFr) } }];"
+      },
+      "id": "d4e5f6a7-b8c9-0123-def0-234567890123",
+      "name": "Parse greeting",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { greeting: $json.greeting, greetingFr: $json.greetingFr } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "e5f6a7b8-c9d0-1234-ef01-345678901234",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1040,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Prepare prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare prompt": {
+      "main": [
+        [
+          {
+            "node": "OpenAI Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat": {
+      "main": [
+        [
+          {
+            "node": "Parse greeting",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse greeting": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "tags": []
+}
