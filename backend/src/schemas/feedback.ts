@@ -1,5 +1,6 @@
 import {
   FEEDBACK_DEVICE_CLASSES,
+  FEEDBACK_IMPROVEMENT_DECISIONS,
   FEEDBACK_TICKET_STATUSES,
   FEEDBACK_TICKET_TYPES,
 } from '../services/feedback.js'
@@ -21,6 +22,14 @@ const ticketSummarySchema = {
     id: { type: 'integer' },
     type: { type: 'string', enum: [...FEEDBACK_TICKET_TYPES] },
     status: { type: 'string', enum: [...FEEDBACK_TICKET_STATUSES] },
+    improvementDecision: {
+      anyOf: [
+        { type: 'string', enum: [...FEEDBACK_IMPROVEMENT_DECISIONS] },
+        { type: 'null' },
+      ],
+    },
+    decisionNote: { type: ['string', 'null'] },
+    decidedAt: { type: ['string', 'null'] },
     message: { type: 'string' },
     pagePath: { type: ['string', 'null'] },
     deviceClass: { type: 'string', enum: [...FEEDBACK_DEVICE_CLASSES] },
@@ -37,6 +46,9 @@ const ticketSummarySchema = {
     'id',
     'type',
     'status',
+    'improvementDecision',
+    'decisionNote',
+    'decidedAt',
     'message',
     'pagePath',
     'deviceClass',
@@ -112,6 +124,16 @@ export const feedbackStatusBodySchema = {
   required: ['status'],
   properties: {
     status: { type: 'string', enum: [...FEEDBACK_TICKET_STATUSES] },
+  },
+} as const
+
+export const feedbackDecisionBodySchema = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['decision', 'note'],
+  properties: {
+    decision: { type: 'string', enum: ['accepted', 'rejected'] },
+    note: { type: 'string', minLength: 3, maxLength: 8000 },
   },
 } as const
 

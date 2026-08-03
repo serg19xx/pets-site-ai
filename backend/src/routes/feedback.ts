@@ -4,6 +4,7 @@ import { AppError } from '../lib/errors.js'
 import { getUserId } from '../plugins/jwt-auth.js'
 import { errorResponseSchema } from '../schemas/auth.js'
 import {
+  feedbackDecisionBodySchema,
   feedbackMeSchema,
   feedbackReplyBodySchema,
   feedbackStatusBodySchema,
@@ -12,6 +13,7 @@ import {
 } from '../schemas/feedback.js'
 import {
   createFeedbackTicket,
+  decideFeedbackImprovement,
   FEEDBACK_DEVICE_CLASSES,
   FEEDBACK_TICKET_TYPES,
   getFeedbackAccess,
@@ -261,6 +263,38 @@ export const feedbackRoutes: FastifyPluginAsync = async (app) => {
         userId: getUserId(request),
         ticketId: parseTicketId(request.params.id),
         status: request.body.status,
+      })
+      return { ticket }
+    },
+  )
+
+  app.post<{
+    Params: { id: string }
+    Body: { decision: 'accepted' | 'rejected'; note: string }
+  }>(
+    '/feedback/tickets/:id/decision',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['feedback'],
+        summary: 'Accept or reject an improvement (admin)',
+        security: [{ bearerAuth: [] }],
+        body: feedbackDecisionBodySchema,
+        response: {
+          200: feedbackTicketResponseSchema,
+          400: errorResponseSchema,
+          401: errorResponseSchema,
+          403: errorResponseSchema,
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const ticket = await decideFeedbackImprovement({
+        adminUserId: getUserId(request),
+        ticketId: parseTicketId(request.params.id),
+        decision: request.body.decision,
+        note: request.body.note,
       })
       return { ticket }
     },

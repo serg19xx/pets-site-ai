@@ -1,5 +1,6 @@
 export type FeedbackTicketType = 'bug' | 'improvement'
 export type FeedbackTicketStatus = 'open' | 'closed'
+export type FeedbackImprovementDecision = 'pending' | 'accepted' | 'rejected'
 export type FeedbackDeviceClass = 'desktop' | 'mobile' | 'tablet' | 'unknown'
 
 export interface FeedbackAuthor {
@@ -13,6 +14,9 @@ export interface FeedbackTicketSummary {
   id: number
   type: FeedbackTicketType
   status: FeedbackTicketStatus
+  improvementDecision: FeedbackImprovementDecision | null
+  decisionNote: string | null
+  decidedAt: string | null
   message: string
   pagePath: string | null
   deviceClass: FeedbackDeviceClass

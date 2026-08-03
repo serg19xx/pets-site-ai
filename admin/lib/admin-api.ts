@@ -39,6 +39,7 @@ async function requestJson<T>(
 
 export type FeedbackTicketType = 'bug' | 'improvement'
 export type FeedbackTicketStatus = 'open' | 'closed'
+export type FeedbackImprovementDecision = 'pending' | 'accepted' | 'rejected'
 
 export interface FeedbackAuthor {
   id: number
@@ -51,6 +52,9 @@ export interface FeedbackTicketSummary {
   id: number
   type: FeedbackTicketType
   status: FeedbackTicketStatus
+  improvementDecision: FeedbackImprovementDecision | null
+  decisionNote: string | null
+  decidedAt: string | null
   message: string
   pagePath: string | null
   deviceClass: string
@@ -121,6 +125,19 @@ export async function updateFeedbackTicketStatus(
   })
 }
 
+export async function decideFeedbackImprovement(
+  ticketId: number,
+  accessToken: string,
+  decision: 'accepted' | 'rejected',
+  note: string,
+): Promise<{ ticket: FeedbackTicketDetail }> {
+  return requestJson(`/api/feedback/tickets/${ticketId}/decision`, {
+    method: 'POST',
+    accessToken,
+    body: JSON.stringify({ decision, note }),
+  })
+}
+
 export interface AdminUserRow {
   id: number
   fullName: string
@@ -158,6 +175,49 @@ export async function deleteAdminUser(
   await requestJson(`/api/admin/users/${userId}`, {
     method: 'DELETE',
     accessToken,
+  })
+}
+
+export interface BetaTesterStatsRow {
+  id: number
+  displayName: string
+  email: string
+  bugCount: number
+  acceptedImprovementCount: number
+  pendingImprovementCount: number
+  rejectedImprovementCount: number
+  joinedAt: string | null
+}
+
+export async function fetchBetaTesterStats(
+  accessToken: string,
+): Promise<{ testers: BetaTesterStatsRow[]; total: number }> {
+  return requestJson('/api/admin/testers', { accessToken })
+}
+
+export interface BetaAnnouncementRow {
+  id: number
+  title: string
+  body: string
+  linkPath: string | null
+  createdAt: string
+  recipientCount?: number
+}
+
+export async function fetchBetaAnnouncements(
+  accessToken: string,
+): Promise<{ announcements: BetaAnnouncementRow[]; total: number }> {
+  return requestJson('/api/admin/announcements', { accessToken })
+}
+
+export async function createBetaAnnouncement(
+  accessToken: string,
+  input: { title: string; body: string; linkPath?: string | null },
+): Promise<{ announcement: BetaAnnouncementRow }> {
+  return requestJson('/api/admin/announcements', {
+    method: 'POST',
+    accessToken,
+    body: JSON.stringify(input),
   })
 }
 

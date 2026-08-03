@@ -3,6 +3,7 @@ import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 
 import UserAvatar from '~/components/UserAvatar.vue'
 import { fetchMarketplaceInquiryUnreadCount } from '~/lib/marketplace-inquiries-api'
+import { fetchUnreadNotificationCount } from '~/lib/notifications-api'
 import { UI_ACTION_ICONS } from '~/lib/ui-icons'
 import { useAuthStore } from '~/stores/auth'
 
@@ -19,6 +20,7 @@ const rootRef = ref<HTMLElement | null>(null)
 const menuRef = ref<HTMLElement | null>(null)
 const menuPosition = ref({ top: '0px', left: '0px' })
 const unreadInquiryCount = ref(0)
+const unreadNotificationCount = ref(0)
 let unreadPollTimer: ReturnType<typeof setInterval> | null = null
 
 const hasUnreadInquiries = computed(() => unreadInquiryCount.value > 0)
@@ -90,6 +92,7 @@ function closeMenu() {
 function signOut() {
   auth.signOut()
   unreadInquiryCount.value = 0
+  unreadNotificationCount.value = 0
   closeMenu()
   void navigateTo(localePath('/'))
 }
@@ -98,11 +101,16 @@ async function loadUnreadInquiriesCount() {
   const token = auth.accessToken
   if (!token) {
     unreadInquiryCount.value = 0
+    unreadNotificationCount.value = 0
     return
   }
   try {
-    const { unreadCount } = await fetchMarketplaceInquiryUnreadCount(token)
+    const [{ unreadCount }, notifications] = await Promise.all([
+      fetchMarketplaceInquiryUnreadCount(token),
+      fetchUnreadNotificationCount(token),
+    ])
     unreadInquiryCount.value = unreadCount
+    unreadNotificationCount.value = notifications.unreadCount
   } catch {
     // Ignore polling failures in header menu.
   }
@@ -129,6 +137,7 @@ watch(
     if (!token) {
       stopUnreadPolling()
       unreadInquiryCount.value = 0
+      unreadNotificationCount.value = 0
       return
     }
     void loadUnreadInquiriesCount()
@@ -224,6 +233,21 @@ watch(isOpen, (open) => {
           class="ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-primary-600 px-1.5 py-0.5 text-xs font-semibold text-white"
         >
           {{ unreadInquiryCount }}
+        </span>
+      </NuxtLink>
+      <NuxtLink
+        :to="localePath('/app/notifications')"
+        class="ui-menu-item"
+        role="menuitem"
+        @click="closeMenu"
+      >
+        <Icon :icon="UI_ACTION_ICONS.message" class="ui-icon-sm" aria-hidden="true" />
+        {{ t('auth.notifications') }}
+        <span
+          v-if="unreadNotificationCount > 0"
+          class="ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-primary-600 px-1.5 py-0.5 text-xs font-semibold text-white"
+        >
+          {{ unreadNotificationCount }}
         </span>
       </NuxtLink>
       <NuxtLink

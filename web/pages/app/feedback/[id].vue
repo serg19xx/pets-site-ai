@@ -136,6 +136,17 @@ onUnmounted(() => {
           <span class="rounded-md bg-(--ui-surface-muted) px-2 py-0.5 text-xs font-medium">
             {{ $t(`feedback.status.${ticket.status}`) }}
           </span>
+          <span
+            v-if="ticket.improvementDecision"
+            class="rounded-md px-2 py-0.5 text-xs font-medium"
+            :class="{
+              'bg-amber-100 text-amber-900': ticket.improvementDecision === 'pending',
+              'bg-emerald-100 text-emerald-900': ticket.improvementDecision === 'accepted',
+              'bg-stone-200 text-stone-700': ticket.improvementDecision === 'rejected',
+            }"
+          >
+            {{ $t(`feedback.decision.${ticket.improvementDecision}`) }}
+          </span>
           <button
             type="button"
             class="ui-btn-sm ui-btn-secondary ml-auto"
@@ -153,6 +164,14 @@ onUnmounted(() => {
 
         <p class="mt-4 whitespace-pre-wrap text-sm text-stone-800 dark:text-stone-200">
           {{ ticket.message }}
+        </p>
+
+        <p
+          v-if="ticket.decisionNote"
+          class="mt-4 rounded-md border border-(--ui-border) bg-(--ui-surface-muted) p-3 text-sm"
+        >
+          <span class="font-semibold">{{ $t('feedback.decisionNote') }}:</span>
+          {{ ticket.decisionNote }}
         </p>
 
         <div

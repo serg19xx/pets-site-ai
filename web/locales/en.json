@@ -337,6 +337,7 @@
     "myPosts": "My posts",
     "myListings": "My listings",
     "listingMessages": "Listing messages",
+    "notifications": "Notifications",
     "feedback": "Beta feedback",
     "saved": "Saved posts",
     "likedPets": "Liked pets",
@@ -509,6 +510,17 @@
     "galleryLoadError": "Could not load gallery photos."
   },
 
+  "notifications": {
+    "metaTitle": "Notifications — Pet Friends",
+    "metaDescription": "Feature announces and feedback updates from the Pet Friends team.",
+    "title": "Notifications",
+    "subtitle": "New features to test and replies on your feedback.",
+    "loading": "Loading…",
+    "loadError": "Could not load notifications.",
+    "empty": "No notifications yet.",
+    "markAllRead": "Mark all read"
+  },
+
   "feedback": {
     "title": "Beta feedback",
     "subtitle": "Report bugs or suggest improvements. We reply in the same thread.",
@@ -530,6 +542,12 @@
       "bug": "Bug",
       "improvement": "Improvement"
     },
+    "decision": {
+      "pending": "Pending review",
+      "accepted": "Accepted into work",
+      "rejected": "Declined"
+    },
+    "decisionNote": "Team note",
     "bugHint": "Describe what went wrong. We automatically attach page, device, OS and browser. Add console text or a screenshot when useful.",
     "improvementHint": "Write your idea freely — no technical snapshot needed.",
     "messageLabel": "Your message",

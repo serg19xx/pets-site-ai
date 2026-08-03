@@ -336,6 +336,7 @@
     "myPosts": "Mes publications",
     "myListings": "Mes annonces",
     "listingMessages": "Messages annonces",
+    "notifications": "Notifications",
     "feedback": "Retours bêta",
     "saved": "Publications enregistrées",
     "likedPets": "Animaux aimés",
@@ -508,6 +509,17 @@
     "galleryLoadError": "Impossible de charger la galerie."
   },
 
+  "notifications": {
+    "metaTitle": "Notifications — Pet Friends",
+    "metaDescription": "Annonces de fonctionnalités et réponses à vos retours.",
+    "title": "Notifications",
+    "subtitle": "Nouvelles fonctionnalités à tester et réponses à vos retours.",
+    "loading": "Chargement…",
+    "loadError": "Impossible de charger les notifications.",
+    "empty": "Aucune notification pour l'instant.",
+    "markAllRead": "Tout marquer lu"
+  },
+
   "feedback": {
     "title": "Retours bêta",
     "subtitle": "Signalez un bug ou proposez une amélioration. Nous répondons dans le même fil.",
@@ -529,6 +541,12 @@
       "bug": "Bug",
       "improvement": "Amélioration"
     },
+    "decision": {
+      "pending": "En attente",
+      "accepted": "Acceptée",
+      "rejected": "Refusée"
+    },
+    "decisionNote": "Note de l'équipe",
     "bugHint": "Décrivez le problème. Page, appareil, OS et navigateur sont joints automatiquement. Ajoutez la console ou une capture si utile.",
     "improvementHint": "Écrivez votre idée librement — pas de snapshot technique.",
     "messageLabel": "Votre message",

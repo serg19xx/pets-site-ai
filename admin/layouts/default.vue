@@ -33,6 +33,20 @@ function signOut() {
             Feedback
           </NuxtLink>
           <NuxtLink
+            to="/announcements"
+            class="rounded px-2 py-1"
+            :class="route.path.startsWith('/announcements') ? 'bg-teal-50 text-teal-900' : 'text-zinc-600 hover:bg-zinc-50'"
+          >
+            Announce
+          </NuxtLink>
+          <NuxtLink
+            to="/testers"
+            class="rounded px-2 py-1"
+            :class="route.path.startsWith('/testers') ? 'bg-teal-50 text-teal-900' : 'text-zinc-600 hover:bg-zinc-50'"
+          >
+            Testers
+          </NuxtLink>
+          <NuxtLink
             to="/users"
             class="rounded px-2 py-1"
             :class="route.path.startsWith('/users') ? 'bg-teal-50 text-teal-900' : 'text-zinc-600 hover:bg-zinc-50'"

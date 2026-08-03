@@ -5,6 +5,11 @@ import { assertAdmin } from '../lib/admin.js'
 import { getUserId } from '../plugins/jwt-auth.js'
 import { errorResponseSchema } from '../schemas/auth.js'
 import { listAdminUsers, deleteAdminUser } from '../services/admin-users.js'
+import {
+  createBetaAnnouncement,
+  listBetaAnnouncements,
+} from '../services/beta-announcements.js'
+import { listBetaTesterStats } from '../services/beta-tester-stats.js'
 
 const adminMeSchema = {
   type: 'object',
@@ -47,6 +52,42 @@ const adminUsersListSchema = {
     total: { type: 'integer' },
   },
   required: ['users', 'total'],
+} as const
+
+const announcementSchema = {
+  type: 'object',
+  properties: {
+    id: { type: 'integer' },
+    title: { type: 'string' },
+    body: { type: 'string' },
+    linkPath: { type: ['string', 'null'] },
+    createdAt: { type: 'string' },
+  },
+  required: ['id', 'title', 'body', 'linkPath', 'createdAt'],
+} as const
+
+const testerStatsSchema = {
+  type: 'object',
+  properties: {
+    id: { type: 'integer' },
+    displayName: { type: 'string' },
+    email: { type: 'string' },
+    bugCount: { type: 'integer' },
+    acceptedImprovementCount: { type: 'integer' },
+    pendingImprovementCount: { type: 'integer' },
+    rejectedImprovementCount: { type: 'integer' },
+    joinedAt: { type: ['string', 'null'] },
+  },
+  required: [
+    'id',
+    'displayName',
+    'email',
+    'bugCount',
+    'acceptedImprovementCount',
+    'pendingImprovementCount',
+    'rejectedImprovementCount',
+    'joinedAt',
+  ],
 } as const
 
 function parseLimit(value: unknown): number {
@@ -150,6 +191,116 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
         targetUserId: id,
       })
       return reply.status(204).send()
+    },
+  )
+
+  app.get(
+    '/admin/testers',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['admin'],
+        summary: 'Beta tester activity (bugs + accepted improvements)',
+        security: [{ bearerAuth: [] }],
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              testers: { type: 'array', items: testerStatsSchema },
+              total: { type: 'integer' },
+            },
+            required: ['testers', 'total'],
+          },
+          401: errorResponseSchema,
+          403: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      return listBetaTesterStats({ adminUserId: getUserId(request) })
+    },
+  )
+
+  app.get<{ Querystring: { limit?: string; offset?: string } }>(
+    '/admin/announcements',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['admin'],
+        summary: 'List beta feature announcements',
+        security: [{ bearerAuth: [] }],
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              announcements: { type: 'array', items: announcementSchema },
+              total: { type: 'integer' },
+            },
+            required: ['announcements', 'total'],
+          },
+          401: errorResponseSchema,
+          403: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      return listBetaAnnouncements({
+        adminUserId: getUserId(request),
+        limit: parseLimit(request.query.limit),
+        offset: parseOffset(request.query.offset),
+      })
+    },
+  )
+
+  app.post<{
+    Body: { title: string; body: string; linkPath?: string | null }
+  }>(
+    '/admin/announcements',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['admin'],
+        summary: 'Announce a feature to all beta testers (in-app + email)',
+        security: [{ bearerAuth: [] }],
+        body: {
+          type: 'object',
+          additionalProperties: false,
+          required: ['title', 'body'],
+          properties: {
+            title: { type: 'string', minLength: 3, maxLength: 200 },
+            body: { type: 'string', minLength: 3, maxLength: 8000 },
+            linkPath: { type: ['string', 'null'], maxLength: 500 },
+          },
+        },
+        response: {
+          201: {
+            type: 'object',
+            properties: {
+              announcement: {
+                type: 'object',
+                properties: {
+                  ...announcementSchema.properties,
+                  recipientCount: { type: 'integer' },
+                },
+                required: [...announcementSchema.required, 'recipientCount'],
+              },
+            },
+            required: ['announcement'],
+          },
+          400: errorResponseSchema,
+          401: errorResponseSchema,
+          403: errorResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const announcement = await createBetaAnnouncement({
+        adminUserId: getUserId(request),
+        title: request.body.title,
+        body: request.body.body,
+        linkPath: request.body.linkPath,
+      })
+      return reply.status(201).send({ announcement })
     },
   )
 }

@@ -12,6 +12,7 @@ import { galleryRoutes } from './routes/gallery.js'
 import { healthRoutes } from './routes/health.js'
 import { marketplaceInquiryRoutes } from './routes/marketplace-inquiries.js'
 import { marketplaceRoutes } from './routes/marketplace.js'
+import { notificationRoutes } from './routes/notifications.js'
 import { petsRoutes } from './routes/pets.js'
 
 export async function buildServer() {
@@ -27,6 +28,7 @@ export async function buildServer() {
   await app.register(marketplaceRoutes, { prefix: '/api' })
   await app.register(marketplaceInquiryRoutes, { prefix: '/api' })
   await app.register(feedbackRoutes, { prefix: '/api' })
+  await app.register(notificationRoutes, { prefix: '/api' })
   await app.register(adminRoutes, { prefix: '/api' })
   await app.register(authRoutes, { prefix: '/api' })
   await app.register(petsRoutes, { prefix: '/api' })

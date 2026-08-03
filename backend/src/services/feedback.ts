@@ -2,12 +2,21 @@ import { pool } from '../db/pool.js'
 import { AppError } from '../lib/errors.js'
 import { buildPublicUploadUrl, saveImageBuffer } from '../lib/uploads.js'
 import { isAdminEmail, assertAdmin } from '../lib/admin.js'
+import { notifyUser } from './notifications.js'
 
 export const FEEDBACK_TICKET_TYPES = ['bug', 'improvement'] as const
 export type FeedbackTicketType = (typeof FEEDBACK_TICKET_TYPES)[number]
 
 export const FEEDBACK_TICKET_STATUSES = ['open', 'closed'] as const
 export type FeedbackTicketStatus = (typeof FEEDBACK_TICKET_STATUSES)[number]
+
+export const FEEDBACK_IMPROVEMENT_DECISIONS = [
+  'pending',
+  'accepted',
+  'rejected',
+] as const
+export type FeedbackImprovementDecision =
+  (typeof FEEDBACK_IMPROVEMENT_DECISIONS)[number]
 
 export const FEEDBACK_DEVICE_CLASSES = [
   'desktop',
@@ -28,6 +37,9 @@ export interface FeedbackTicketSummary {
   id: number
   type: FeedbackTicketType
   status: FeedbackTicketStatus
+  improvementDecision: FeedbackImprovementDecision | null
+  decisionNote: string | null
+  decidedAt: string | null
   message: string
   pagePath: string | null
   deviceClass: FeedbackDeviceClass
@@ -60,6 +72,9 @@ type TicketRow = {
   user_id: string
   type: FeedbackTicketType
   status: FeedbackTicketStatus
+  improvement_decision: FeedbackImprovementDecision | null
+  decision_note: string | null
+  decided_at: Date | null
   message: string
   page_path: string | null
   user_agent: string | null
@@ -156,6 +171,9 @@ function mapTicketSummary(row: TicketRow): FeedbackTicketSummary {
     id: Number(row.id),
     type: row.type,
     status: row.status,
+    improvementDecision: row.improvement_decision,
+    decisionNote: row.decision_note,
+    decidedAt: row.decided_at?.toISOString() ?? null,
     message: row.message,
     pagePath: row.page_path,
     deviceClass: row.device_class,
@@ -176,7 +194,8 @@ function mapTicketSummary(row: TicketRow): FeedbackTicketSummary {
 }
 
 const TICKET_SELECT = `
-  t.id, t.user_id, t.type, t.status, t.message, t.page_path, t.user_agent,
+  t.id, t.user_id, t.type, t.status, t.improvement_decision, t.decision_note, t.decided_at,
+  t.message, t.page_path, t.user_agent,
   t.device_class, t.os_label, t.browser_label, t.console_text, t.screenshot_path,
   t.created_at, t.updated_at,
   u.full_name AS author_full_name, u.nickname AS author_nickname, u.email AS author_email,
@@ -233,15 +252,19 @@ export async function createFeedbackTicket(
       ? input.deviceClass
       : 'unknown'
 
+  const improvementDecision =
+    input.type === 'improvement' ? 'pending' : null
+
   const inserted = await pool.query<{ id: string }>(
     `INSERT INTO feedback_tickets (
-       user_id, type, message, page_path, user_agent, device_class,
+       user_id, type, improvement_decision, message, page_path, user_agent, device_class,
        os_label, browser_label, console_text, screenshot_path
-     ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+     ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
      RETURNING id`,
     [
       input.userId,
       input.type,
+      improvementDecision,
       message,
       input.pagePath?.trim() || null,
       input.userAgent?.trim() || null,
@@ -401,7 +424,109 @@ export async function replyFeedbackTicket(input: {
     [input.ticketId],
   )
 
+  const ownerId = Number(row.user_id)
+  if (isAdmin && ownerId !== input.userId) {
+    try {
+      await notifyUser({
+        userId: ownerId,
+        type: 'feedback_reply',
+        title: `New reply on feedback #${input.ticketId}`,
+        body: body.length > 280 ? `${body.slice(0, 277)}…` : body,
+        linkPath: `/app/feedback/${input.ticketId}`,
+        meta: { ticketId: input.ticketId },
+      })
+    } catch (error) {
+      console.error('Feedback reply notification failed:', error)
+    }
+  }
+
   return getFeedbackTicket(input.userId, input.ticketId)
+}
+
+export async function decideFeedbackImprovement(input: {
+  adminUserId: number
+  ticketId: number
+  decision: 'accepted' | 'rejected'
+  note: string
+}): Promise<FeedbackTicketDetail> {
+  await assertFeedbackAdmin(input.adminUserId)
+
+  const note = input.note.trim()
+  if (note.length < 3) {
+    throw new AppError(
+      400,
+      'Please explain why this improvement is accepted or rejected',
+      'VALIDATION_ERROR',
+    )
+  }
+  if (note.length > 8000) {
+    throw new AppError(400, 'Decision note is too long', 'VALIDATION_ERROR')
+  }
+
+  const ticket = await pool.query<{
+    user_id: string
+    type: FeedbackTicketType
+    improvement_decision: FeedbackImprovementDecision | null
+  }>('SELECT user_id, type, improvement_decision FROM feedback_tickets WHERE id = $1', [
+    input.ticketId,
+  ])
+  const row = ticket.rows[0]
+  if (!row) {
+    throw new AppError(404, 'Feedback not found', 'NOT_FOUND')
+  }
+  if (row.type !== 'improvement') {
+    throw new AppError(
+      400,
+      'Accept/reject applies only to improvement tickets',
+      'VALIDATION_ERROR',
+    )
+  }
+
+  const prefix =
+    input.decision === 'accepted'
+      ? 'Improvement accepted into work'
+      : 'Improvement declined'
+  const threadBody = `${prefix}:\n\n${note}`
+
+  await pool.query(
+    `UPDATE feedback_tickets
+     SET improvement_decision = $2::feedback_improvement_decision,
+         decision_note = $3,
+         decided_at = NOW(),
+         decided_by_user_id = $4,
+         status = CASE
+           WHEN $2::text = 'rejected' THEN 'closed'::feedback_ticket_status
+           ELSE status
+         END,
+         updated_at = NOW()
+     WHERE id = $1`,
+    [input.ticketId, input.decision, note, input.adminUserId],
+  )
+
+  await pool.query(
+    `INSERT INTO feedback_messages (ticket_id, author_user_id, body)
+     VALUES ($1, $2, $3)`,
+    [input.ticketId, input.adminUserId, threadBody],
+  )
+
+  const ownerId = Number(row.user_id)
+  try {
+    await notifyUser({
+      userId: ownerId,
+      type: 'feedback_decision',
+      title:
+        input.decision === 'accepted'
+          ? `Improvement #${input.ticketId} accepted`
+          : `Improvement #${input.ticketId} declined`,
+      body: note,
+      linkPath: `/app/feedback/${input.ticketId}`,
+      meta: { ticketId: input.ticketId, decision: input.decision },
+    })
+  } catch (error) {
+    console.error('Feedback decision notification failed:', error)
+  }
+
+  return getFeedbackTicket(input.adminUserId, input.ticketId)
 }
 
 export async function updateFeedbackTicketStatus(input: {
