@@ -5,6 +5,8 @@ import type { PetSex } from '~/types/pet'
 export interface GalleryPetPhoto {
   id: number
   url: string
+  caption: string | null
+  captionFr: string | null
 }
 
 /** Public gallery card (API: GET /api/gallery/pets). */
@@ -19,11 +21,44 @@ export interface GalleryPet {
   description: string | null
   greeting: string | null
   greetingFr: string | null
+  coverCaption: string | null
+  coverCaptionFr: string | null
+  /** Most recent AI draft reaction (event voice). */
+  latestVoice: string | null
+  latestVoiceFr: string | null
+  latestVoiceTemplate: string | null
+  virtualLifeEnabled: boolean
   liked: boolean
   likeCount: number
   /** Present on GET /api/gallery/pets/:id only. */
   member?: PublicMember
   photos: GalleryPetPhoto[]
+  /** Present on GET /api/gallery/pets/:id only. */
+  friends?: PetFriendSummary[]
+  /** Short hello/reply exchanges; present on GET /api/gallery/pets/:id only. */
+  friendExchanges?: PetFriendExchange[]
+}
+
+/** Public friend card on a gallery pet profile. */
+export interface PetFriendSummary {
+  id: number
+  name: string
+  avatarUrl: string | null
+  species: { slug: string; label: string }
+}
+
+export interface PetFriendExchangeLine {
+  speakerPetId: number
+  speakerName: string
+  turn: number
+  body: string
+  bodyFr: string
+  createdAt: string
+}
+
+export interface PetFriendExchange {
+  friend: PetFriendSummary
+  lines: PetFriendExchangeLine[]
 }
 
 export type { PublicMember } from '~/types/public-member'

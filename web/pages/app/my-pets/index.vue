@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 
 import PetAvatar from '~/components/PetAvatar.vue'
+import PetVirtualBadge from '~/components/PetVirtualBadge.vue'
 import { ApiError } from '~/lib/auth-api'
 import { UI_ACTION_ICONS } from '~/lib/ui-icons'
 import { listMyPets } from '~/lib/pets-api'
@@ -105,7 +106,10 @@ function speciesLine(pet: Pet) {
         >
           <PetAvatar :pet="pet" size="md" />
           <div class="min-w-0 flex-1">
-            <p class="ui-list-link-title">{{ pet.name }}</p>
+            <p class="ui-list-link-title flex flex-wrap items-center gap-2">
+              <span>{{ pet.name }}</span>
+              <PetVirtualBadge :enabled="pet.virtualLifeEnabled" />
+            </p>
             <p class="ui-list-link-meta">
               {{ speciesLine(pet) }}
             </p>

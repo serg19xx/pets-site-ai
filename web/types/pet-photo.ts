@@ -5,4 +5,6 @@ export interface PetPhoto {
   sortOrder: number
   createdAt: string
   isCover: boolean
+  caption: string | null
+  captionFr: string | null
 }

@@ -12,6 +12,34 @@ export const MEMBER_SELECT = `
   u.show_nickname AS member_show_nickname
 `
 
+/** Latest ready/published AI draft — the pet’s most recent “event voice”. */
+export const LATEST_VOICE_SELECT = `
+  (
+    SELECT d.body
+    FROM pet_ai_drafts d
+    WHERE d.pet_id = p.id
+      AND d.status IN ('ready', 'published')
+    ORDER BY d.created_at DESC, d.id DESC
+    LIMIT 1
+  ) AS latest_voice,
+  (
+    SELECT d.body_fr
+    FROM pet_ai_drafts d
+    WHERE d.pet_id = p.id
+      AND d.status IN ('ready', 'published')
+    ORDER BY d.created_at DESC, d.id DESC
+    LIMIT 1
+  ) AS latest_voice_fr,
+  (
+    SELECT d.template_key
+    FROM pet_ai_drafts d
+    WHERE d.pet_id = p.id
+      AND d.status IN ('ready', 'published')
+    ORDER BY d.created_at DESC, d.id DESC
+    LIMIT 1
+  ) AS latest_voice_template
+`
+
 export const PET_GALLERY_SELECT = `
   p.id,
   p.name,
@@ -21,9 +49,31 @@ export const PET_GALLERY_SELECT = `
   p.date_of_birth,
   p.sex,
   cover_pp.path AS avatar_path,
+  COALESCE(
+    cover_pp.caption,
+    (
+      SELECT pp.caption
+      FROM pet_photos pp
+      WHERE pp.pet_id = p.id AND pp.caption IS NOT NULL
+      ORDER BY pp.created_at DESC, pp.id DESC
+      LIMIT 1
+    )
+  ) AS cover_caption,
+  COALESCE(
+    cover_pp.caption_fr,
+    (
+      SELECT pp.caption_fr
+      FROM pet_photos pp
+      WHERE pp.pet_id = p.id AND pp.caption_fr IS NOT NULL
+      ORDER BY pp.created_at DESC, pp.id DESC
+      LIMIT 1
+    )
+  ) AS cover_caption_fr,
+  ${LATEST_VOICE_SELECT},
   p.description,
   p.greeting,
   p.greeting_fr,
+  p.virtual_life_enabled,
   false AS liked,
   COALESCE((
     SELECT COUNT(*)::int

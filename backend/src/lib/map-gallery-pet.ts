@@ -5,6 +5,8 @@ import type { PetSex } from '../types/pet.js'
 export interface GalleryPetPhoto {
   id: number
   url: string
+  caption: string | null
+  captionFr: string | null
 }
 
 export interface GalleryPet {
@@ -18,10 +20,42 @@ export interface GalleryPet {
   description: string | null
   greeting: string | null
   greetingFr: string | null
+  coverCaption: string | null
+  coverCaptionFr: string | null
+  /** Most recent AI draft (event reaction), bilingual. */
+  latestVoice: string | null
+  latestVoiceFr: string | null
+  latestVoiceTemplate: string | null
+  virtualLifeEnabled: boolean
   liked: boolean
   likeCount: number
   member?: PublicMember
   photos: GalleryPetPhoto[]
+  /** Present on GET /api/gallery/pets/:id only. */
+  friends?: PetFriendSummary[]
+  /** Short hello/reply exchanges; present on GET /api/gallery/pets/:id only. */
+  friendExchanges?: PetFriendExchange[]
+}
+
+export interface PetFriendSummary {
+  id: number
+  name: string
+  avatarUrl: string | null
+  species: { slug: string; label: string }
+}
+
+export interface PetFriendExchangeLine {
+  speakerPetId: number
+  speakerName: string
+  turn: number
+  body: string
+  bodyFr: string
+  createdAt: string
+}
+
+export interface PetFriendExchange {
+  friend: PetFriendSummary
+  lines: PetFriendExchangeLine[]
 }
 
 export type GalleryRow = {
@@ -36,6 +70,12 @@ export type GalleryRow = {
   description: string | null
   greeting: string | null
   greeting_fr: string | null
+  cover_caption: string | null
+  cover_caption_fr: string | null
+  latest_voice: string | null
+  latest_voice_fr: string | null
+  latest_voice_template: string | null
+  virtual_life_enabled: boolean
   liked: boolean
   like_count: number
 }
@@ -48,6 +88,8 @@ export function mapGalleryPetRow(
   row: GalleryRow,
   photos: GalleryPetPhoto[] = [],
   member?: PublicMember,
+  friends?: PetFriendSummary[],
+  friendExchanges?: PetFriendExchange[],
 ): GalleryPet {
   return {
     id: Number(row.id),
@@ -60,9 +102,17 @@ export function mapGalleryPetRow(
     description: row.description,
     greeting: row.greeting,
     greetingFr: row.greeting_fr,
+    coverCaption: row.cover_caption?.trim() || null,
+    coverCaptionFr: row.cover_caption_fr?.trim() || null,
+    latestVoice: row.latest_voice?.trim() || null,
+    latestVoiceFr: row.latest_voice_fr?.trim() || null,
+    latestVoiceTemplate: row.latest_voice_template?.trim() || null,
+    virtualLifeEnabled: Boolean(row.virtual_life_enabled),
     liked: row.liked,
     likeCount: Number(row.like_count ?? 0),
     ...(member ? { member } : {}),
     photos,
+    ...(friends ? { friends } : {}),
+    ...(friendExchanges ? { friendExchanges } : {}),
   }
 }

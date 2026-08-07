@@ -15,6 +15,11 @@ import type {
   PetParentRole,
   UpsertPetParentInput,
 } from '~/types/pet-parent'
+import type {
+  PetPersonality,
+  PetPersonalityInput,
+} from '~/types/pet-personality'
+import type { PetAiDraftsListResponse } from '~/types/pet-ai-draft'
 import type { Pet, PetBreedListItem, PetSex, PetSpeciesListItem } from '~/types/pet'
 
 async function parseJson<T>(response: Response): Promise<T> {
@@ -198,6 +203,7 @@ export interface UpdatePetPayload {
   markings?: string | null
   physicalNotes?: string | null
   pedigreeNotes?: string | null
+  virtualLifeEnabled?: boolean
 }
 
 export async function updatePet(
@@ -577,4 +583,45 @@ export async function deletePetMedicalPhoto(
   }
   const body = (await response.json().catch(() => ({}))) as ApiErrorBody
   throw new ApiError(body.message ?? 'Request failed', response.status, body.code)
+}
+
+export async function getPetPersonality(
+  accessToken: string,
+  petId: number,
+): Promise<{ personality: PetPersonality }> {
+  return requestJson(`/api/pets/${petId}/personality`, {
+    method: 'GET',
+    accessToken,
+  })
+}
+
+export async function updatePetPersonality(
+  accessToken: string,
+  petId: number,
+  input: PetPersonalityInput,
+): Promise<{ personality: PetPersonality }> {
+  return requestJson(`/api/pets/${petId}/personality`, {
+    method: 'PUT',
+    accessToken,
+    body: JSON.stringify(input),
+  })
+}
+
+export async function listPetAiDrafts(
+  accessToken: string,
+  petId: number,
+  options: { limit?: number; offset?: number } = {},
+): Promise<PetAiDraftsListResponse> {
+  const params = new URLSearchParams()
+  if (options.limit != null) {
+    params.set('limit', String(options.limit))
+  }
+  if (options.offset != null) {
+    params.set('offset', String(options.offset))
+  }
+  const qs = params.toString()
+  return requestJson(`/api/pets/${petId}/ai-drafts${qs ? `?${qs}` : ''}`, {
+    method: 'GET',
+    accessToken,
+  })
 }

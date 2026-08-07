@@ -2,12 +2,14 @@ import { pool } from '../db/pool.js'
 import { adminUsersExclusion } from '../lib/admin.js'
 import { mapGalleryPetRow, type GalleryRow } from '../lib/map-gallery-pet.js'
 import {
+  LATEST_VOICE_SELECT,
   mapMemberFromDetailRow,
   MEMBER_SELECT,
   PET_GALLERY_SELECT,
   type GalleryDetailRow,
 } from './gallery-members.js'
 import { listPetPhotosPublic } from './pet-photos.js'
+import { listPetFriendExchanges, listPetFriends } from './pet-friendships.js'
 
 const MAX_LIMIT = 60
 
@@ -19,13 +21,15 @@ export async function listGalleryPets(
   const safeLimit = Math.min(Math.max(1, limit), MAX_LIMIT)
   const safeOffset = Math.max(0, offset)
 
+  // Own pets stay in the gallery: friendship and public profiles need them visible.
   const excludeForCount = adminUsersExclusion('u.email', 1)
+
   const countR = await pool.query<{ c: string }>(
     `SELECT COUNT(*)::text AS c
      FROM pets p
      INNER JOIN users u ON u.id = p.user_id
      WHERE TRUE${excludeForCount.clause}`,
-    excludeForCount.params,
+    [...excludeForCount.params],
   )
   const total = Number(countR.rows[0]?.c ?? 0)
 
@@ -58,9 +62,31 @@ export async function listGalleryPets(
       p.date_of_birth,
       p.sex,
       cover_pp.path AS avatar_path,
+      COALESCE(
+        cover_pp.caption,
+        (
+          SELECT pp.caption
+          FROM pet_photos pp
+          WHERE pp.pet_id = p.id AND pp.caption IS NOT NULL
+          ORDER BY pp.created_at DESC, pp.id DESC
+          LIMIT 1
+        )
+      ) AS cover_caption,
+      COALESCE(
+        cover_pp.caption_fr,
+        (
+          SELECT pp.caption_fr
+          FROM pet_photos pp
+          WHERE pp.pet_id = p.id AND pp.caption_fr IS NOT NULL
+          ORDER BY pp.created_at DESC, pp.id DESC
+          LIMIT 1
+        )
+      ) AS cover_caption_fr,
+      ${LATEST_VOICE_SELECT},
       p.description,
       p.greeting,
       p.greeting_fr,
+      p.virtual_life_enabled,
       ${likedSelect},
       COALESCE((
         SELECT COUNT(*)::int
@@ -110,9 +136,31 @@ export async function listLikedGalleryPets(
       p.date_of_birth,
       p.sex,
       cover_pp.path AS avatar_path,
+      COALESCE(
+        cover_pp.caption,
+        (
+          SELECT pp.caption
+          FROM pet_photos pp
+          WHERE pp.pet_id = p.id AND pp.caption IS NOT NULL
+          ORDER BY pp.created_at DESC, pp.id DESC
+          LIMIT 1
+        )
+      ) AS cover_caption,
+      COALESCE(
+        cover_pp.caption_fr,
+        (
+          SELECT pp.caption_fr
+          FROM pet_photos pp
+          WHERE pp.pet_id = p.id AND pp.caption_fr IS NOT NULL
+          ORDER BY pp.created_at DESC, pp.id DESC
+          LIMIT 1
+        )
+      ) AS cover_caption_fr,
+      ${LATEST_VOICE_SELECT},
       p.description,
       p.greeting,
       p.greeting_fr,
+      p.virtual_life_enabled,
       true AS liked,
       COALESCE((
         SELECT COUNT(*)::int
@@ -154,7 +202,16 @@ export async function getGalleryPetById(
     return null
   }
   const photos = await listPetPhotosPublic(id)
-  const galleryPhotos = photos.map((p) => ({ id: p.id, url: p.url }))
+  const galleryPhotos = photos.map((p) => ({
+    id: p.id,
+    url: p.url,
+    caption: p.caption,
+    captionFr: p.captionFr,
+  }))
   const member = mapMemberFromDetailRow(row)
-  return mapGalleryPetRow(row, galleryPhotos, member)
+  const [friends, friendExchanges] = await Promise.all([
+    listPetFriends(id),
+    listPetFriendExchanges(id),
+  ])
+  return mapGalleryPetRow(row, galleryPhotos, member, friends, friendExchanges)
 }

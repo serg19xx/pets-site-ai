@@ -53,6 +53,13 @@ function signOut() {
           >
             Users
           </NuxtLink>
+          <NuxtLink
+            to="/species"
+            class="rounded px-2 py-1"
+            :class="route.path.startsWith('/species') ? 'bg-teal-50 text-teal-900' : 'text-zinc-600 hover:bg-zinc-50'"
+          >
+            Species
+          </NuxtLink>
         </nav>
         <div class="ml-auto flex items-center gap-3 text-sm text-zinc-600">
           <span>{{ auth.displayName }}</span>

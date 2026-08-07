@@ -5,6 +5,13 @@ import {
 } from '../lib/generate-pet-greeting.js'
 import { resolveBilingualPetGreetings } from '../lib/n8n-pet-greeting.js'
 import { mapPetRow } from '../lib/map-pet.js'
+import { getPetSpeciesById } from './pet-catalog.js'
+import { PET_EVENT_TYPES, recordPetEvent } from './pet-events.js'
+import {
+  cancelActivePetGoals,
+  ensureDefaultPetGoals,
+} from './pet-goals.js'
+import { createSelfIntroductionDraft } from './pet-ai-drafts.js'
 import { deleteAllPetPhotoFiles } from './pet-photos.js'
 import { deleteAllPetCertificateFiles } from './pet-certificates.js'
 import { deleteAllPetMedicalFiles } from './pet-medical.js'
@@ -19,6 +26,7 @@ const PET_SELECT = `
   p.description, p.greeting, p.greeting_fr,
   p.weight_kg, p.color, p.length_cm, p.height_cm, p.markings, p.physical_notes,
   p.pedigree_notes,
+  p.virtual_life_enabled,
   p.date_of_birth, p.sex, p.created_at, p.updated_at
 `
 
@@ -29,10 +37,20 @@ const PET_FROM = `
   LEFT JOIN pet_photos cover_pp ON cover_pp.id = p.cover_photo_id
 `
 
-async function assertSpeciesExists(speciesId: number): Promise<void> {
-  const r = await pool.query('SELECT 1 FROM pet_species WHERE id = $1', [speciesId])
-  if (r.rowCount === 0) {
+async function assertSpeciesAssignable(
+  speciesId: number,
+  options: { requireActive: boolean },
+): Promise<void> {
+  const species = await getPetSpeciesById(speciesId)
+  if (!species) {
     throw new AppError(400, 'Invalid species', 'INVALID_SPECIES')
+  }
+  if (options.requireActive && !species.isActive) {
+    throw new AppError(
+      400,
+      'This species is not available for new pets yet',
+      'SPECIES_INACTIVE',
+    )
   }
 }
 
@@ -126,7 +144,7 @@ export async function createPet(userId: number, input: CreatePetInput) {
     throw new AppError(400, 'Name is required', 'VALIDATION_ERROR')
   }
 
-  await assertSpeciesExists(input.speciesId)
+  await assertSpeciesAssignable(input.speciesId, { requireActive: true })
   await assertBreedMatchesSpecies(input.breedId, input.speciesId)
 
   const species = await loadSpeciesForGreeting(input.speciesId)
@@ -162,7 +180,21 @@ export async function createPet(userId: number, input: CreatePetInput) {
   if (!id) {
     throw new AppError(500, 'Could not create pet', 'INTERNAL_ERROR')
   }
-  return getPetById(userId, Number(id))
+  const petId = Number(id)
+  await recordPetEvent({
+    petId,
+    eventType: PET_EVENT_TYPES.PET_CREATED,
+    payload: {
+      name,
+      speciesId: input.speciesId,
+      speciesSlug: species.slug,
+      breedId: input.breedId,
+      sex: input.sex,
+    },
+  })
+  await ensureDefaultPetGoals(petId)
+  await createSelfIntroductionDraft(petId)
+  return getPetById(userId, petId)
 }
 
 export interface UpdatePetInput {
@@ -179,6 +211,7 @@ export interface UpdatePetInput {
   markings?: string | null
   physicalNotes?: string | null
   pedigreeNotes?: string | null
+  virtualLifeEnabled?: boolean
 }
 
 function normalizeOptionalText(
@@ -240,7 +273,9 @@ export async function updatePet(userId: number, petId: number, input: UpdatePetI
     breedId = existing.breed?.id ?? null
   }
 
-  await assertSpeciesExists(speciesId)
+  await assertSpeciesAssignable(speciesId, {
+    requireActive: speciesId !== existing.species.id,
+  })
   await assertBreedMatchesSpecies(breedId, speciesId)
 
   const description =
@@ -279,6 +314,10 @@ export async function updatePet(userId: number, petId: number, input: UpdatePetI
     input.pedigreeNotes !== undefined
       ? normalizeOptionalText(input.pedigreeNotes, 2000, 'pedigreeNotes')
       : existing.pedigreeNotes
+  const virtualLifeEnabled =
+    input.virtualLifeEnabled !== undefined
+      ? Boolean(input.virtualLifeEnabled)
+      : existing.virtualLifeEnabled
 
   await pool.query(
     `UPDATE pets SET
@@ -297,8 +336,9 @@ export async function updatePet(userId: number, petId: number, input: UpdatePetI
       markings = $13,
       physical_notes = $14,
       pedigree_notes = $15,
+      virtual_life_enabled = $16,
       updated_at = NOW()
-    WHERE id = $16 AND user_id = $17`,
+    WHERE id = $17 AND user_id = $18`,
     [
       name,
       speciesId,
@@ -315,10 +355,20 @@ export async function updatePet(userId: number, petId: number, input: UpdatePetI
       markings ?? null,
       physicalNotes ?? null,
       pedigreeNotes ?? null,
+      virtualLifeEnabled,
       petId,
       userId,
     ],
   )
+
+  if (virtualLifeEnabled !== existing.virtualLifeEnabled) {
+    if (virtualLifeEnabled) {
+      await ensureDefaultPetGoals(petId)
+      await createSelfIntroductionDraft(petId)
+    } else {
+      await cancelActivePetGoals(petId)
+    }
+  }
 
   return getPetById(userId, petId)
 }

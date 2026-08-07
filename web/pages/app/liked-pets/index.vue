@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import PetAvatar from '~/components/PetAvatar.vue'
+import PetVirtualBadge from '~/components/PetVirtualBadge.vue'
 import { ApiError } from '~/lib/auth-api'
+import { pickGalleryCardVoice } from '~/lib/pick-pet-caption'
 import { togglePetLike } from '~/lib/pet-likes-api'
 import { fetchLikedGalleryPets } from '~/lib/pets-api'
 import { UI_ACTION_ICONS } from '~/lib/ui-icons'
@@ -12,7 +14,7 @@ definePageMeta({
   middleware: 'auth',
 })
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const auth = useAuthStore()
 
@@ -28,6 +30,10 @@ function petPath(id: number) {
 function speciesSubtitle(animal: GalleryPet) {
   const b = animal.breed?.label
   return b ? `${animal.species.label} · ${b}` : animal.species.label
+}
+
+function cardCaption(animal: GalleryPet) {
+  return pickGalleryCardVoice(animal, locale.value)
 }
 
 async function loadPets() {
@@ -96,7 +102,16 @@ async function onUnlike(pet: GalleryPet) {
             <PetAvatar :pet="animal" size="fill" />
           </div>
           <div class="ui-gallery-card-body">
-            <h2 class="ui-gallery-card-title">{{ animal.name }}</h2>
+            <p
+              v-if="cardCaption(animal)"
+              class="ui-gallery-card-caption"
+            >
+              {{ cardCaption(animal) }}
+            </p>
+            <h2 class="ui-gallery-card-title flex flex-wrap items-center gap-2">
+              <span>{{ animal.name }}</span>
+              <PetVirtualBadge :enabled="animal.virtualLifeEnabled" />
+            </h2>
             <p class="ui-gallery-card-meta">
               {{ speciesSubtitle(animal) }}
             </p>

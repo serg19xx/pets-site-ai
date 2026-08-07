@@ -2,7 +2,9 @@
 import { computed, ref, watch } from 'vue'
 
 import PetAvatar from '~/components/PetAvatar.vue'
+import PetVirtualBadge from '~/components/PetVirtualBadge.vue'
 import { ApiError } from '~/lib/auth-api'
+import { pickGalleryCardVoice } from '~/lib/pick-pet-caption'
 import { togglePetLike } from '~/lib/pet-likes-api'
 import { fetchGalleryPets } from '~/lib/pets-api'
 import { UI_ACTION_ICONS } from '~/lib/ui-icons'
@@ -57,6 +59,10 @@ const loadError = computed(() => {
 function speciesSubtitle(animal: GalleryPet) {
   const b = animal.breed?.label
   return b ? `${animal.species.label} · ${b}` : animal.species.label
+}
+
+function cardCaption(animal: GalleryPet) {
+  return pickGalleryCardVoice(animal, locale.value)
 }
 
 function petPath(id: number) {
@@ -181,7 +187,16 @@ watch(
             <PetAvatar :pet="animal" size="fill" />
           </div>
           <div class="ui-gallery-card-body">
-            <h2 class="ui-gallery-card-title">{{ animal.name }}</h2>
+            <p
+              v-if="cardCaption(animal)"
+              class="ui-gallery-card-caption"
+            >
+              {{ cardCaption(animal) }}
+            </p>
+            <h2 class="ui-gallery-card-title flex flex-wrap items-center gap-2">
+              <span>{{ animal.name }}</span>
+              <PetVirtualBadge :enabled="animal.virtualLifeEnabled" />
+            </h2>
             <p class="ui-gallery-card-meta">
               {{ speciesSubtitle(animal) }}
             </p>

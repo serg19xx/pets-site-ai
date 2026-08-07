@@ -288,6 +288,35 @@ Pets should eventually:
 
 The owners should gradually feel that their pets are actually living inside the platform.
 
+### Pet friendships — current vs later
+
+**Current (MVP):** when two pets become friends (same species, different owners), the platform generates a short **hello + reply** exchange only. Shown on the public pet profile. Not a threaded chat. Keeps OpenAI cost predictable.
+
+**Later (if engagement justifies it):** longer pet↔pet dialogues, ongoing threads, and richer memory of past exchanges. Document and implement only after the short-replica loop proves useful — full dialogue is intentionally deferred because of complexity and LLM cost.
+
+### Chat-room (Odigo-style) — future entertainment toy
+
+Inspired by early-2000s Odigo visual messenger rooms: a shared stage where **pet avatars** can move closer or farther and “talk.” On the scene, participants appear as **animals**, not as human profiles.
+
+**Product framing**
+
+- Pure entertainment / social toy for users — not a core always-on simulation.
+- Presence and movement matter: approach another pet, hang out, step away.
+- First version can be live presence + short chat around pets without long AI dialogue.
+- If engagement and monetization justify it: enrich with **LLM** (ambient lines, reactions, proximity quips). Backend still owns rules; LLM only language.
+
+**Lifecycle / cost**
+
+- The room is **active only while a user has it open**.
+- Closing the room **freezes** all characters and stops presence, movement, chat transport, and any optional LLM — **no background resource use**.
+- Do not run idle simulations or keep sockets/jobs alive for closed rooms.
+
+**Relation to current MVP**
+
+- Keep friendship hello/reply replicas as the cheap async Pet World loop for acquisition and testing.
+- Chat-room is a separate real-time surface for retention, if/when the product is ready.
+- Optional later link: meet in the room → suggest pet friendship.
+
 ---
 
 ## Development Roadmap

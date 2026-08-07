@@ -1,0 +1,109 @@
+{
+  "name": "Petsbook — Pet AI Draft",
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "description": "POST webhook → OpenAI → { body, bodyFr }. Used by pets-api for SELF_INTRODUCTION / PHOTO_POST / VETERINARY_VISIT drafts."
+  },
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "petsbook/pet-ai-draft",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "f1a2b3c4-d5e6-7890-abcd-ef1234567001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "petsbook-pet-ai-draft",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_HEADER_AUTH_CREDENTIAL",
+          "name": "Petsbook Webhook Secret"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\nconst body = raw.body && typeof raw.body === 'object' ? raw.body : raw;\n\nconst templateKey = String(body.templateKey ?? '').trim();\nif (!templateKey) {\n  throw new Error('templateKey is required');\n}\n\nconst templateInstructions = String(body.templateInstructions ?? '').trim();\nconst promptText = String(body.promptText ?? '').trim();\nif (!promptText) {\n  throw new Error('promptText is required');\n}\n\nconst eventHint = body.eventHint ? String(body.eventHint).trim() : null;\nconst procedureLabel = body.procedureLabel ? String(body.procedureLabel).trim() : null;\nconst identity = body.identity && typeof body.identity === 'object' ? body.identity : {};\n\nconst system =\n  'You write short first-person social posts as a pet on Petsbook.\\n' +\n  'Produce TWO independent texts (not a translation of each other): one English, one French (natural Canadian/European French).\\n' +\n  'Rules:\\n' +\n  '- Never mention AI, language models, prompts, or being artificial.\\n' +\n  '- Speak as the pet (I / me / je / moi).\\n' +\n  '- Follow the template instructions carefully.\\n' +\n  '- Use only facts from the provided context. Do not invent friends, awards, or medical details.\\n' +\n  '- Each text under 800 characters.\\n' +\n  '- Return ONLY valid JSON with exactly these keys (no markdown):\\n' +\n  '{\"body\":\"<English text>\",\"bodyFr\":\"<French text>\"}';\n\nconst userPayload = {\n  templateKey,\n  templateInstructions,\n  eventHint,\n  procedureLabel,\n  identity,\n  context: promptText,\n};\n\nconst openAiBody = {\n  model: 'gpt-4o-mini',\n  temperature: 0.85,\n  max_tokens: 700,\n  response_format: { type: 'json_object' },\n  messages: [\n    { role: 'system', content: system },\n    {\n      role: 'user',\n      content:\n        'Write both texts from this Petsbook context (JSON):\\n' +\n        JSON.stringify(userPayload, null, 2),\n    },\n  ],\n};\n\nreturn [{ json: { templateKey, openAiBody } }];"
+      },
+      "id": "f1a2b3c4-d5e6-7890-abcd-ef1234567002",
+      "name": "Prepare prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [260, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.openAiBody) }}",
+        "options": {
+          "timeout": 45000
+        }
+      },
+      "id": "f1a2b3c4-d5e6-7890-abcd-ef1234567003",
+      "name": "OpenAI Chat",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [520, 0],
+      "credentials": {
+        "openAiApi": {
+          "id": "REPLACE_WITH_OPENAI_CREDENTIAL",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const content = String(\n  $input.first().json.choices?.[0]?.message?.content ?? '',\n)\n  .trim()\n  .replace(/^```(?:json)?\\s*/i, '')\n  .replace(/\\s*```$/i, '');\n\nif (!content) {\n  throw new Error('OpenAI returned empty draft payload');\n}\n\nlet parsed;\ntry {\n  parsed = JSON.parse(content);\n} catch (e) {\n  throw new Error('OpenAI returned non-JSON draft payload');\n}\n\nfunction clean(value) {\n  return String(value ?? '')\n    .trim()\n    .replace(/^[\\\"'«»]+|[\\\"'«»]+$/g, '');\n}\n\nconst bodyEn = clean(parsed.body ?? parsed.bodyEn);\nconst bodyFr = clean(parsed.bodyFr);\n\nif (!bodyEn || !bodyFr) {\n  throw new Error('OpenAI JSON missing body / bodyFr');\n}\n\nconst max = 2000;\nfunction clip(text) {\n  return text.length <= max ? text : `${text.slice(0, max - 1).trimEnd()}…`;\n}\n\nreturn [{ json: { body: clip(bodyEn), bodyFr: clip(bodyFr) } }];"
+      },
+      "id": "f1a2b3c4-d5e6-7890-abcd-ef1234567004",
+      "name": "Parse draft",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [780, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { body: $json.body, bodyFr: $json.bodyFr } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "f1a2b3c4-d5e6-7890-abcd-ef1234567005",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1040, 0]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Prepare prompt", "type": "main", "index": 0 }]]
+    },
+    "Prepare prompt": {
+      "main": [[{ "node": "OpenAI Chat", "type": "main", "index": 0 }]]
+    },
+    "OpenAI Chat": {
+      "main": [[{ "node": "Parse draft", "type": "main", "index": 0 }]]
+    },
+    "Parse draft": {
+      "main": [[{ "node": "Respond", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "tags": []
+}

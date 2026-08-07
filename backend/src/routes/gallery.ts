@@ -44,7 +44,7 @@ export const galleryRoutes: FastifyPluginAsync = async (app) => {
         tags: ['gallery'],
         summary: 'Public pet gallery',
         description:
-          'Paginated list of all pets. Pets with a profile photo appear first, then by last update. Query: `limit` (1–60, default 24), `offset` (default 0). No authentication.',
+          'Paginated public pet gallery. Own pets remain visible (needed for friendships and public profiles). Pets with a profile photo appear first, then by last update. Query: `limit` (1–60, default 24), `offset` (default 0).',
         response: {
           200: galleryPetsResponseSchema,
           400: errorResponseSchema,

@@ -32,6 +32,7 @@ export interface Pet {
   description: string | null
   greeting: string | null
   greetingFr: string | null
+  virtualLifeEnabled: boolean
   weightKg: number | null
   color: string | null
   lengthCm: number | null

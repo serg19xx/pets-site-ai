@@ -39,6 +39,12 @@ const galleryPetItemSchema = {
     description: { type: ['string', 'null'] },
     greeting: { type: ['string', 'null'] },
     greetingFr: { type: ['string', 'null'] },
+    coverCaption: { type: ['string', 'null'] },
+    coverCaptionFr: { type: ['string', 'null'] },
+    latestVoice: { type: ['string', 'null'] },
+    latestVoiceFr: { type: ['string', 'null'] },
+    latestVoiceTemplate: { type: ['string', 'null'] },
+    virtualLifeEnabled: { type: 'boolean' },
     liked: { type: 'boolean' },
     likeCount: { type: 'integer' },
     photos: {
@@ -48,8 +54,10 @@ const galleryPetItemSchema = {
         properties: {
           id: { type: 'integer' },
           url: { type: 'string' },
+          caption: { type: ['string', 'null'] },
+          captionFr: { type: ['string', 'null'] },
         },
-        required: ['id', 'url'],
+        required: ['id', 'url', 'caption', 'captionFr'],
       },
     },
   },
@@ -64,6 +72,12 @@ const galleryPetItemSchema = {
     'description',
     'greeting',
     'greetingFr',
+    'coverCaption',
+    'coverCaptionFr',
+    'latestVoice',
+    'latestVoiceFr',
+    'latestVoiceTemplate',
+    'virtualLifeEnabled',
     'liked',
     'likeCount',
     'photos',
@@ -79,13 +93,67 @@ export const galleryPetsResponseSchema = {
   required: ['pets', 'total'],
 } as const
 
+const petFriendSummarySchema = {
+  type: 'object',
+  properties: {
+    id: { type: 'integer' },
+    name: { type: 'string' },
+    avatarUrl: { type: ['string', 'null'] },
+    species: {
+      type: 'object',
+      properties: {
+        slug: { type: 'string' },
+        label: { type: 'string' },
+      },
+      required: ['slug', 'label'],
+    },
+  },
+  required: ['id', 'name', 'avatarUrl', 'species'],
+} as const
+
+const petFriendExchangeLineSchema = {
+  type: 'object',
+  properties: {
+    speakerPetId: { type: 'integer' },
+    speakerName: { type: 'string' },
+    turn: { type: 'integer' },
+    body: { type: 'string' },
+    bodyFr: { type: 'string' },
+    createdAt: { type: 'string' },
+  },
+  required: [
+    'speakerPetId',
+    'speakerName',
+    'turn',
+    'body',
+    'bodyFr',
+    'createdAt',
+  ],
+} as const
+
+const petFriendExchangeSchema = {
+  type: 'object',
+  properties: {
+    friend: petFriendSummarySchema,
+    lines: { type: 'array', items: petFriendExchangeLineSchema },
+  },
+  required: ['friend', 'lines'],
+} as const
+
 const galleryPetDetailSchema = {
   type: 'object',
   properties: {
     ...galleryPetItemSchema.properties,
     member: publicMemberSchema,
+    friends: { type: 'array', items: petFriendSummarySchema },
+    friendExchanges: { type: 'array', items: petFriendExchangeSchema },
   },
-  required: [...galleryPetItemSchema.required, 'member'],
+  required: [
+    ...galleryPetItemSchema.required,
+    'member',
+    'friends',
+    'friendExchanges',
+  ],
 } as const
 
 export const galleryPetResponseSchema = {

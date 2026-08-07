@@ -13,6 +13,8 @@ import {
   resolveUploadAbsolutePath,
 } from '../lib/uploads.js'
 import { getPetById } from './pets.js'
+import { PET_EVENT_TYPES, recordPetEvent } from './pet-events.js'
+import { createPhotoPostDraft } from './pet-ai-drafts.js'
 
 const MAX_PHOTOS_PER_PET = 24
 
@@ -64,6 +66,8 @@ async function listPetPhotoRows(petId: number): Promise<PetPhotoRow[]> {
       pp.path,
       pp.sort_order,
       pp.created_at,
+      pp.caption,
+      pp.caption_fr,
       (pp.id = p.cover_photo_id) AS is_cover
     FROM pet_photos pp
     INNER JOIN pets p ON p.id = pp.pet_id
@@ -117,7 +121,7 @@ export async function uploadPetPhoto(
     const inserted = await pool.query<PetPhotoRow>(
       `INSERT INTO pet_photos (pet_id, path, sort_order)
        VALUES ($1, $2, $3)
-       RETURNING id, path, sort_order, created_at, FALSE AS is_cover`,
+       RETURNING id, path, sort_order, created_at, caption, caption_fr, FALSE AS is_cover`,
       [petId, relativePath, sortOrder],
     )
     const row = inserted.rows[0]
@@ -140,6 +144,22 @@ export async function uploadPetPhoto(
       await pool.query('UPDATE pets SET updated_at = NOW() WHERE id = $1', [petId])
     }
 
+    await recordPetEvent({
+      petId,
+      eventType: PET_EVENT_TYPES.PHOTO_UPLOADED,
+      payload: { photoId, isCover: Boolean(row.is_cover) },
+    })
+    const draft = await createPhotoPostDraft(petId, photoId)
+    if (draft) {
+      await pool.query(
+        `UPDATE pet_photos
+         SET caption = $1, caption_fr = $2
+         WHERE id = $3 AND pet_id = $4`,
+        [draft.body, draft.bodyFr, photoId, petId],
+      )
+      row.caption = draft.body
+      row.caption_fr = draft.bodyFr
+    }
     return mapPetPhotoRow(row)
   } catch (err) {
     await deleteUploadIfExists(relativePath)
@@ -196,6 +216,8 @@ export async function replacePetPhotoFile(
       pp.path,
       pp.sort_order,
       pp.created_at,
+      pp.caption,
+      pp.caption_fr,
       (pp.id = p.cover_photo_id) AS is_cover
     FROM pet_photos pp
     INNER JOIN pets p ON p.id = pp.pet_id

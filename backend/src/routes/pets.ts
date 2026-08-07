@@ -23,6 +23,15 @@ import {
   speciesListResponseSchema,
   updatePetBodySchema,
   upsertPetMedicalRecordBodySchema,
+  petPersonalityResponseSchema,
+  upsertPetPersonalityBodySchema,
+  petEventsListResponseSchema,
+  petMemoriesListResponseSchema,
+  petGoalsListResponseSchema,
+  petAiDraftsListResponseSchema,
+  createPetFriendshipBodySchema,
+  petFriendsListResponseSchema,
+  petFriendshipSuggestionsResponseSchema,
 } from '../schemas/pets.js'
 import { errorResponseSchema } from '../schemas/auth.js'
 import { listBreedsForSpecies, listPetSpecies } from '../services/pet-catalog.js'
@@ -58,6 +67,24 @@ import {
   uploadExternalParentPhoto,
   type UpsertParentInput,
 } from '../services/pet-parents.js'
+import {
+  getPetPersonality,
+  upsertPetPersonality,
+  type PetPersonalityInput,
+} from '../services/pet-personality.js'
+import { listPetEvents } from '../services/pet-events.js'
+import { listPetMemories } from '../services/pet-memories.js'
+import { listPetGoals, PET_GOAL_STATUSES } from '../services/pet-goals.js'
+import { listPetAiDrafts } from '../services/pet-ai-drafts.js'
+import {
+  createFriendship,
+  deleteFriendship,
+  listPetFriends,
+  listPendingFriendshipSuggestions,
+  generateFriendshipSuggestions,
+  approveFriendshipSuggestion,
+  declineFriendshipSuggestion,
+} from '../services/pet-friendships.js'
 import {
   deletePetPhoto,
   listPetPhotosForOwner,
@@ -98,6 +125,7 @@ interface UpdatePetBody {
   markings?: string | null
   physicalNotes?: string | null
   pedigreeNotes?: string | null
+  virtualLifeEnabled?: boolean
 }
 
 interface SetPetParentsBody {
@@ -325,6 +353,7 @@ export const petsRoutes: FastifyPluginAsync = async (app) => {
         markings: body.markings,
         physicalNotes: body.physicalNotes,
         pedigreeNotes: body.pedigreeNotes,
+        virtualLifeEnabled: body.virtualLifeEnabled,
       })
       return { pet }
     },
@@ -1071,6 +1100,443 @@ export const petsRoutes: FastifyPluginAsync = async (app) => {
       const photoId = parseIdParam(request.params.photoId, 'photo id')
       await deletePetMedicalPhoto(getUserId(request), petId, recordId, photoId)
       return reply.status(204).send()
+    },
+  )
+
+  app.get<{ Params: { id: string } }>(
+    '/pets/:id/personality',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['pets'],
+        summary: 'Get pet personality trait sliders (defaults to 5 if unset)',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id'],
+          properties: { id: { type: 'string' } },
+        },
+        response: {
+          200: petPersonalityResponseSchema,
+          401: errorResponseSchema,
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const petId = parseIdParam(request.params.id, 'pet id')
+      const personality = await getPetPersonality(getUserId(request), petId)
+      return { personality }
+    },
+  )
+
+  app.put<{ Params: { id: string }; Body: PetPersonalityInput }>(
+    '/pets/:id/personality',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['pets'],
+        summary: 'Create or update pet personality traits (1–10)',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id'],
+          properties: { id: { type: 'string' } },
+        },
+        body: upsertPetPersonalityBodySchema,
+        response: {
+          200: petPersonalityResponseSchema,
+          400: errorResponseSchema,
+          401: errorResponseSchema,
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const petId = parseIdParam(request.params.id, 'pet id')
+      const personality = await upsertPetPersonality(
+        getUserId(request),
+        petId,
+        request.body,
+      )
+      return { personality }
+    },
+  )
+
+  app.get<{
+    Params: { id: string }
+    Querystring: { limit?: number; offset?: number }
+  }>(
+    '/pets/:id/events',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['pets'],
+        summary: 'List pet lifecycle events (newest first)',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id'],
+          properties: { id: { type: 'string' } },
+        },
+        querystring: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            limit: { type: 'integer', minimum: 1, maximum: 100 },
+            offset: { type: 'integer', minimum: 0 },
+          },
+        },
+        response: {
+          200: petEventsListResponseSchema,
+          401: errorResponseSchema,
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const petId = parseIdParam(request.params.id, 'pet id')
+      return listPetEvents(getUserId(request), petId, {
+        limit: request.query.limit,
+        offset: request.query.offset,
+      })
+    },
+  )
+
+  app.get<{
+    Params: { id: string }
+    Querystring: { limit?: number; offset?: number; activeOnly?: boolean }
+  }>(
+    '/pets/:id/memories',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['pets'],
+        summary: 'List pet memories for AI context (owner API; no public UI yet)',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id'],
+          properties: { id: { type: 'string' } },
+        },
+        querystring: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            limit: { type: 'integer', minimum: 1, maximum: 100 },
+            offset: { type: 'integer', minimum: 0 },
+            activeOnly: { type: 'boolean' },
+          },
+        },
+        response: {
+          200: petMemoriesListResponseSchema,
+          401: errorResponseSchema,
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const petId = parseIdParam(request.params.id, 'pet id')
+      return listPetMemories(getUserId(request), petId, {
+        limit: request.query.limit,
+        offset: request.query.offset,
+        activeOnly: request.query.activeOnly,
+      })
+    },
+  )
+
+  app.get<{
+    Params: { id: string }
+    Querystring: { status?: 'active' | 'completed' | 'cancelled' | 'all' }
+  }>(
+    '/pets/:id/goals',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['pets'],
+        summary: 'List pet goals (backend rules; no public UI yet)',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id'],
+          properties: { id: { type: 'string' } },
+        },
+        querystring: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            status: {
+              type: 'string',
+              enum: ['active', 'completed', 'cancelled', 'all'],
+            },
+          },
+        },
+        response: {
+          200: petGoalsListResponseSchema,
+          401: errorResponseSchema,
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const petId = parseIdParam(request.params.id, 'pet id')
+      const status = request.query.status ?? PET_GOAL_STATUSES.ACTIVE
+      return listPetGoals(getUserId(request), petId, { status })
+    },
+  )
+
+  app.get<{
+    Params: { id: string }
+    Querystring: { limit?: number; offset?: number }
+  }>(
+    '/pets/:id/ai-drafts',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['pets'],
+        summary:
+          'List AI text drafts (not published to feed yet; no public UI)',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id'],
+          properties: { id: { type: 'string' } },
+        },
+        querystring: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            limit: { type: 'integer', minimum: 1, maximum: 100 },
+            offset: { type: 'integer', minimum: 0 },
+          },
+        },
+        response: {
+          200: petAiDraftsListResponseSchema,
+          401: errorResponseSchema,
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const petId = parseIdParam(request.params.id, 'pet id')
+      return listPetAiDrafts(getUserId(request), petId, {
+        limit: request.query.limit,
+        offset: request.query.offset,
+      })
+    },
+  )
+
+  app.get<{ Params: { id: string } }>(
+    '/pets/:id/friends',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['pets'],
+        summary: 'List friends of an owned pet',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id'],
+          properties: { id: { type: 'string' } },
+        },
+        response: {
+          200: petFriendsListResponseSchema,
+          401: errorResponseSchema,
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const petId = parseIdParam(request.params.id, 'pet id')
+      await getPetById(getUserId(request), petId)
+      return { friends: await listPetFriends(petId) }
+    },
+  )
+
+  app.post<{
+    Params: { id: string }
+    Body: { friendPetId: number }
+  }>(
+    '/pets/:id/friends',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['pets'],
+        summary: 'Make friends between an owned pet and another pet',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id'],
+          properties: { id: { type: 'string' } },
+        },
+        body: createPetFriendshipBodySchema,
+        response: {
+          200: petFriendsListResponseSchema,
+          400: errorResponseSchema,
+          401: errorResponseSchema,
+          404: errorResponseSchema,
+          409: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const fromPetId = parseIdParam(request.params.id, 'pet id')
+      const friendPetId = Number(request.body.friendPetId)
+      if (!Number.isInteger(friendPetId) || friendPetId < 1) {
+        throw new AppError(400, 'Invalid friend pet id', 'VALIDATION_ERROR')
+      }
+      return createFriendship(getUserId(request), fromPetId, friendPetId)
+    },
+  )
+
+  app.delete<{
+    Params: { id: string; friendPetId: string }
+  }>(
+    '/pets/:id/friends/:friendPetId',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['pets'],
+        summary: 'Remove a friendship (owner of either pet)',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id', 'friendPetId'],
+          properties: {
+            id: { type: 'string' },
+            friendPetId: { type: 'string' },
+          },
+        },
+        response: {
+          204: { type: 'null' },
+          400: errorResponseSchema,
+          401: errorResponseSchema,
+          403: errorResponseSchema,
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const petId = parseIdParam(request.params.id, 'pet id')
+      const friendPetId = parseIdParam(request.params.friendPetId, 'friend pet id')
+      await deleteFriendship(getUserId(request), petId, friendPetId)
+      return reply.code(204).send()
+    },
+  )
+
+  app.get<{ Params: { id: string } }>(
+    '/pets/:id/friend-suggestions',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['pets'],
+        summary: 'List pending friendship suggestions for an owned pet',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id'],
+          properties: { id: { type: 'string' } },
+        },
+        response: {
+          200: petFriendshipSuggestionsResponseSchema,
+          401: errorResponseSchema,
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const petId = parseIdParam(request.params.id, 'pet id')
+      return listPendingFriendshipSuggestions(getUserId(request), petId)
+    },
+  )
+
+  app.post<{ Params: { id: string } }>(
+    '/pets/:id/friend-suggestions/generate',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['pets'],
+        summary: 'Generate friendship suggestions (same species, other owners)',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id'],
+          properties: { id: { type: 'string' } },
+        },
+        response: {
+          200: petFriendshipSuggestionsResponseSchema,
+          400: errorResponseSchema,
+          401: errorResponseSchema,
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const petId = parseIdParam(request.params.id, 'pet id')
+      return generateFriendshipSuggestions(getUserId(request), petId)
+    },
+  )
+
+  app.post<{ Params: { id: string; suggestionId: string } }>(
+    '/pets/:id/friend-suggestions/:suggestionId/approve',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['pets'],
+        summary: 'Approve a friendship suggestion',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id', 'suggestionId'],
+          properties: {
+            id: { type: 'string' },
+            suggestionId: { type: 'string' },
+          },
+        },
+        response: {
+          200: petFriendsListResponseSchema,
+          400: errorResponseSchema,
+          401: errorResponseSchema,
+          404: errorResponseSchema,
+          409: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const petId = parseIdParam(request.params.id, 'pet id')
+      const suggestionId = parseIdParam(request.params.suggestionId, 'suggestion id')
+      return approveFriendshipSuggestion(getUserId(request), petId, suggestionId)
+    },
+  )
+
+  app.post<{ Params: { id: string; suggestionId: string } }>(
+    '/pets/:id/friend-suggestions/:suggestionId/decline',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['pets'],
+        summary: 'Decline a friendship suggestion',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id', 'suggestionId'],
+          properties: {
+            id: { type: 'string' },
+            suggestionId: { type: 'string' },
+          },
+        },
+        response: {
+          204: { type: 'null' },
+          401: errorResponseSchema,
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const petId = parseIdParam(request.params.id, 'pet id')
+      const suggestionId = parseIdParam(request.params.suggestionId, 'suggestion id')
+      await declineFriendshipSuggestion(getUserId(request), petId, suggestionId)
+      return reply.code(204).send()
     },
   )
 }

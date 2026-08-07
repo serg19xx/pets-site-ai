@@ -6,6 +6,7 @@ import { UI_ACTION_ICONS } from '~/lib/ui-icons'
 export interface LightboxPhoto {
   id: number
   url: string
+  caption?: string | null
 }
 
 const props = withDefaults(
@@ -150,13 +151,20 @@ onUnmounted(() => {
           <Icon :icon="UI_ACTION_ICONS.chevronLeft" class="ui-icon-lg" aria-hidden="true" />
         </button>
 
-        <img
-          :src="currentPhoto.url"
-          alt=""
-          class="ui-photo-lightbox-img"
-          decoding="async"
-          @click.stop
-        />
+        <div class="ui-photo-lightbox-frame" @click.stop>
+          <img
+            :src="currentPhoto.url"
+            alt=""
+            class="ui-photo-lightbox-img"
+            decoding="async"
+          />
+          <p
+            v-if="currentPhoto.caption"
+            class="ui-photo-lightbox-caption"
+          >
+            {{ currentPhoto.caption }}
+          </p>
+        </div>
 
         <button
           v-if="hasMultiple"

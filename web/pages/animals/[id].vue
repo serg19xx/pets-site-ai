@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import LikeButton from '~/components/LikeButton.vue'
 import PetAvatar from '~/components/PetAvatar.vue'
+import PetVirtualBadge from '~/components/PetVirtualBadge.vue'
 import PetPhotoGallery from '~/components/PetPhotoGallery.vue'
 import PetMemberLink from '~/components/PetMemberLink.vue'
 import PetProfileDetails from '~/components/PetProfileDetails.vue'
+import PetFriendsSection from '~/components/PetFriendsSection.vue'
 import PhotoLightbox, { type LightboxPhoto } from '~/components/PhotoLightbox.vue'
 import { ApiError } from '~/lib/auth-api'
+import { pickCoverCaption, pickLatestVoice, pickPetCaption } from '~/lib/pick-pet-caption'
 import { pickPetGreeting } from '~/lib/pick-pet-greeting'
 import { UI_ACTION_ICONS } from '~/lib/ui-icons'
 import { fetchGalleryPet } from '~/lib/pets-api'
@@ -19,7 +22,7 @@ const siteUrl = String(config.public.siteUrl).replace(/\/$/, '')
 const route = useRoute()
 const petId = computed(() => Number(route.params.id))
 
-const { data: pet, error: loadError, pending } = await useAsyncData(
+const { data: pet, error: loadError, pending, refresh } = await useAsyncData(
   () => `gallery-pet-${petId.value}-${locale.value}`,
   async () => {
     const id = petId.value
@@ -34,8 +37,16 @@ const { data: pet, error: loadError, pending } = await useAsyncData(
 
 const isLoading = computed(() => pending.value && !pet.value)
 
+const displayLatestVoice = computed(() =>
+  pet.value ? pickLatestVoice(pet.value, locale.value) : null,
+)
+
 const displayGreeting = computed(() =>
   pet.value ? pickPetGreeting(pet.value, locale.value) : null,
+)
+
+const displayCoverCaption = computed(() =>
+  pet.value ? pickCoverCaption(pet.value, locale.value) : null,
 )
 
 const subtitle = computed(() => {
@@ -52,9 +63,17 @@ const viewerPhotos = computed((): LightboxPhoto[] => {
   if (!p) {
     return []
   }
-  const items: LightboxPhoto[] = [...(p.photos ?? [])]
+  const items: LightboxPhoto[] = (p.photos ?? []).map((photo) => ({
+    id: photo.id,
+    url: photo.url,
+    caption: pickPetCaption(photo, locale.value),
+  }))
   if (p.avatarUrl && !items.some((photo) => photo.url === p.avatarUrl)) {
-    items.unshift({ id: 0, url: p.avatarUrl })
+    items.unshift({
+      id: 0,
+      url: p.avatarUrl,
+      caption: displayCoverCaption.value,
+    })
   }
   return items
 })
@@ -147,7 +166,10 @@ usePageSeo({
         <div class="ui-pet-hero-card">
           <div class="ui-pet-hero-head">
             <div class="ui-pet-hero-title">
-              <h1 class="ui-h1">{{ pet.name }}</h1>
+              <h1 class="ui-h1 flex flex-wrap items-center gap-2">
+                <span>{{ pet.name }}</span>
+                <PetVirtualBadge :enabled="pet.virtualLifeEnabled" />
+              </h1>
               <p class="ui-pet-hero-subtitle">{{ subtitle }}</p>
             </div>
             <LikeButton :pet-id="pet.id" :pet-name="pet.name" />
@@ -168,20 +190,36 @@ usePageSeo({
             </div>
           </div>
 
-          <div v-if="displayGreeting" class="ui-pet-hero-greeting">
+          <div v-if="displayGreeting" class="ui-pet-meet ui-pet-meet--hero lg:hidden">
             <p class="ui-pet-hero-greeting-label">{{ $t('pet.greetingLabel') }}</p>
             <blockquote class="ui-pet-greeting">
               <p>{{ displayGreeting }}</p>
             </blockquote>
           </div>
+
+          <div v-if="displayLatestVoice" class="ui-pet-hero-greeting">
+            <p class="ui-pet-hero-greeting-label">{{ $t('pet.latestVoiceLabel') }}</p>
+            <blockquote class="ui-pet-greeting">
+              <p>{{ displayLatestVoice }}</p>
+            </blockquote>
+          </div>
         </div>
 
-        <div
-          v-if="pet.description"
-          class="ui-pet-page-about-desktop ui-pet-description"
-        >
-          <h2 class="ui-section-title">{{ $t('pet.about') }}</h2>
-          <p class="ui-prose mt-3 whitespace-pre-wrap">{{ pet.description }}</p>
+        <div class="ui-pet-page-aside">
+          <div v-if="displayGreeting" class="ui-pet-meet ui-pet-meet--aside">
+            <p class="ui-pet-hero-greeting-label">{{ $t('pet.greetingLabel') }}</p>
+            <blockquote class="ui-pet-greeting">
+              <p>{{ displayGreeting }}</p>
+            </blockquote>
+          </div>
+
+          <div
+            v-if="pet.description"
+            class="ui-pet-page-about-desktop ui-pet-description"
+          >
+            <h2 class="ui-section-title">{{ $t('pet.about') }}</h2>
+            <p class="ui-prose mt-3 whitespace-pre-wrap">{{ pet.description }}</p>
+          </div>
         </div>
 
         <div
@@ -205,6 +243,8 @@ usePageSeo({
         :show-greeting="false"
         :show-about="false"
       />
+
+      <PetFriendsSection :target-pet="pet" class="mt-6" @updated="refresh" />
 
       <div
         v-if="pet.description"

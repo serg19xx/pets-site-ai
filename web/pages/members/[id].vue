@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import PetAvatar from '~/components/PetAvatar.vue'
+import PetVirtualBadge from '~/components/PetVirtualBadge.vue'
 import UserAvatar from '~/components/UserAvatar.vue'
 import { ApiError } from '~/lib/auth-api'
+import { pickGalleryCardVoice } from '~/lib/pick-pet-caption'
 import { fetchGalleryMember } from '~/lib/pets-api'
 import { UI_ACTION_ICONS } from '~/lib/ui-icons'
 import type { GalleryPet } from '~/types/gallery'
@@ -47,6 +49,19 @@ const errorMessage = computed(() => {
   return t('member.loadError')
 })
 
+function petPath(id: number) {
+  return localePath(`/animals/${id}`)
+}
+
+function speciesSubtitle(animal: GalleryPet) {
+  const b = animal.breed?.label
+  return b ? `${animal.species.label} · ${b}` : animal.species.label
+}
+
+function cardCaption(animal: GalleryPet) {
+  return pickGalleryCardVoice(animal, locale.value)
+}
+
 const pageTitle = computed(() =>
   member.value
     ? t('meta.member.titleNamed', { name: member.value.displayName })
@@ -66,15 +81,6 @@ usePageSeo({
   description: pageDescription,
   path: canonicalPath,
 })
-
-function speciesSubtitle(animal: GalleryPet) {
-  const b = animal.breed?.label
-  return b ? `${animal.species.label} · ${b}` : animal.species.label
-}
-
-function petPath(id: number) {
-  return localePath(`/animals/${id}`)
-}
 </script>
 
 <template>
@@ -128,7 +134,16 @@ function petPath(id: number) {
                 <PetAvatar :pet="animal" size="fill" />
               </div>
               <div class="ui-gallery-card-body">
-                <h3 class="ui-gallery-card-title">{{ animal.name }}</h3>
+                <p
+                  v-if="cardCaption(animal)"
+                  class="ui-gallery-card-caption"
+                >
+                  {{ cardCaption(animal) }}
+                </p>
+                <h3 class="ui-gallery-card-title flex flex-wrap items-center gap-2">
+                  <span>{{ animal.name }}</span>
+                  <PetVirtualBadge :enabled="animal.virtualLifeEnabled" />
+                </h3>
                 <p class="ui-gallery-card-meta">
                   {{ speciesSubtitle(animal) }}
                 </p>

@@ -634,8 +634,17 @@
     @apply relative flex min-h-0 flex-1 items-center justify-center;
   }
 
+  .ui-photo-lightbox-frame {
+    @apply flex max-h-full max-w-full flex-col items-center justify-center px-2;
+  }
+
   .ui-photo-lightbox-img {
-    @apply max-h-[min(85vh,900px)] max-w-full select-none object-contain;
+    @apply max-h-[min(75vh,820px)] max-w-full select-none object-contain;
+  }
+
+  .ui-photo-lightbox-caption {
+    @apply mt-3 max-w-2xl px-2 text-center text-sm leading-relaxed
+           text-white/95 italic sm:text-base;
   }
 
   .ui-photo-lightbox-nav {
@@ -707,6 +716,22 @@
     @apply h-full w-full min-h-0 min-w-0;
   }
 
+  .ui-pet-meet--hero {
+    @apply border-t border-(--ui-border) px-4 py-3;
+  }
+
+  .ui-pet-meet--hero .ui-pet-greeting {
+    @apply mt-2 border-0 bg-transparent p-0 dark:bg-transparent;
+  }
+
+  .ui-pet-page-aside {
+    @apply hidden min-w-0 space-y-6 lg:block;
+  }
+
+  .ui-pet-meet--aside {
+    @apply space-y-1.5;
+  }
+
   .ui-pet-hero-greeting {
     @apply border-t border-(--ui-border) px-4 py-3;
   }
@@ -720,7 +745,7 @@
   }
 
   .ui-pet-page-about-desktop {
-    @apply hidden min-w-0 lg:block;
+    @apply min-w-0;
   }
 
   .ui-pet-page-about-mobile {
@@ -729,6 +754,94 @@
 
   .ui-pet-profile {
     @apply space-y-5;
+  }
+
+  .ui-pet-meet {
+    @apply space-y-1.5;
+  }
+
+  .ui-pet-friends {
+    @apply space-y-3;
+  }
+
+  .ui-pet-friends-head {
+    @apply flex flex-wrap items-center justify-between gap-3;
+  }
+
+  .ui-pet-friends-actions {
+    @apply flex flex-wrap items-center gap-2;
+  }
+
+  .ui-pet-friends-list {
+    @apply m-0 grid list-none gap-2 p-0 sm:grid-cols-2;
+  }
+
+  .ui-pet-friend-link {
+    @apply flex items-center gap-3 rounded-(--radius-card) border border-(--ui-border)
+           bg-(--ui-surface) px-3 py-2 text-inherit no-underline
+           transition-colors hover:border-primary-300 dark:hover:border-primary-700;
+  }
+
+  .ui-pet-friend-meta {
+    @apply min-w-0 flex flex-col;
+  }
+
+  .ui-pet-friend-name {
+    @apply truncate font-medium text-stone-900 dark:text-stone-100;
+  }
+
+  .ui-pet-friend-species {
+    @apply truncate text-sm text-(--ui-text-muted);
+  }
+
+  .ui-pet-friends-modal {
+    @apply max-w-md;
+  }
+
+  .ui-pet-friends-picker-list {
+    @apply m-0 max-h-64 list-none space-y-1 overflow-y-auto px-4 py-3;
+  }
+
+  .ui-pet-friends-picker-item {
+    @apply flex cursor-pointer items-center gap-3 rounded-md px-2 py-2
+           hover:bg-stone-100 dark:hover:bg-stone-800/60;
+  }
+
+  .ui-pet-friends-picker-item input {
+    @apply shrink-0;
+  }
+
+  .ui-pet-friend-exchanges {
+    @apply space-y-3 border-t border-(--ui-border) pt-4;
+  }
+
+  .ui-pet-friend-exchanges-title {
+    @apply m-0 text-base font-semibold text-stone-900 dark:text-stone-100;
+  }
+
+  .ui-pet-friend-exchange {
+    @apply space-y-2;
+  }
+
+  .ui-pet-friend-exchange-with {
+    @apply text-sm font-medium text-primary-700 no-underline
+           hover:underline dark:text-primary-300;
+  }
+
+  .ui-pet-friend-exchange-lines {
+    @apply m-0 list-none space-y-2 p-0;
+  }
+
+  .ui-pet-friend-exchange-line {
+    @apply space-y-0.5;
+  }
+
+  .ui-pet-friend-exchange-speaker {
+    @apply text-xs font-medium uppercase tracking-wide text-(--ui-text-muted);
+  }
+
+  .ui-pet-friend-exchange-body {
+    @apply m-0 text-sm leading-relaxed text-stone-800 dark:text-stone-200;
   }
 
   .ui-pet-details {
@@ -989,7 +1102,19 @@
   }
 
   .ui-gallery-card-body {
-    @apply p-3;
+    @apply flex flex-1 flex-col gap-1.5 p-3;
+  }
+
+  .ui-gallery-card-caption {
+    @apply text-sm leading-snug text-(--ui-text) italic line-clamp-3;
+  }
+
+  .ui-gallery-card-caption::before {
+    content: '“';
+  }
+
+  .ui-gallery-card-caption::after {
+    content: '”';
   }
 
   .ui-gallery-card-title {
@@ -998,6 +1123,10 @@
 
   .ui-gallery-card-meta {
     @apply text-sm text-(--ui-text-subtle);
+  }
+
+  .ui-pet-photo-caption {
+    @apply mt-2 px-0.5 text-sm leading-snug text-(--ui-text) italic line-clamp-4;
   }
 
   /* —— Media / avatars —— */
@@ -1121,6 +1250,17 @@
   .ui-pet-photo-cover-badge {
     @apply pointer-events-none absolute top-1.5 left-1.5 z-20 rounded-full bg-(--ui-primary) px-2 py-0.5
            text-[10px] font-semibold uppercase tracking-wide text-white shadow-sm;
+  }
+
+  .ui-virtual-badge {
+    @apply inline-flex size-7 shrink-0 items-center justify-center align-middle;
+  }
+
+  .ui-virtual-badge-icon {
+    @apply block size-6 shrink-0;
+    min-width: 1.5rem;
+    min-height: 1.5rem;
+    filter: drop-shadow(0 1px 2px rgb(66 133 244 / 0.35));
   }
 
   .ui-pet-photo-actions {

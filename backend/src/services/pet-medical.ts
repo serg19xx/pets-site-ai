@@ -13,6 +13,10 @@ import {
   resolveUploadAbsolutePath,
 } from '../lib/uploads.js'
 import { getPetById } from './pets.js'
+import { PET_EVENT_TYPES, recordPetEvent } from './pet-events.js'
+import { PET_MEMORY_KINDS, recordPetMemory } from './pet-memories.js'
+import { completePetGoal, PET_GOAL_TYPES } from './pet-goals.js'
+import { createVeterinaryVisitDraft } from './pet-ai-drafts.js'
 
 const MAX_RECORDS_PER_PET = 100
 const MAX_PHOTOS_PER_RECORD = 6
@@ -274,7 +278,33 @@ export async function createPetMedicalRecord(
     throw new AppError(500, 'Failed to create medical record', 'INTERNAL_ERROR')
   }
   await pool.query('UPDATE pets SET updated_at = NOW() WHERE id = $1', [petId])
-  return mapRecord(row, [])
+  const record = mapRecord(row, [])
+  await recordPetEvent({
+    petId,
+    eventType: PET_EVENT_TYPES.MEDICAL_VISIT,
+    payload: {
+      recordId: record.id,
+      visitedOn: record.visitedOn,
+      procedureLabel: record.procedureLabel,
+    },
+  })
+  await recordPetMemory({
+    petId,
+    kind: PET_MEMORY_KINDS.FACT,
+    content: `Had a veterinary visit on ${record.visitedOn}: ${record.procedureLabel}.`,
+    importance: 6,
+    sourceEventType: PET_EVENT_TYPES.MEDICAL_VISIT,
+  })
+  await completePetGoal(petId, PET_GOAL_TYPES.VISIT_VETERINARIAN, {
+    recordId: record.id,
+    visitedOn: record.visitedOn,
+  })
+  await createVeterinaryVisitDraft(petId, {
+    recordId: record.id,
+    visitedOn: record.visitedOn,
+    procedureLabel: record.procedureLabel,
+  })
+  return record
 }
 
 export async function updatePetMedicalRecord(

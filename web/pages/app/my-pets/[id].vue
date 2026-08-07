@@ -5,6 +5,10 @@ import PetAvatar from '~/components/PetAvatar.vue'
 import PetCertificatesGallery from '~/components/PetCertificatesGallery.vue'
 import PetMedicalEditor from '~/components/PetMedicalEditor.vue'
 import PetPedigreeEditor from '~/components/PetPedigreeEditor.vue'
+import PetPersonalityEditor from '~/components/PetPersonalityEditor.vue'
+import PetAiDraftsPreview from '~/components/PetAiDraftsPreview.vue'
+import PetFriendSuggestions from '~/components/PetFriendSuggestions.vue'
+import PetVirtualBadge from '~/components/PetVirtualBadge.vue'
 import PetPhotoManager from '~/components/PetPhotoManager.vue'
 import { useEnumLabels } from '~/composables/useEnumLabels'
 import { UI_ACTION_ICONS } from '~/lib/ui-icons'
@@ -86,6 +90,9 @@ const sex = ref<PetSex>('unknown')
 const description = ref('')
 const greeting = ref('')
 const greetingFr = ref('')
+const virtualLifeEnabled = ref(false)
+const isSavingVirtualLife = ref(false)
+const aiDraftsRef = ref<{ reload: () => void } | null>(null)
 
 const weightKg = ref('')
 const color = ref('')
@@ -142,6 +149,19 @@ async function loadSpecies() {
   speciesOptions.value = species
 }
 
+function ensureSpeciesInOptions(species: {
+  id: number
+  slug: string
+  label: string
+}) {
+  if (speciesOptions.value.some((s) => s.id === species.id)) {
+    return
+  }
+  speciesOptions.value = [...speciesOptions.value, species].sort((a, b) =>
+    a.label.localeCompare(b.label),
+  )
+}
+
 async function loadBreedsForSpecies(sid: number | null) {
   if (!sid) {
     breeds.value = []
@@ -165,6 +185,7 @@ async function onSpeciesChange() {
 async function hydrateFromPet(pet: Pet) {
   localPet.value = pet
   name.value = pet.name
+  ensureSpeciesInOptions(pet.species)
   speciesId.value = pet.species.id
   await loadBreedsForSpecies(pet.species.id)
   breedId.value = pet.breed?.id ?? null
@@ -173,6 +194,7 @@ async function hydrateFromPet(pet: Pet) {
   description.value = pet.description ?? ''
   greeting.value = pet.greeting ?? ''
   greetingFr.value = pet.greetingFr ?? ''
+  virtualLifeEnabled.value = pet.virtualLifeEnabled === true
   weightKg.value = formatOptionalNumber(pet.weightKg)
   color.value = pet.color ?? ''
   lengthCm.value = formatOptionalNumber(pet.lengthCm)
@@ -194,6 +216,9 @@ async function loadEditPage(options: { soft?: boolean } = {}) {
     if (soft) {
       const keepBreed = breedId.value
       await loadSpecies()
+      if (localPet.value) {
+        ensureSpeciesInOptions(localPet.value.species)
+      }
       if (speciesId.value !== null) {
         await loadBreedsForSpecies(speciesId.value)
         breedId.value = keepBreed
@@ -344,6 +369,39 @@ async function regenerateGreeting() {
   }
 }
 
+async function onVirtualLifeChange(next: boolean) {
+  const token = auth.accessToken
+  if (!token || !petIdParam.value) {
+    return
+  }
+  const previous = virtualLifeEnabled.value
+  virtualLifeEnabled.value = next
+  isSavingVirtualLife.value = true
+  formError.value = ''
+  successMessage.value = ''
+  try {
+    const { pet } = await updatePet(token, petIdParam.value, {
+      virtualLifeEnabled: next,
+    })
+    await hydrateFromPet(pet)
+    successMessage.value = next
+      ? t('myPets.virtualLife.savedOn')
+      : t('myPets.virtualLife.savedOff')
+    if (next) {
+      aiDraftsRef.value?.reload()
+    }
+  } catch (error) {
+    virtualLifeEnabled.value = previous
+    if (error instanceof ApiError) {
+      formError.value = error.message
+    } else {
+      formError.value = t('myPets.virtualLife.saveError')
+    }
+  } finally {
+    isSavingVirtualLife.value = false
+  }
+}
+
 async function confirmDelete() {
   if (!petIdParam.value || !auth.accessToken) {
     return
@@ -380,8 +438,9 @@ async function confirmDelete() {
       </NuxtLink>
     </div>
 
-    <h1 class="ui-page-title">
-      {{ $t('myPets.editTitle') }}
+    <h1 class="ui-page-title flex flex-wrap items-center gap-2">
+      <span>{{ $t('myPets.editTitle') }}</span>
+      <PetVirtualBadge :enabled="virtualLifeEnabled" />
     </h1>
 
     <p v-if="isLoading" class="ui-page-subtitle mt-2">{{ $t('common.loading') }}</p>
@@ -673,14 +732,46 @@ async function confirmDelete() {
       />
 
       <div
-        v-if="activeTab === 'ai'"
-        class="ui-card mt-2 p-4"
+        v-if="activeTab === 'ai' && petIdParam"
+        class="mt-2 space-y-6"
       >
-        <p class="text-sm font-medium">{{ $t('myPets.tabComingSoon') }}</p>
-        <p class="ui-hint mt-2">{{ $t('myPets.tabAiHint') }}</p>
-        <div class="mt-4 flex justify-center opacity-60">
-          <PetAvatar :species-slug="selectedSpeciesSlug" size="md" />
+        <p class="ui-hint">{{ $t('myPets.tabAiHint') }}</p>
+
+        <div class="ui-card space-y-3 p-4">
+          <h2 class="text-base font-semibold">{{ $t('myPets.virtualLife.title') }}</h2>
+          <p class="ui-hint">{{ $t('myPets.virtualLife.hint') }}</p>
+          <label class="flex items-start gap-3 text-sm">
+            <input
+              type="checkbox"
+              class="mt-1 size-4 accent-(--ui-accent)"
+              :checked="virtualLifeEnabled"
+              :disabled="isSavingVirtualLife || isLoading"
+              @change="onVirtualLifeChange(($event.target as HTMLInputElement).checked)"
+            />
+            <span>
+              {{
+                virtualLifeEnabled
+                  ? $t('myPets.virtualLife.enabled')
+                  : $t('myPets.virtualLife.disabled')
+              }}
+            </span>
+          </label>
         </div>
+
+        <PetPersonalityEditor
+          :pet-id="petIdParam"
+        />
+
+        <PetFriendSuggestions
+          :pet-id="petIdParam"
+          :virtual-life-enabled="virtualLifeEnabled"
+        />
+
+        <PetAiDraftsPreview
+          ref="aiDraftsRef"
+          :pet-id="petIdParam"
+          :virtual-life-enabled="virtualLifeEnabled"
+        />
       </div>
     </template>
   </section>

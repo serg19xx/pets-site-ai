@@ -3,12 +3,12 @@ import { computed } from 'vue'
 
 import { getDefaultPetAvatarSvg } from '~/assets/animal_avatars'
 import { mediaUrl } from '~/lib/media'
-import type { GalleryPet } from '~/types/gallery'
+import type { GalleryPet, PetFriendSummary } from '~/types/gallery'
 import type { Pet } from '~/types/pet'
 
 const props = withDefaults(
   defineProps<{
-    pet?: Pet | GalleryPet | null
+    pet?: Pet | GalleryPet | PetFriendSummary | null
     /** When creating a pet (no `pet` yet), default art from species slug (e.g. `dog`). */
     speciesSlug?: string
     size?: 'sm' | 'md' | 'lg' | 'fill'

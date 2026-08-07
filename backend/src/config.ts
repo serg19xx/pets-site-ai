@@ -101,11 +101,12 @@ export const config = {
   twilioAuthToken: readEnv('TWILIO_AUTH_TOKEN'),
   twilioFromNumber: readEnv('TWILIO_FROM_NUMBER'),
   /**
-   * Optional n8n webhooks (OVH). When unset, API uses local template greetings.
-   * See agents/n8n/docs/pet-greeting.md
+   * Optional n8n webhooks (OVH). When unset, API uses local templates.
+   * See agents/n8n/docs/pet-greeting.md and pet-ai-draft.md
    */
   n8n: {
     petGreetingWebhookUrl: readEnv('N8N_PET_GREETING_WEBHOOK_URL'),
+    petAiDraftWebhookUrl: readEnv('N8N_PET_AI_DRAFT_WEBHOOK_URL'),
     webhookSecret: readEnv('N8N_WEBHOOK_SECRET'),
     timeoutMs: Number(readEnv('N8N_TIMEOUT_MS') ?? '20000'),
   },

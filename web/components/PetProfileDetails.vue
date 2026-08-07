@@ -53,9 +53,12 @@ const displayGreeting = computed(() => pickPetGreeting(props.pet, locale.value))
       </div>
     </dl>
 
-    <blockquote v-if="showGreeting && displayGreeting" class="ui-pet-greeting">
-      <p>{{ displayGreeting }}</p>
-    </blockquote>
+    <div v-if="showGreeting && displayGreeting" class="ui-pet-meet">
+      <p class="ui-pet-hero-greeting-label">{{ $t('pet.greetingLabel') }}</p>
+      <blockquote class="ui-pet-greeting">
+        <p>{{ displayGreeting }}</p>
+      </blockquote>
+    </div>
 
     <div v-if="showAbout && pet.description" class="ui-pet-description">
       <h2 class="ui-section-title">{{ $t('pet.about') }}</h2>

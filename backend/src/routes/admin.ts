@@ -10,6 +10,10 @@ import {
   listBetaAnnouncements,
 } from '../services/beta-announcements.js'
 import { listBetaTesterStats } from '../services/beta-tester-stats.js'
+import {
+  listAdminPetSpecies,
+  setPetSpeciesActive,
+} from '../services/pet-catalog.js'
 
 const adminMeSchema = {
   type: 'object',
@@ -301,6 +305,104 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
         linkPath: request.body.linkPath,
       })
       return reply.status(201).send({ announcement })
+    },
+  )
+
+  app.get(
+    '/admin/species',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['admin'],
+        summary: 'List all pet species with launch visibility',
+        security: [{ bearerAuth: [] }],
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              species: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'integer' },
+                    slug: { type: 'string' },
+                    label: { type: 'string' },
+                    isActive: { type: 'boolean' },
+                    petCount: { type: 'integer' },
+                  },
+                  required: ['id', 'slug', 'label', 'isActive', 'petCount'],
+                },
+              },
+            },
+            required: ['species'],
+          },
+          401: errorResponseSchema,
+          403: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      await assertAdmin(getUserId(request))
+      const species = await listAdminPetSpecies()
+      return { species }
+    },
+  )
+
+  app.patch<{ Params: { id: string }; Body: { isActive: boolean } }>(
+    '/admin/species/:id',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['admin'],
+        summary: 'Enable or disable a species in create/edit pickers',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id'],
+          properties: { id: { type: 'string' } },
+        },
+        body: {
+          type: 'object',
+          additionalProperties: false,
+          required: ['isActive'],
+          properties: {
+            isActive: { type: 'boolean' },
+          },
+        },
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              species: {
+                type: 'object',
+                properties: {
+                  id: { type: 'integer' },
+                  slug: { type: 'string' },
+                  label: { type: 'string' },
+                  isActive: { type: 'boolean' },
+                  petCount: { type: 'integer' },
+                },
+                required: ['id', 'slug', 'label', 'isActive', 'petCount'],
+              },
+            },
+            required: ['species'],
+          },
+          400: errorResponseSchema,
+          401: errorResponseSchema,
+          403: errorResponseSchema,
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      await assertAdmin(getUserId(request))
+      const id = Number(request.params.id)
+      if (!Number.isInteger(id) || id < 1) {
+        throw new AppError(400, 'Invalid species id', 'VALIDATION_ERROR')
+      }
+      const species = await setPetSpeciesActive(id, request.body.isActive)
+      return { species }
     },
   )
 }

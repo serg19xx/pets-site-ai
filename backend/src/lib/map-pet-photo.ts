@@ -6,6 +6,8 @@ export interface PetPhoto {
   sortOrder: number
   createdAt: string
   isCover: boolean
+  caption: string | null
+  captionFr: string | null
 }
 
 type PetPhotoRow = {
@@ -14,6 +16,8 @@ type PetPhotoRow = {
   sort_order: number
   created_at: Date
   is_cover: boolean
+  caption: string | null
+  caption_fr: string | null
 }
 
 export type { PetPhotoRow }
@@ -27,5 +31,7 @@ export function mapPetPhotoRow(row: PetPhotoRow): PetPhoto {
     sortOrder: row.sort_order,
     createdAt,
     isCover: Boolean(row.is_cover),
+    caption: row.caption?.trim() || null,
+    captionFr: row.caption_fr?.trim() || null,
   }
 }

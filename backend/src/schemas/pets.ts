@@ -43,6 +43,7 @@ export const petResponseSchema = {
     markings: { type: ['string', 'null'] },
     physicalNotes: { type: ['string', 'null'] },
     pedigreeNotes: { type: ['string', 'null'] },
+    virtualLifeEnabled: { type: 'boolean' },
     createdAt: { type: 'string' },
     updatedAt: { type: 'string' },
   },
@@ -66,6 +67,7 @@ export const petResponseSchema = {
     'markings',
     'physicalNotes',
     'pedigreeNotes',
+    'virtualLifeEnabled',
     'createdAt',
     'updatedAt',
   ],
@@ -121,6 +123,7 @@ export const updatePetBodySchema = {
     markings: { type: ['string', 'null'], maxLength: 500 },
     physicalNotes: { type: ['string', 'null'], maxLength: 2000 },
     pedigreeNotes: { type: ['string', 'null'], maxLength: 2000 },
+    virtualLifeEnabled: { type: 'boolean' },
   },
 } as const
 
@@ -164,8 +167,18 @@ export const petPhotoSchema = {
     sortOrder: { type: 'integer' },
     createdAt: { type: 'string' },
     isCover: { type: 'boolean' },
+    caption: { type: ['string', 'null'] },
+    captionFr: { type: ['string', 'null'] },
   },
-  required: ['id', 'url', 'sortOrder', 'createdAt', 'isCover'],
+  required: [
+    'id',
+    'url',
+    'sortOrder',
+    'createdAt',
+    'isCover',
+    'caption',
+    'captionFr',
+  ],
 } as const
 
 export const setPetCoverBodySchema = {
@@ -389,4 +402,251 @@ export const petMedicalPhotoSingleResponseSchema = {
     photo: petMedicalPhotoSchema,
   },
   required: ['photo'],
+} as const
+
+const personalityTraitSchema = {
+  type: 'integer',
+  minimum: 1,
+  maximum: 10,
+} as const
+
+export const petPersonalitySchema = {
+  type: 'object',
+  properties: {
+    energy: personalityTraitSchema,
+    friendliness: personalityTraitSchema,
+    curiosity: personalityTraitSchema,
+    confidence: personalityTraitSchema,
+    humor: personalityTraitSchema,
+    talkativeness: personalityTraitSchema,
+    affection: personalityTraitSchema,
+    playfulness: personalityTraitSchema,
+    bravery: personalityTraitSchema,
+    patience: personalityTraitSchema,
+    updatedAt: { type: ['string', 'null'] },
+  },
+  required: [
+    'energy',
+    'friendliness',
+    'curiosity',
+    'confidence',
+    'humor',
+    'talkativeness',
+    'affection',
+    'playfulness',
+    'bravery',
+    'patience',
+    'updatedAt',
+  ],
+} as const
+
+export const petPersonalityResponseSchema = {
+  type: 'object',
+  properties: {
+    personality: petPersonalitySchema,
+  },
+  required: ['personality'],
+} as const
+
+export const upsertPetPersonalityBodySchema = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    energy: personalityTraitSchema,
+    friendliness: personalityTraitSchema,
+    curiosity: personalityTraitSchema,
+    confidence: personalityTraitSchema,
+    humor: personalityTraitSchema,
+    talkativeness: personalityTraitSchema,
+    affection: personalityTraitSchema,
+    playfulness: personalityTraitSchema,
+    bravery: personalityTraitSchema,
+    patience: personalityTraitSchema,
+  },
+} as const
+
+export const petEventSchema = {
+  type: 'object',
+  properties: {
+    id: { type: 'integer' },
+    petId: { type: 'integer' },
+    eventType: { type: 'string' },
+    payload: { type: 'object', additionalProperties: true },
+    createdAt: { type: 'string' },
+  },
+  required: ['id', 'petId', 'eventType', 'payload', 'createdAt'],
+} as const
+
+export const petEventsListResponseSchema = {
+  type: 'object',
+  properties: {
+    events: { type: 'array', items: petEventSchema },
+    total: { type: 'integer' },
+  },
+  required: ['events', 'total'],
+} as const
+
+export const petMemorySchema = {
+  type: 'object',
+  properties: {
+    id: { type: 'integer' },
+    petId: { type: 'integer' },
+    kind: { type: 'string' },
+    content: { type: 'string' },
+    importance: { type: 'integer' },
+    sourceEventType: { type: ['string', 'null'] },
+    isActive: { type: 'boolean' },
+    createdAt: { type: 'string' },
+  },
+  required: [
+    'id',
+    'petId',
+    'kind',
+    'content',
+    'importance',
+    'sourceEventType',
+    'isActive',
+    'createdAt',
+  ],
+} as const
+
+export const petMemoriesListResponseSchema = {
+  type: 'object',
+  properties: {
+    memories: { type: 'array', items: petMemorySchema },
+    total: { type: 'integer' },
+  },
+  required: ['memories', 'total'],
+} as const
+
+export const petGoalSchema = {
+  type: 'object',
+  properties: {
+    id: { type: 'integer' },
+    petId: { type: 'integer' },
+    goalType: { type: 'string' },
+    status: { type: 'string' },
+    priority: { type: 'integer' },
+    payload: { type: 'object', additionalProperties: true },
+    createdAt: { type: 'string' },
+    updatedAt: { type: 'string' },
+  },
+  required: [
+    'id',
+    'petId',
+    'goalType',
+    'status',
+    'priority',
+    'payload',
+    'createdAt',
+    'updatedAt',
+  ],
+} as const
+
+export const petGoalsListResponseSchema = {
+  type: 'object',
+  properties: {
+    goals: { type: 'array', items: petGoalSchema },
+  },
+  required: ['goals'],
+} as const
+
+export const petAiDraftSchema = {
+  type: 'object',
+  properties: {
+    id: { type: 'integer' },
+    petId: { type: 'integer' },
+    templateKey: { type: 'string' },
+    status: { type: 'string' },
+    body: { type: 'string' },
+    bodyFr: { type: 'string' },
+    sourceEventType: { type: ['string', 'null'] },
+    payload: { type: 'object', additionalProperties: true },
+    createdAt: { type: 'string' },
+    updatedAt: { type: 'string' },
+  },
+  required: [
+    'id',
+    'petId',
+    'templateKey',
+    'status',
+    'body',
+    'bodyFr',
+    'sourceEventType',
+    'payload',
+    'createdAt',
+    'updatedAt',
+  ],
+} as const
+
+export const petAiDraftsListResponseSchema = {
+  type: 'object',
+  properties: {
+    drafts: { type: 'array', items: petAiDraftSchema },
+    total: { type: 'integer' },
+  },
+  required: ['drafts', 'total'],
+} as const
+
+export const petFriendSummarySchema = {
+  type: 'object',
+  properties: {
+    id: { type: 'integer' },
+    name: { type: 'string' },
+    avatarUrl: { type: ['string', 'null'] },
+    species: {
+      type: 'object',
+      properties: {
+        slug: { type: 'string' },
+        label: { type: 'string' },
+      },
+      required: ['slug', 'label'],
+    },
+  },
+  required: ['id', 'name', 'avatarUrl', 'species'],
+} as const
+
+export const createPetFriendshipBodySchema = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['friendPetId'],
+  properties: {
+    friendPetId: { type: 'integer', minimum: 1 },
+  },
+} as const
+
+export const petFriendsListResponseSchema = {
+  type: 'object',
+  properties: {
+    friends: { type: 'array', items: petFriendSummarySchema },
+  },
+  required: ['friends'],
+} as const
+
+export const petFriendshipSuggestionSchema = {
+  type: 'object',
+  properties: {
+    id: { type: 'integer' },
+    fromPetId: { type: 'integer' },
+    toPetId: { type: 'integer' },
+    status: { type: 'string' },
+    createdAt: { type: 'string' },
+    candidate: petFriendSummarySchema,
+  },
+  required: [
+    'id',
+    'fromPetId',
+    'toPetId',
+    'status',
+    'createdAt',
+    'candidate',
+  ],
+} as const
+
+export const petFriendshipSuggestionsResponseSchema = {
+  type: 'object',
+  properties: {
+    suggestions: { type: 'array', items: petFriendshipSuggestionSchema },
+  },
+  required: ['suggestions'],
 } as const

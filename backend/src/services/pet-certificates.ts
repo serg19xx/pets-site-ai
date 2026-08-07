@@ -13,6 +13,8 @@ import {
   buildPublicUploadUrl,
 } from '../lib/uploads.js'
 import { getPetById } from './pets.js'
+import { PET_EVENT_TYPES, recordPetEvent } from './pet-events.js'
+import { PET_MEMORY_KINDS, recordPetMemory } from './pet-memories.js'
 
 const MAX_CERTIFICATES_PER_PET = 12
 
@@ -137,7 +139,20 @@ export async function uploadPetCertificate(
       throw new AppError(500, 'Failed to save certificate', 'INTERNAL_ERROR')
     }
     await pool.query('UPDATE pets SET updated_at = NOW() WHERE id = $1', [petId])
-    return mapCertificateRow(row)
+    const certificate = mapCertificateRow(row)
+    await recordPetEvent({
+      petId,
+      eventType: PET_EVENT_TYPES.CERTIFICATE_UPLOADED,
+      payload: { certificateId: certificate.id },
+    })
+    await recordPetMemory({
+      petId,
+      kind: PET_MEMORY_KINDS.ACHIEVEMENT,
+      content: 'Received an official certificate (birth / genetic / other document on file).',
+      importance: 7,
+      sourceEventType: PET_EVENT_TYPES.CERTIFICATE_UPLOADED,
+    })
+    return certificate
   } catch (err) {
     await deleteUploadIfExists(relativePath)
     throw err

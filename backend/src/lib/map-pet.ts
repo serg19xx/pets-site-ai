@@ -32,6 +32,7 @@ export interface Pet {
   markings: string | null
   physicalNotes: string | null
   pedigreeNotes: string | null
+  virtualLifeEnabled: boolean
   createdAt: string
   updatedAt: string
 }
@@ -57,6 +58,7 @@ type PetRow = {
   markings: string | null
   physical_notes: string | null
   pedigree_notes: string | null
+  virtual_life_enabled: boolean
   date_of_birth: Date
   sex: PetSex
   created_at: Date
@@ -110,6 +112,7 @@ export function mapPetRow(row: PetRow): Pet {
     markings: row.markings,
     physicalNotes: row.physical_notes,
     pedigreeNotes: row.pedigree_notes,
+    virtualLifeEnabled: Boolean(row.virtual_life_enabled),
     createdAt: formatIso(row.created_at),
     updatedAt: formatIso(row.updated_at),
   }

@@ -221,6 +221,32 @@ export async function createBetaAnnouncement(
   })
 }
 
+export interface AdminSpeciesRow {
+  id: number
+  slug: string
+  label: string
+  isActive: boolean
+  petCount: number
+}
+
+export async function fetchAdminSpecies(
+  accessToken: string,
+): Promise<{ species: AdminSpeciesRow[] }> {
+  return requestJson('/api/admin/species', { accessToken })
+}
+
+export async function setAdminSpeciesActive(
+  speciesId: number,
+  isActive: boolean,
+  accessToken: string,
+): Promise<{ species: AdminSpeciesRow }> {
+  return requestJson(`/api/admin/species/${speciesId}`, {
+    method: 'PATCH',
+    accessToken,
+    body: JSON.stringify({ isActive }),
+  })
+}
+
 export function mediaUrl(path: string | null | undefined): string | null {
   if (!path) {
     return null
