@@ -220,11 +220,10 @@ async function getRecordById(
   return mapRecord(row, photosMap.get(recordId) ?? [])
 }
 
-export async function listPetMedicalRecords(
-  userId: number,
+/** Medical visits for a public pet profile (no ownership check). */
+export async function listPetMedicalRecordsPublic(
   petId: number,
 ): Promise<PetMedicalRecord[]> {
-  await getPetById(userId, petId)
   const r = await pool.query<RecordRow>(
     `SELECT id, visited_on, clinic_name, doctor_name, procedure_label, notes,
             created_at, updated_at
@@ -236,6 +235,14 @@ export async function listPetMedicalRecords(
   const ids = r.rows.map((row) => Number(row.id))
   const photosMap = await loadPhotosForRecords(ids)
   return r.rows.map((row) => mapRecord(row, photosMap.get(Number(row.id)) ?? []))
+}
+
+export async function listPetMedicalRecords(
+  userId: number,
+  petId: number,
+): Promise<PetMedicalRecord[]> {
+  await getPetById(userId, petId)
+  return listPetMedicalRecordsPublic(petId)
 }
 
 export async function createPetMedicalRecord(

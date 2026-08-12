@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { getDefaultPetAvatarSvg } from '~/assets/animal_avatars'
+import { getDefaultPetAvatarDataUri } from '~/assets/animal_avatars'
 import { mediaUrl } from '~/lib/media'
 import type { GalleryPet, PetFriendSummary } from '~/types/gallery'
 import type { Pet } from '~/types/pet'
@@ -22,9 +22,9 @@ const props = withDefaults(
 
 const imageSrc = computed(() => mediaUrl(props.pet?.avatarUrl ?? null))
 
-const defaultSvg = computed(() => {
+const fallbackSrc = computed(() => {
   const slug = props.pet?.species.slug ?? props.speciesSlug ?? 'cat'
-  return getDefaultPetAvatarSvg(slug)
+  return getDefaultPetAvatarDataUri(slug)
 })
 
 const ariaLabel = computed(() => {
@@ -55,29 +55,10 @@ const ringClass = computed(() =>
 <template>
   <span class="ui-avatar-ring" :class="[displayClass, sizeClass, ringClass]">
     <img
-      v-if="imageSrc"
-      :src="imageSrc"
+      :src="imageSrc || fallbackSrc"
       :alt="ariaLabel"
       class="h-full w-full object-cover"
-    />
-    <span
-      v-else
-      class="pet-avatar-fallback flex h-full w-full items-center justify-center"
-      role="img"
-      :aria-label="ariaLabel"
-      v-html="defaultSvg"
     />
   </span>
 </template>
 
-<style scoped>
-.pet-avatar-fallback {
-  background: var(--ui-surface-muted);
-}
-
-.pet-avatar-fallback :deep(svg) {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-</style>

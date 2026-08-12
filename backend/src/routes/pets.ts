@@ -12,6 +12,9 @@ import {
   petMedicalPhotoSingleResponseSchema,
   petMedicalRecordSingleResponseSchema,
   petMedicalRecordsListResponseSchema,
+  petMedicalRequestSingleResponseSchema,
+  petMedicalRequestsListResponseSchema,
+  petMedicalShareViewSchema,
   petParentsResponseSchema,
   petParentSingleResponseSchema,
   petSingleResponseSchema,
@@ -59,6 +62,13 @@ import {
   uploadPetMedicalPhoto,
   type UpsertMedicalRecordInput,
 } from '../services/pet-medical.js'
+import {
+  approveMedicalRequest,
+  declineMedicalRequest,
+  getMedicalShareByPet,
+  getMedicalShareByToken,
+  listOwnerMedicalRequests,
+} from '../services/pet-medical-requests.js'
 import {
   deleteExternalParentPhoto,
   getPetParents,
@@ -877,6 +887,157 @@ export const petsRoutes: FastifyPluginAsync = async (app) => {
       const petId = parseIdParam(request.params.id, 'pet id')
       const records = await listPetMedicalRecords(getUserId(request), petId)
       return { records }
+    },
+  )
+
+  app.get<{ Params: { id: string } }>(
+    '/pets/:id/medical-requests',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['pets'],
+        summary: 'List medical record requests for a pet you own',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id'],
+          properties: { id: { type: 'string' } },
+        },
+        response: {
+          200: petMedicalRequestsListResponseSchema,
+          401: errorResponseSchema,
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const petId = parseIdParam(request.params.id, 'pet id')
+      return listOwnerMedicalRequests(getUserId(request), petId)
+    },
+  )
+
+  app.post<{ Params: { id: string; requestId: string } }>(
+    '/pets/:id/medical-requests/:requestId/approve',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['pets'],
+        summary: 'Approve a medical records request (2-hour share for the requester)',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id', 'requestId'],
+          properties: {
+            id: { type: 'string' },
+            requestId: { type: 'string' },
+          },
+        },
+        response: {
+          200: petMedicalRequestSingleResponseSchema,
+          401: errorResponseSchema,
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const petId = parseIdParam(request.params.id, 'pet id')
+      const requestId = parseIdParam(request.params.requestId, 'request id')
+      const result = await approveMedicalRequest(
+        getUserId(request),
+        petId,
+        requestId,
+      )
+      return { request: result }
+    },
+  )
+
+  app.post<{ Params: { id: string; requestId: string } }>(
+    '/pets/:id/medical-requests/:requestId/decline',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['pets'],
+        summary: 'Decline a medical records request',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id', 'requestId'],
+          properties: {
+            id: { type: 'string' },
+            requestId: { type: 'string' },
+          },
+        },
+        response: {
+          200: petMedicalRequestSingleResponseSchema,
+          401: errorResponseSchema,
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const petId = parseIdParam(request.params.id, 'pet id')
+      const requestId = parseIdParam(request.params.requestId, 'request id')
+      const result = await declineMedicalRequest(
+        getUserId(request),
+        petId,
+        requestId,
+      )
+      return { request: result }
+    },
+  )
+
+  app.get<{ Params: { id: string } }>(
+    '/pets/:id/medical-share',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['pets'],
+        summary: 'Requester: view an approved medical share for this pet',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id'],
+          properties: { id: { type: 'string' } },
+        },
+        response: {
+          200: petMedicalShareViewSchema,
+          401: errorResponseSchema,
+          403: errorResponseSchema,
+          404: errorResponseSchema,
+          410: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const petId = parseIdParam(request.params.id, 'pet id')
+      return getMedicalShareByPet(getUserId(request), petId)
+    },
+  )
+
+  app.get<{ Params: { token: string } }>(
+    '/medical-share/:token',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['pets'],
+        summary: 'Requester: view an approved medical share by email token',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['token'],
+          properties: { token: { type: 'string', minLength: 16 } },
+        },
+        response: {
+          200: petMedicalShareViewSchema,
+          401: errorResponseSchema,
+          403: errorResponseSchema,
+          404: errorResponseSchema,
+          410: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      return getMedicalShareByToken(getUserId(request), request.params.token)
     },
   )
 

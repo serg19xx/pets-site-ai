@@ -260,9 +260,8 @@ function friendPath(id: number) {
       </article>
     </div>
 
-    <Teleport to="body">
+    <Teleport v-if="pickerOpen" to="body">
       <div
-        v-if="pickerOpen"
         class="ui-modal-backdrop"
         role="dialog"
         aria-modal="true"

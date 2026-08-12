@@ -6,21 +6,30 @@ import PetPhotoGallery from '~/components/PetPhotoGallery.vue'
 import PetMemberLink from '~/components/PetMemberLink.vue'
 import PetProfileDetails from '~/components/PetProfileDetails.vue'
 import PetFriendsSection from '~/components/PetFriendsSection.vue'
+import PetMedicalRequest from '~/components/PetMedicalRequest.vue'
+import PetPublicDossier from '~/components/PetPublicDossier.vue'
 import PhotoLightbox, { type LightboxPhoto } from '~/components/PhotoLightbox.vue'
 import { ApiError } from '~/lib/auth-api'
 import { pickCoverCaption, pickLatestVoice, pickPetCaption } from '~/lib/pick-pet-caption'
 import { pickPetGreeting } from '~/lib/pick-pet-greeting'
 import { UI_ACTION_ICONS } from '~/lib/ui-icons'
 import { fetchGalleryPet } from '~/lib/pets-api'
+import { useAuthStore } from '~/stores/auth'
 import type { GalleryPet } from '~/types/gallery'
 
 const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const config = useRuntimeConfig()
 const siteUrl = String(config.public.siteUrl).replace(/\/$/, '')
+const auth = useAuthStore()
+const authUiReady = useAuthUiReady()
 
 const route = useRoute()
 const petId = computed(() => Number(route.params.id))
+
+const isMemberView = computed(
+  () => authUiReady.value && auth.isAuthenticated && Boolean(auth.accessToken),
+)
 
 const { data: pet, error: loadError, pending, refresh } = await useAsyncData(
   () => `gallery-pet-${petId.value}-${locale.value}`,
@@ -29,11 +38,25 @@ const { data: pet, error: loadError, pending, refresh } = await useAsyncData(
     if (!Number.isInteger(id) || id < 1) {
       throw new ApiError(t('pet.invalidId'), 400)
     }
-    const { pet: loaded } = await fetchGalleryPet(id)
+    const { pet: loaded } = await fetchGalleryPet(
+      id,
+      authUiReady.value ? auth.accessToken ?? undefined : undefined,
+    )
     return loaded
   },
   { watch: [petId, locale] },
 )
+
+watch(authUiReady, (ready) => {
+  if (ready) {
+    void refresh()
+  }
+})
+
+const memberLoginTo = computed(() => ({
+  path: localePath('/login'),
+  query: { redirect: route.fullPath },
+}))
 
 const isLoading = computed(() => pending.value && !pet.value)
 
@@ -244,8 +267,6 @@ usePageSeo({
         :show-about="false"
       />
 
-      <PetFriendsSection :target-pet="pet" class="mt-6" @updated="refresh" />
-
       <div
         v-if="pet.description"
         class="ui-pet-page-about-mobile ui-pet-description"
@@ -255,6 +276,40 @@ usePageSeo({
       </div>
 
       <PetPhotoGallery :photos="pet.photos ?? []" :title="pet.name" />
+
+      <ClientOnly>
+        <template v-if="isMemberView">
+          <PetFriendsSection
+            :target-pet="pet"
+            class="mt-6"
+            @updated="refresh"
+          />
+          <PetPublicDossier
+            v-if="pet.dossier"
+            :dossier="pet.dossier"
+          />
+          <PetMedicalRequest
+            class="mt-6"
+            :pet-id="pet.id"
+            :pet-name="pet.name"
+            :owner-user-id="pet.member?.id"
+          />
+        </template>
+        <div v-else class="ui-pet-guest-cta">
+          <p class="ui-prose">{{ $t('pet.guestFullProfileHint') }}</p>
+          <NuxtLink :to="memberLoginTo" class="ui-btn ui-btn-sm ui-btn-secondary mt-3">
+            {{ $t('pet.guestSignInCta') }}
+          </NuxtLink>
+        </div>
+        <template #fallback>
+          <div class="ui-pet-guest-cta">
+            <p class="ui-prose">{{ $t('pet.guestFullProfileHint') }}</p>
+            <NuxtLink :to="memberLoginTo" class="ui-btn ui-btn-sm ui-btn-secondary mt-3">
+              {{ $t('pet.guestSignInCta') }}
+            </NuxtLink>
+          </div>
+        </template>
+      </ClientOnly>
 
       <PhotoLightbox
         v-model="lightboxOpen"

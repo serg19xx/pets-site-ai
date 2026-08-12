@@ -8,8 +8,10 @@ import {
   PET_GALLERY_SELECT,
   type GalleryDetailRow,
 } from './gallery-members.js'
-import { listPetPhotosPublic } from './pet-photos.js'
+import { listPetCertificatesPublic } from './pet-certificates.js'
 import { listPetFriendExchanges, listPetFriends } from './pet-friendships.js'
+import { listPetParentsPublic } from './pet-parents.js'
+import { listPetPhotosPublic } from './pet-photos.js'
 
 const MAX_LIMIT = 60
 
@@ -181,14 +183,40 @@ export async function listLikedGalleryPets(
   return { pets, total }
 }
 
+type GalleryDetailWithPhysical = GalleryDetailRow & {
+  weight_kg: string | null
+  color: string | null
+  length_cm: string | null
+  height_cm: string | null
+  markings: string | null
+  physical_notes: string | null
+  pedigree_notes: string | null
+}
+
+function toNullableNumber(value: string | null): number | null {
+  if (value === null || value === undefined || value === '') {
+    return null
+  }
+  const n = Number(value)
+  return Number.isFinite(n) ? n : null
+}
+
 export async function getGalleryPetById(
   id: number,
+  viewerUserId?: number,
 ): Promise<ReturnType<typeof mapGalleryPetRow> | null> {
   const exclude = adminUsersExclusion('u.email', 2)
-  const r = await pool.query<GalleryDetailRow>(
+  const r = await pool.query<GalleryDetailWithPhysical>(
     `SELECT
       ${PET_GALLERY_SELECT},
-      ${MEMBER_SELECT}
+      ${MEMBER_SELECT},
+      p.weight_kg,
+      p.color,
+      p.length_cm,
+      p.height_cm,
+      p.markings,
+      p.physical_notes,
+      p.pedigree_notes
     FROM pets p
     INNER JOIN users u ON u.id = p.user_id
     INNER JOIN pet_species ps ON ps.id = p.species_id
@@ -209,9 +237,28 @@ export async function getGalleryPetById(
     captionFr: p.captionFr,
   }))
   const member = mapMemberFromDetailRow(row)
-  const [friends, friendExchanges] = await Promise.all([
+
+  if (viewerUserId === undefined) {
+    return mapGalleryPetRow(row, galleryPhotos, member)
+  }
+
+  const [friends, friendExchanges, parents, certificates] = await Promise.all([
     listPetFriends(id),
     listPetFriendExchanges(id),
+    listPetParentsPublic(id),
+    listPetCertificatesPublic(id),
   ])
-  return mapGalleryPetRow(row, galleryPhotos, member, friends, friendExchanges)
+  const dossier = {
+    weightKg: toNullableNumber(row.weight_kg),
+    color: row.color,
+    lengthCm: toNullableNumber(row.length_cm),
+    heightCm: toNullableNumber(row.height_cm),
+    markings: row.markings,
+    physicalNotes: row.physical_notes,
+    pedigreeNotes: row.pedigree_notes,
+    dam: parents.dam,
+    sire: parents.sire,
+    certificates,
+  }
+  return mapGalleryPetRow(row, galleryPhotos, member, friends, friendExchanges, dossier)
 }

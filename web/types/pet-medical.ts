@@ -24,3 +24,36 @@ export interface UpsertPetMedicalRecordInput {
   procedureLabel: string
   notes?: string | null
 }
+
+export type MedicalRequestStatus = 'pending' | 'approved' | 'declined'
+
+export type MedicalShareViewerStatus =
+  | 'none'
+  | 'pending'
+  | 'declined'
+  | 'approved'
+  | 'expired'
+
+export interface OwnerMedicalRequest {
+  id: number
+  petId: number
+  petName: string
+  requesterUserId: number
+  requesterLabel: string
+  status: MedicalRequestStatus
+  createdAt: string
+  decidedAt: string | null
+  shareExpiresAt: string | null
+}
+
+export interface RequesterMedicalStatus {
+  status: MedicalShareViewerStatus
+  expiresAt: string | null
+  sharePath: string | null
+}
+
+export interface MedicalShareView {
+  pet: { id: number; name: string }
+  expiresAt: string
+  records: PetMedicalRecord[]
+}

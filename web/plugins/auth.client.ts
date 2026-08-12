@@ -25,7 +25,9 @@ export default defineNuxtPlugin((nuxtApp) => {
   }
 
   nuxtApp.hook('app:mounted', () => {
-    authUiReady.value = true
+    requestAnimationFrame(() => {
+      authUiReady.value = true
+    })
   })
 
   window.addEventListener('storage', (event) => {

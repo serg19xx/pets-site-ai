@@ -1,12 +1,17 @@
 import { pool } from '../db/pool.js'
 import { config } from '../config.js'
 import { AppError } from '../lib/errors.js'
+import { normalizeSmsPhone } from '../lib/phone.js'
 import { sendEmail } from './email.js'
+import { sendSms } from './sms.js'
 
 export const NOTIFICATION_TYPES = [
   'feature_announce',
   'feedback_reply',
   'feedback_decision',
+  'medical_request',
+  'medical_share',
+  'medical_request_declined',
 ] as const
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number]
@@ -177,12 +182,48 @@ export async function notifyUser(input: NotifyUserInput): Promise<AppNotificatio
   }
 
   if (channels.has('sms')) {
-    await recordDelivery({
-      notificationId: notification.id,
-      channel: 'sms',
-      status: 'skipped',
-      error: 'SMS adapter not configured yet',
-    })
+    const user = await pool.query<{ phone: string | null }>(
+      'SELECT phone FROM users WHERE id = $1',
+      [input.userId],
+    )
+    const phone = user.rows[0]?.phone
+      ? normalizeSmsPhone(user.rows[0].phone)
+      : null
+    if (!phone) {
+      await recordDelivery({
+        notificationId: notification.id,
+        channel: 'sms',
+        status: 'skipped',
+        error: 'User phone missing',
+      })
+    } else {
+      const url = absoluteLink(notification.linkPath)
+      const smsBody = url
+        ? `${notification.title}\n${notification.body}\n${url}`
+        : `${notification.title}\n${notification.body}`
+      try {
+        await sendSms({ to: phone, body: smsBody.slice(0, 480) })
+        await recordDelivery({
+          notificationId: notification.id,
+          channel: 'sms',
+          status: 'sent',
+        })
+      } catch (error) {
+        const message =
+          error instanceof AppError
+            ? error.message
+            : error instanceof Error
+              ? error.message
+              : 'SMS send failed'
+        console.error('Notification SMS failed:', message)
+        await recordDelivery({
+          notificationId: notification.id,
+          channel: 'sms',
+          status: 'failed',
+          error: message.slice(0, 500),
+        })
+      }
+    }
   }
 
   return notification

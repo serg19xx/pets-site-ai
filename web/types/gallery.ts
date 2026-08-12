@@ -1,3 +1,5 @@
+import type { PetCertificate } from '~/types/pet-certificate'
+import type { PetParentRecord } from '~/types/pet-parent'
 import type { PublicMember } from '~/types/public-member'
 import type { PetSex } from '~/types/pet'
 
@@ -37,6 +39,8 @@ export interface GalleryPet {
   friends?: PetFriendSummary[]
   /** Short hello/reply exchanges; present on GET /api/gallery/pets/:id only. */
   friendExchanges?: PetFriendExchange[]
+  /** Logged-in members only. */
+  dossier?: GalleryPetDossier
 }
 
 /** Public friend card on a gallery pet profile. */
@@ -59,6 +63,20 @@ export interface PetFriendExchangeLine {
 export interface PetFriendExchange {
   friend: PetFriendSummary
   lines: PetFriendExchangeLine[]
+}
+
+/** Extra public-profile fields for authenticated viewers. */
+export interface GalleryPetDossier {
+  weightKg: number | null
+  color: string | null
+  lengthCm: number | null
+  heightCm: number | null
+  markings: string | null
+  physicalNotes: string | null
+  pedigreeNotes: string | null
+  dam: PetParentRecord | null
+  sire: PetParentRecord | null
+  certificates: PetCertificate[]
 }
 
 export type { PublicMember } from '~/types/public-member'

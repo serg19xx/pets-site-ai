@@ -38,3 +38,35 @@ Soft-launch system for **in-app messages + email**, feature announces to testers
 
 - `025_notifications.sql`
 - `026_feedback_improvement_decision.sql`
+
+## Future — feedback as a shared blog / forum (if beta scales)
+
+**Today:** each founding tester opens a **private ticket** to admin/developer (`/app/feedback`). Good for soft launch: simple, private, scored for bonuses.
+
+**Later (if engagement justifies it):** surface bugs and improvements more like a **shared discussion board / changelog blog**, not only 1:1 tickets.
+
+### Why
+
+- **Less duplicate tickets** — testers see an existing report before filing the same bug again.
+- **Shared context** — people understand what is known, in progress, or fixed.
+- **New ideas** — comments on a thread can spawn improvements the original reporter did not think of.
+- **Trust** — the community sees that feedback is real work, not a black hole.
+
+### Suggested shape (not implemented)
+
+| Layer | Role |
+|-------|------|
+| Keep private tickets | Sensitive details, screenshots, PII, account-specific issues |
+| Public threads | Summarized bug/improvement posts (title + status + short body) |
+| Comments | Testers discuss, confirm “me too”, suggest variants |
+| Status labels | `open` / `confirmed` / `in progress` / `shipped` (admin-owned) |
+| Link back | Ticket ↔ public thread when appropriate |
+
+### Rules of thumb
+
+- Backend still owns decisions (accept / reject / ship); the board is language and visibility, not a second bug tracker for ops.
+- Opt-in or beta-only at first; do not dump raw private tickets onto the public web.
+- Bonus scoring can stay on ticket activity + accepted improvements; “me too” / useful comments are optional later signals.
+- Do not build this until private tickets prove noisy (duplicates) or testers ask for visibility — current MVP is enough for the first cohort.
+
+---

@@ -116,9 +116,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <Teleport to="body">
+  <Teleport v-if="modelValue && currentPhoto" to="body">
     <div
-      v-if="modelValue && currentPhoto"
       class="ui-photo-lightbox-backdrop"
       role="dialog"
       aria-modal="true"

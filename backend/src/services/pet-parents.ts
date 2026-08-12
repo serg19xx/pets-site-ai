@@ -144,12 +144,13 @@ async function loadLinkedPet(linkedPetId: number): Promise<{
   }
 }
 
-export async function getPetParents(
-  userId: number,
+/**
+ * Pedigree for a public pet profile (no ownership check).
+ * Caller must already know the pet exists and is gallery-visible.
+ */
+export async function listPetParentsPublic(
   petId: number,
 ): Promise<{ dam: PetParentRecord | null; sire: PetParentRecord | null }> {
-  await assertOwnsPet(userId, petId)
-
   const result = await pool.query<ParentRow>(
     `SELECT
        pp.role, pp.source, pp.linked_pet_id, pp.name, pp.breed_label, pp.notes, pp.photo_path,
@@ -178,6 +179,14 @@ export async function getPetParents(
     }
   }
   return { dam, sire }
+}
+
+export async function getPetParents(
+  userId: number,
+  petId: number,
+): Promise<{ dam: PetParentRecord | null; sire: PetParentRecord | null }> {
+  await assertOwnsPet(userId, petId)
+  return listPetParentsPublic(petId)
 }
 
 async function clearParentRole(petId: number, role: PetParentRole): Promise<void> {

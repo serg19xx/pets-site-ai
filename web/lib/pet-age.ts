@@ -1,12 +1,14 @@
-/** Age label from ISO date (YYYY-MM-DD). */
+/** Age label from ISO date (YYYY-MM-DD). Uses UTC so SSR and client match. */
 export function formatPetAge(dateOfBirth: string, locale: string): string {
-  const born = new Date(`${dateOfBirth}T12:00:00`)
-  if (Number.isNaN(born.getTime())) {
+  const parts = /^(\d{4})-(\d{2})-(\d{2})/.exec(dateOfBirth)
+  if (!parts) {
     return dateOfBirth
   }
+  const bornYear = Number(parts[1])
+  const bornMonth = Number(parts[2])
   const now = new Date()
-  let years = now.getFullYear() - born.getFullYear()
-  let months = now.getMonth() - born.getMonth()
+  let years = now.getUTCFullYear() - bornYear
+  let months = now.getUTCMonth() + 1 - bornMonth
   if (months < 0) {
     years -= 1
     months += 12

@@ -1,3 +1,8 @@
+import {
+  petCertificateSchema,
+  petParentRecordSchema,
+} from './pets.js'
+
 const petSexEnum = { type: 'string', enum: ['male', 'female', 'unknown'] }
 
 export const publicMemberSchema = {
@@ -140,6 +145,34 @@ const petFriendExchangeSchema = {
   required: ['friend', 'lines'],
 } as const
 
+const galleryPetDossierSchema = {
+  type: 'object',
+  properties: {
+    weightKg: { type: ['number', 'null'] },
+    color: { type: ['string', 'null'] },
+    lengthCm: { type: ['number', 'null'] },
+    heightCm: { type: ['number', 'null'] },
+    markings: { type: ['string', 'null'] },
+    physicalNotes: { type: ['string', 'null'] },
+    pedigreeNotes: { type: ['string', 'null'] },
+    dam: { anyOf: [petParentRecordSchema, { type: 'null' }] },
+    sire: { anyOf: [petParentRecordSchema, { type: 'null' }] },
+    certificates: { type: 'array', items: petCertificateSchema },
+  },
+  required: [
+    'weightKg',
+    'color',
+    'lengthCm',
+    'heightCm',
+    'markings',
+    'physicalNotes',
+    'pedigreeNotes',
+    'dam',
+    'sire',
+    'certificates',
+  ],
+} as const
+
 const galleryPetDetailSchema = {
   type: 'object',
   properties: {
@@ -147,13 +180,9 @@ const galleryPetDetailSchema = {
     member: publicMemberSchema,
     friends: { type: 'array', items: petFriendSummarySchema },
     friendExchanges: { type: 'array', items: petFriendExchangeSchema },
+    dossier: galleryPetDossierSchema,
   },
-  required: [
-    ...galleryPetItemSchema.required,
-    'member',
-    'friends',
-    'friendExchanges',
-  ],
+  required: [...galleryPetItemSchema.required, 'member'],
 } as const
 
 export const galleryPetResponseSchema = {

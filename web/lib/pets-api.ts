@@ -5,8 +5,11 @@ import type { PublicMember } from '~/types/public-member'
 import type { PetPhoto } from '~/types/pet-photo'
 import type { PetCertificate } from '~/types/pet-certificate'
 import type {
+  MedicalShareView,
+  OwnerMedicalRequest,
   PetMedicalPhoto,
   PetMedicalRecord,
+  RequesterMedicalStatus,
   UpsertPetMedicalRecordInput,
 } from '~/types/pet-medical'
 import type {
@@ -137,13 +140,92 @@ export async function fetchLikedGalleryPets(
   return body
 }
 
-export async function fetchGalleryPet(id: number): Promise<{ pet: GalleryPet }> {
-  const response = await fetch(apiUrl(`/api/gallery/pets/${id}`))
+export async function fetchGalleryPet(
+  id: number,
+  accessToken?: string,
+): Promise<{ pet: GalleryPet }> {
+  const headers: HeadersInit = {}
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`
+  }
+  const response = await fetch(apiUrl(`/api/gallery/pets/${id}`), { headers })
   const body = await parseJson<{ pet: GalleryPet } & ApiErrorBody>(response)
   if (!response.ok) {
     throw new ApiError(body.message ?? 'Request failed', response.status, body.code)
   }
   return body
+}
+
+export async function requestPetMedicalRecords(
+  petId: number,
+  accessToken: string,
+): Promise<{ ok: boolean }> {
+  return requestJson(`/api/gallery/pets/${petId}/medical-request`, {
+    method: 'POST',
+    accessToken,
+  })
+}
+
+export async function fetchRequesterMedicalStatus(
+  petId: number,
+  accessToken: string,
+): Promise<RequesterMedicalStatus> {
+  return requestJson(`/api/gallery/pets/${petId}/medical-request`, {
+    method: 'GET',
+    accessToken,
+  })
+}
+
+export async function listOwnerMedicalRequests(
+  petId: number,
+  accessToken: string,
+): Promise<{ requests: OwnerMedicalRequest[] }> {
+  return requestJson(`/api/pets/${petId}/medical-requests`, {
+    method: 'GET',
+    accessToken,
+  })
+}
+
+export async function approveMedicalRequest(
+  petId: number,
+  requestId: number,
+  accessToken: string,
+): Promise<{ request: OwnerMedicalRequest }> {
+  return requestJson(`/api/pets/${petId}/medical-requests/${requestId}/approve`, {
+    method: 'POST',
+    accessToken,
+  })
+}
+
+export async function declineMedicalRequest(
+  petId: number,
+  requestId: number,
+  accessToken: string,
+): Promise<{ request: OwnerMedicalRequest }> {
+  return requestJson(`/api/pets/${petId}/medical-requests/${requestId}/decline`, {
+    method: 'POST',
+    accessToken,
+  })
+}
+
+export async function fetchMedicalShareByPet(
+  petId: number,
+  accessToken: string,
+): Promise<MedicalShareView> {
+  return requestJson(`/api/pets/${petId}/medical-share`, {
+    method: 'GET',
+    accessToken,
+  })
+}
+
+export async function fetchMedicalShareByToken(
+  token: string,
+  accessToken: string,
+): Promise<MedicalShareView> {
+  return requestJson(`/api/medical-share/${encodeURIComponent(token)}`, {
+    method: 'GET',
+    accessToken,
+  })
 }
 
 export async function fetchGalleryMember(id: number): Promise<{

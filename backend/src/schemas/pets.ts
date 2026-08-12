@@ -375,6 +375,78 @@ export const petMedicalRecordsListResponseSchema = {
   required: ['records'],
 } as const
 
+export const petMedicalRequestSchema = {
+  type: 'object',
+  properties: {
+    id: { type: 'integer' },
+    petId: { type: 'integer' },
+    petName: { type: 'string' },
+    requesterUserId: { type: 'integer' },
+    requesterLabel: { type: 'string' },
+    status: { type: 'string', enum: ['pending', 'approved', 'declined'] },
+    createdAt: { type: 'string' },
+    decidedAt: { type: ['string', 'null'] },
+    shareExpiresAt: { type: ['string', 'null'] },
+  },
+  required: [
+    'id',
+    'petId',
+    'petName',
+    'requesterUserId',
+    'requesterLabel',
+    'status',
+    'createdAt',
+    'decidedAt',
+    'shareExpiresAt',
+  ],
+} as const
+
+export const petMedicalRequestsListResponseSchema = {
+  type: 'object',
+  properties: {
+    requests: { type: 'array', items: petMedicalRequestSchema },
+  },
+  required: ['requests'],
+} as const
+
+export const petMedicalRequestSingleResponseSchema = {
+  type: 'object',
+  properties: {
+    request: petMedicalRequestSchema,
+  },
+  required: ['request'],
+} as const
+
+export const petMedicalShareStatusSchema = {
+  type: 'object',
+  properties: {
+    status: {
+      type: 'string',
+      enum: ['none', 'pending', 'declined', 'approved', 'expired'],
+    },
+    expiresAt: { type: ['string', 'null'] },
+    sharePath: { type: ['string', 'null'] },
+  },
+  required: ['status', 'expiresAt', 'sharePath'],
+} as const
+
+export const petMedicalShareViewSchema = {
+  type: 'object',
+  properties: {
+    pet: {
+      type: 'object',
+      properties: {
+        id: { type: 'integer' },
+        name: { type: 'string' },
+      },
+      required: ['id', 'name'],
+    },
+    expiresAt: { type: 'string' },
+    records: { type: 'array', items: petMedicalRecordSchema },
+  },
+  required: ['pet', 'expiresAt', 'records'],
+} as const
+
 export const petMedicalRecordSingleResponseSchema = {
   type: 'object',
   properties: {

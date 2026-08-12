@@ -567,14 +567,16 @@
            dark:text-stone-200 dark:hover:bg-stone-800 md:px-2.5;
   }
 
-  /* —— Tabs (auth register / reset) —— */
+  /* —— Tabs (auth, pet edit, …) —— */
   .ui-tabs {
-    @apply mb-6 flex gap-1 overflow-x-auto rounded-(--radius-control)
+    @apply mb-6 flex gap-1 overflow-x-auto overscroll-x-contain rounded-(--radius-control)
            bg-stone-100 p-1 dark:bg-stone-800;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
   }
 
   .ui-tab {
-    @apply min-w-0 flex-1 whitespace-nowrap rounded-md px-2 py-2 text-sm font-medium
+    @apply shrink-0 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium
            text-(--ui-text-muted) transition-colors;
   }
 
@@ -842,6 +844,54 @@
 
   .ui-pet-friend-exchange-body {
     @apply m-0 text-sm leading-relaxed text-stone-800 dark:text-stone-200;
+  }
+
+  .ui-pet-dossier {
+    @apply mt-6 space-y-6;
+  }
+
+  .ui-pet-dossier-block {
+    @apply space-y-1;
+  }
+
+  .ui-pet-pedigree-list {
+    @apply m-0 mt-3 grid list-none gap-2 p-0 sm:grid-cols-2;
+  }
+
+  .ui-pet-pedigree-card {
+    @apply flex items-center gap-3 rounded-(--radius-card) border border-(--ui-border)
+           bg-(--ui-surface) px-3 py-2 text-inherit no-underline
+           transition-colors hover:border-primary-300 dark:hover:border-primary-700;
+  }
+
+  .ui-pet-pedigree-card--static {
+    @apply hover:border-(--ui-border);
+  }
+
+  .ui-pet-pedigree-photo {
+    @apply size-12 shrink-0 rounded-full object-cover;
+  }
+
+  .ui-pet-pedigree-fallback {
+    @apply flex size-12 shrink-0 items-center justify-center rounded-full
+           bg-stone-200 text-sm font-semibold text-stone-700
+           dark:bg-stone-700 dark:text-stone-100;
+  }
+
+  .ui-pet-guest-cta {
+    @apply mt-6 rounded-(--radius-card) border border-(--ui-border) bg-(--ui-surface) p-4;
+  }
+
+  .ui-pet-medical-list {
+    @apply m-0 mt-3 list-none space-y-3 p-0;
+  }
+
+  .ui-pet-medical-card {
+    @apply rounded-(--radius-card) border border-(--ui-border) bg-(--ui-surface) p-4;
+  }
+
+  .ui-pet-medical-title {
+    @apply m-0 font-medium text-stone-900 dark:text-stone-100;
   }
 
   .ui-pet-details {

@@ -10,6 +10,7 @@ const props = defineProps<{
 
 const { t } = useI18n()
 const auth = useAuthStore()
+const authUiReady = useAuthUiReady()
 
 const liked = ref(false)
 const count = ref(0)
@@ -18,10 +19,12 @@ const isToggling = ref(false)
 const loadError = ref('')
 
 const labelName = computed(() => props.petName?.trim() || String(props.petId))
-const canToggle = computed(() => Boolean(auth.accessToken))
+const canToggle = computed(
+  () => authUiReady.value && Boolean(auth.accessToken),
+)
 
 async function loadStatus() {
-  const token = auth.accessToken
+  const token = authUiReady.value ? auth.accessToken : null
   isLoading.value = true
   loadError.value = ''
   try {
@@ -62,7 +65,7 @@ async function onToggle() {
 }
 
 watch(
-  () => [props.petId, auth.accessToken] as const,
+  () => [props.petId, authUiReady.value, auth.accessToken] as const,
   () => {
     void loadStatus()
   },

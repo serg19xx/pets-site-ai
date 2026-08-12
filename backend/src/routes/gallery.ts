@@ -5,7 +5,12 @@ import { getOptionalUserId, getUserId } from '../plugins/jwt-auth.js'
 import { getPublicMemberProfile } from '../services/gallery-members.js'
 import { getGalleryPetById, listGalleryPets, listLikedGalleryPets } from '../services/gallery-pets.js'
 import { getPetLikeStatus, togglePetLike } from '../services/pet-likes.js'
+import {
+  getRequesterMedicalStatus,
+  requestPetMedicalRecords,
+} from '../services/pet-medical-requests.js'
 import { errorResponseSchema } from '../schemas/auth.js'
+import { petMedicalShareStatusSchema } from '../schemas/pets.js'
 import { petLikeStatusSchema } from '../schemas/likes.js'
 import {
   galleryMemberResponseSchema,
@@ -86,10 +91,12 @@ export const galleryRoutes: FastifyPluginAsync = async (app) => {
   app.get(
     '/gallery/pets/:id',
     {
+      onRequest: [app.authenticateOptional],
       schema: {
         tags: ['gallery'],
         summary: 'Public pet by id',
-        description: 'Single pet card for the public gallery. No authentication.',
+        description:
+          'Guest: identity, AI voice, owner description, photos. Logged-in: also pedigree, certificates, physical details, and pet friends. Medical records are private — use the medical-request endpoint.',
         params: {
           type: 'object',
           properties: { id: { type: 'integer' } },
@@ -107,7 +114,7 @@ export const galleryRoutes: FastifyPluginAsync = async (app) => {
       if (!Number.isInteger(petId) || petId < 1) {
         throw new AppError(404, 'Pet not found', 'NOT_FOUND')
       }
-      const pet = await getGalleryPetById(petId)
+      const pet = await getGalleryPetById(petId, getOptionalUserId(request))
       if (!pet) {
         throw new AppError(404, 'Pet not found', 'NOT_FOUND')
       }
@@ -174,6 +181,74 @@ export const galleryRoutes: FastifyPluginAsync = async (app) => {
         throw new AppError(404, 'Pet not found', 'NOT_FOUND')
       }
       return togglePetLike(petId, getUserId(request))
+    },
+  )
+
+  app.get(
+    '/gallery/pets/:id/medical-request',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['gallery'],
+        summary: 'Status of my medical records request for this pet',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          properties: { id: { type: 'integer' } },
+          required: ['id'],
+        },
+        response: {
+          200: petMedicalShareStatusSchema,
+          401: errorResponseSchema,
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const { id } = request.params as { id: string }
+      const petId = Number(id)
+      if (!Number.isInteger(petId) || petId < 1) {
+        throw new AppError(404, 'Pet not found', 'NOT_FOUND')
+      }
+      return getRequesterMedicalStatus(getUserId(request), petId)
+    },
+  )
+
+  app.post(
+    '/gallery/pets/:id/medical-request',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['gallery'],
+        summary: 'Request pet medical records from the owner',
+        description:
+          'Members only. Notifies the pet owner. Does not send medical data to the requester.',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          properties: { id: { type: 'integer' } },
+          required: ['id'],
+        },
+        response: {
+          200: {
+            type: 'object',
+            properties: { ok: { type: 'boolean' } },
+            required: ['ok'],
+          },
+          400: errorResponseSchema,
+          401: errorResponseSchema,
+          404: errorResponseSchema,
+          429: errorResponseSchema,
+        },
+      },
+    },
+    async (request) => {
+      const { id } = request.params as { id: string }
+      const petId = Number(id)
+      if (!Number.isInteger(petId) || petId < 1) {
+        throw new AppError(404, 'Pet not found', 'NOT_FOUND')
+      }
+      return requestPetMedicalRecords(getUserId(request), petId)
     },
   )
 

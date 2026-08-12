@@ -38,6 +38,9 @@ export type AppNotificationType =
   | 'feature_announce'
   | 'feedback_reply'
   | 'feedback_decision'
+  | 'medical_request'
+  | 'medical_share'
+  | 'medical_request_declined'
 
 export interface AppNotification {
   id: number

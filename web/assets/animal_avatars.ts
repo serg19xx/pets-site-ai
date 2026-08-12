@@ -64,3 +64,8 @@ export function getDefaultPetAvatarSvg(speciesSlug: string): string {
   const svg = animalAvatars[key as AnimalAvatarSlug] ?? animalAvatars.cat
   return neutralizePlaceholderBg(svg)
 }
+
+/** Data URI so placeholders hydrate as <img>, not v-html (browser-normalized SVG). */
+export function getDefaultPetAvatarDataUri(speciesSlug: string): string {
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(getDefaultPetAvatarSvg(speciesSlug))}`
+}

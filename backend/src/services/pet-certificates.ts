@@ -84,11 +84,10 @@ async function saveCertificateFile(
   return relativePath
 }
 
-export async function listPetCertificates(
-  userId: number,
+/** Certificate photos for a public pet profile (no ownership check). */
+export async function listPetCertificatesPublic(
   petId: number,
 ): Promise<PetCertificate[]> {
-  await getPetById(userId, petId)
   const r = await pool.query<CertificateRow>(
     `SELECT id, path, sort_order, created_at
      FROM pet_certificates
@@ -97,6 +96,14 @@ export async function listPetCertificates(
     [petId],
   )
   return r.rows.map(mapCertificateRow)
+}
+
+export async function listPetCertificates(
+  userId: number,
+  petId: number,
+): Promise<PetCertificate[]> {
+  await getPetById(userId, petId)
+  return listPetCertificatesPublic(petId)
 }
 
 export async function uploadPetCertificate(

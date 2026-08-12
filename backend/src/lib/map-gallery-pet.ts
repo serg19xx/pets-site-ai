@@ -35,6 +35,47 @@ export interface GalleryPet {
   friends?: PetFriendSummary[]
   /** Short hello/reply exchanges; present on GET /api/gallery/pets/:id only. */
   friendExchanges?: PetFriendExchange[]
+  /** Logged-in members only: pedigree, certificates, physical. */
+  dossier?: GalleryPetDossier
+}
+
+export interface GalleryPetDossierParent {
+  role: 'dam' | 'sire'
+  source: string
+  name: string | null
+  breedLabel: string | null
+  notes: string | null
+  photoUrl: string | null
+  linkedPet: {
+    id: number
+    name: string
+    speciesLabel: string
+    breedLabel: string | null
+    avatarUrl: string | null
+    ownerUserId: number
+    publicPath: string
+  } | null
+}
+
+export interface GalleryPetDossierCertificate {
+  id: number
+  url: string
+  sortOrder: number
+  createdAt: string
+}
+
+/** Extra public-profile fields for authenticated viewers. */
+export interface GalleryPetDossier {
+  weightKg: number | null
+  color: string | null
+  lengthCm: number | null
+  heightCm: number | null
+  markings: string | null
+  physicalNotes: string | null
+  pedigreeNotes: string | null
+  dam: GalleryPetDossierParent | null
+  sire: GalleryPetDossierParent | null
+  certificates: GalleryPetDossierCertificate[]
 }
 
 export interface PetFriendSummary {
@@ -90,6 +131,7 @@ export function mapGalleryPetRow(
   member?: PublicMember,
   friends?: PetFriendSummary[],
   friendExchanges?: PetFriendExchange[],
+  dossier?: GalleryPetDossier,
 ): GalleryPet {
   return {
     id: Number(row.id),
@@ -114,5 +156,6 @@ export function mapGalleryPetRow(
     photos,
     ...(friends ? { friends } : {}),
     ...(friendExchanges ? { friendExchanges } : {}),
+    ...(dossier ? { dossier } : {}),
   }
 }

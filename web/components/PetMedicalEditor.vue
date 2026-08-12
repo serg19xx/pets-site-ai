@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue'
 
 import ImageCropModal from '~/components/ImageCropModal.vue'
+import PetMedicalInbox from '~/components/PetMedicalInbox.vue'
 import PhotoLightbox from '~/components/PhotoLightbox.vue'
 import { ApiError } from '~/lib/auth-api'
 import { validateImageFile } from '~/lib/image-export'
@@ -283,6 +284,8 @@ function openLightbox(record: PetMedicalRecord, index: number) {
 <template>
   <div v-if="authUiReady" class="mt-2 space-y-4">
     <p class="ui-hint">{{ $t('myPets.tabMedicalHint') }}</p>
+
+    <PetMedicalInbox :pet-id="petId" />
 
     <p v-if="errorMessage" class="ui-alert-error" role="alert">
       {{ errorMessage }}
