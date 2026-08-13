@@ -2,6 +2,7 @@
 import PetAvatar from '~/components/PetAvatar.vue'
 import PetVirtualBadge from '~/components/PetVirtualBadge.vue'
 import UserAvatar from '~/components/UserAvatar.vue'
+import MemberFriendActions from '~/components/MemberFriendActions.vue'
 import { ApiError } from '~/lib/auth-api'
 import { pickGalleryCardVoice } from '~/lib/pick-pet-caption'
 import { fetchGalleryMember } from '~/lib/pets-api'
@@ -114,6 +115,7 @@ usePageSeo({
         <div>
           <h1 class="ui-h1">{{ member.displayName }}</h1>
           <p class="ui-page-subtitle mt-1">{{ $t('member.subtitle') }}</p>
+          <MemberFriendActions :member-id="member.id" />
         </div>
       </header>
 

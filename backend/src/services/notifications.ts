@@ -12,6 +12,8 @@ export const NOTIFICATION_TYPES = [
   'medical_request',
   'medical_share',
   'medical_request_declined',
+  'friend_request',
+  'friend_accepted',
 ] as const
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number]

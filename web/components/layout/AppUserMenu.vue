@@ -194,6 +194,15 @@ watch(isOpen, (open) => {
         {{ t('auth.profile') }}
       </NuxtLink>
       <NuxtLink
+        :to="localePath('/app/friends')"
+        class="ui-menu-item"
+        role="menuitem"
+        @click="closeMenu"
+      >
+        <Icon :icon="UI_ACTION_ICONS.users" class="ui-icon-sm" aria-hidden="true" />
+        {{ t('auth.friends') }}
+      </NuxtLink>
+      <NuxtLink
         :to="localePath('/app/my-pets')"
         class="ui-menu-item"
         role="menuitem"

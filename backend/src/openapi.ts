@@ -26,6 +26,10 @@ export async function registerOpenApi(app: FastifyInstance) {
           description: 'Liveness and database connectivity checks',
         },
         {
+          name: 'contact',
+          description: 'Public contact form',
+        },
+        {
           name: 'gallery',
           description: 'Public browse (pet photos grid)',
         },
@@ -36,6 +40,10 @@ export async function registerOpenApi(app: FastifyInstance) {
         {
           name: 'pets',
           description: 'User pets, species and breed catalog',
+        },
+        {
+          name: 'friends',
+          description: 'Owner-to-owner friend requests and friends list',
         },
         {
           name: 'feedback',

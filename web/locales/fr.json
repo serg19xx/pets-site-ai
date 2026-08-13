@@ -7,7 +7,10 @@
     "animals": "Animaux",
     "feed": "Fil",
     "marketplace": "Marketplace",
-    "learn": "Apprendre"
+    "learn": "Apprendre",
+    "contact": "Contact",
+    "faq": "FAQ",
+    "menu": "Menu"
   },
   "common": {
     "brand": "Pet Friends",
@@ -64,6 +67,14 @@
     "invite": {
       "title": "Testeurs bêta — Pet Friends",
       "description": "Rejoignez le groupe fondateur de testeurs Pet Friends. Places limitées."
+    },
+    "contact": {
+      "title": "Nous contacter — Pet Friends",
+      "description": "Envoyez un message à l’équipe Pet Friends. Aucun compte requis."
+    },
+    "faq": {
+      "title": "FAQ — Pet Friends",
+      "description": "Réponses courtes sur Pet Friends : ce que c’est, les comptes, l’IA des animaux, la confidentialité et comment rejoindre la bêta."
     },
     "pet": {
       "title": "Animal — Pet Friends",
@@ -362,6 +373,58 @@
     "betaCta": "Voir l'invitation"
   },
 
+  "partners": {
+    "asideTitle": "Partenaires locaux",
+    "asideHint": "Cliniques, boutiques et refuges près de chez vous",
+    "asideEmpty": "Les logos des partenaires apparaîtront bientôt ici.",
+    "seeMore": "Voir plus…",
+    "pageTitle": "Partenaires locaux",
+    "pageDescription": "Entreprises locales mises en avant sur Pet Friends — cliniques, boutiques et refuges.",
+    "pageLead": "Des entreprises qui soutiennent la communauté animale. Cliquez sur un logo pour visiter leur site.",
+    "pageEmpty": "Nous accueillons nos premiers partenaires locaux. Revenez bientôt."
+  },
+
+  "contact": {
+    "title": "Nous contacter",
+    "lead": "Questions, partenariat ou commentaires — envoyez un court message. Nous répondons par courriel.",
+    "name": "Nom",
+    "email": "Courriel",
+    "message": "Message",
+    "send": "Envoyer",
+    "sending": "Envoi…",
+    "success": "Merci — votre message a été envoyé. Nous répondrons par courriel.",
+    "tooMany": "Trop de messages de cette adresse. Réessayez plus tard.",
+    "faqHint": "Si vous avez des questions, consultez d’abord notre {faq}."
+  },
+
+  "faq": {
+    "title": "FAQ",
+    "lead": "Réponses courtes sur Pet Friends. Le site est une bêta soft launch — on construit encore.",
+    "stillNeedHelp": "Si cela ne suffit pas, écrivez-nous via {contact}.",
+    "items": [
+      {
+        "q": "Qu’est-ce que Pet Friends ?",
+        "a": "Une petite communauté pour propriétaires d’animaux dans le Grand Montréal : galerie publique, fil d’actus, marketplace et profils d’animaux. C’est une bêta fondatrice — les choses peuvent encore changer. On veut un retour honnête plus qu’un lancement poli."
+      },
+      {
+        "q": "Faut-il un compte pour regarder ?",
+        "a": "Non. Vous pouvez parcourir la galerie, le fil et la marketplace en invité. Connectez-vous pour ajouter vos animaux, publier, aimer, envoyer des messages ou poster une annonce."
+      },
+      {
+        "q": "Qu’est-ce que l’IA pour les animaux ?",
+        "a": "Chaque animal peut avoir une petite personnalité numérique. Quand deux animaux deviennent amis, ils peuvent échanger un court bonjour — pour le fun des propriétaires. Ce n’est pas un chatbot pour humains, et ce n’est pas encore un monde virtuel fini."
+      },
+      {
+        "q": "Les photos et dossiers médicaux sont-ils publics ?",
+        "a": "Les photos de la galerie sur un profil d’animal sont destinées à la communauté. Les dossiers médicaux restent privés : un autre membre peut demander l’accès, vous décidez, et un partage accepté est en lecture seule et expire après deux heures. Traitez les photos, messages et contacts des autres membres comme confidentiels."
+      },
+      {
+        "q": "Comment rejoindre ? Est-ce gratuit ?",
+        "a": "Oui, le site est gratuit pour l’instant. Pour rejoindre les testeurs fondateurs, ouvrez la page d’invitation, créez un compte (ou connectez-vous), puis acceptez les conditions. Les places sont limitées. Des options payantes pourront arriver plus tard ; les testeurs actifs pourront recevoir des points ou un accès offert — pas d’argent, pas un emploi."
+      }
+    ]
+  },
+
   "invite": {
     "title": "Testeurs bêta fondateurs",
     "eyebrow": "Invitation soft launch",
@@ -401,6 +464,7 @@
     "feedback": "Retours bêta",
     "saved": "Publications enregistrées",
     "likedPets": "Animaux aimés",
+    "friends": "Amis",
     "loginTitle": "Connexion",
     "loginSubtitle": "Connectez-vous pour gérer vos animaux et votre profil.",
     "adminUseAdminApp": "Les comptes admin ne peuvent pas utiliser ce site. Ouvrez la console admin : {url}",
@@ -478,7 +542,31 @@
     "myPostsHint": "Modifier, supprimer et modérer les commentaires de vos publications.",
     "savedHint": "Publications enregistrées depuis le fil communautaire.",
     "myListingsHint": "Publiez et gérez vos annonces marketplace.",
-    "likedPetsHint": "Animaux que vous avez aimés dans la galerie."
+    "likedPetsHint": "Animaux que vous avez aimés dans la galerie.",
+    "communitySection": "Communauté",
+    "friendsHint": "Les personnes que vous avez ajoutées, et les demandes en attente."
+  },
+  "friends": {
+    "backToProfile": "Retour au profil",
+    "title": "Amis",
+    "subtitle": "Ajoutez des personnes depuis leur profil public. Elles confirment avant de devenir amis.",
+    "listHeading": "Vos amis",
+    "incomingHeading": "Demandes pour vous",
+    "outgoingHeading": "En attente de réponse",
+    "empty": "Pas encore d’amis. Ouvrez le profil d’un membre et appuyez sur Ajouter.",
+    "loadError": "Impossible de charger les amis.",
+    "actionError": "Impossible de mettre à jour l’amitié.",
+    "add": "Ajouter",
+    "accept": "Accepter",
+    "decline": "Refuser",
+    "unfriend": "Retirer",
+    "cancelRequest": "Annuler la demande",
+    "working": "En cours…",
+    "loginToAdd": "Connectez-vous pour ajouter ce membre comme ami.",
+    "thisIsYou": "C’est votre profil public.",
+    "requestSent": "Demande envoyée",
+    "theyAsked": "Ce membre a demandé à être ami.",
+    "youAreFriends": "Vous êtes amis"
   },
   "likedPets": {
     "backToProfile": "Retour au profil",

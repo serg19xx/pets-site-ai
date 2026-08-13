@@ -1,4 +1,4 @@
-const STATIC_PATHS = ['', '/feed', '/learn'] as const
+const STATIC_PATHS = ['', '/feed', '/learn', '/contact', '/faq'] as const
 const FR_PREFIX = '/fr'
 
 function xmlEscape(value: string): string {

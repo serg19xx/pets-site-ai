@@ -4,6 +4,9 @@ export const UI_NAV_ICONS = {
   feed: 'lucide:newspaper',
   learn: 'lucide:book-open',
   marketplace: 'lucide:store',
+  contact: 'lucide:mail',
+  faq: 'lucide:circle-help',
+  more: 'lucide:circle-ellipsis',
 } as const
 
 export const UI_ACTION_ICONS = {
@@ -15,6 +18,7 @@ export const UI_ACTION_ICONS = {
   login: 'lucide:log-in',
   logout: 'lucide:log-out',
   user: 'lucide:user',
+  users: 'lucide:users',
   pets: 'lucide:cat',
   rotateLeft: 'lucide:rotate-ccw',
   rotateRight: 'lucide:rotate-cw',

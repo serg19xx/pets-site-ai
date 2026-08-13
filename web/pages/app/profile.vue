@@ -490,6 +490,22 @@ async function onRemoveAvatar() {
     </form>
 
     <div v-if="auth.user" class="mt-8">
+      <h2 class="ui-section-title">{{ $t('profile.communitySection') }}</h2>
+      <ul class="mt-3 flex list-none flex-col gap-2">
+        <li>
+          <NuxtLink :to="localePath('/app/friends')" class="ui-list-link">
+            <Icon :icon="UI_ACTION_ICONS.users" class="ui-icon-md shrink-0 text-primary-600" aria-hidden="true" />
+            <div class="min-w-0 flex-1">
+              <p class="ui-list-link-title">{{ $t('auth.friends') }}</p>
+              <p class="ui-list-link-meta">{{ $t('profile.friendsHint') }}</p>
+            </div>
+            <Icon :icon="UI_ACTION_ICONS.chevron" class="ui-icon-sm shrink-0 text-(--ui-text-muted)" aria-hidden="true" />
+          </NuxtLink>
+        </li>
+      </ul>
+    </div>
+
+    <div v-if="auth.user" class="mt-8">
       <h2 class="ui-section-title">{{ $t('profile.feedSection') }}</h2>
       <ul class="mt-3 flex list-none flex-col gap-2">
         <li>

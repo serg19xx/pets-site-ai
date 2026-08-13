@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AsidePartners from '~/components/layout/AsidePartners.vue'
 import { ApiError, fetchBetaStatus } from '~/lib/auth-api'
 import { useAuthStore } from '~/stores/auth'
 
@@ -107,5 +108,7 @@ watch(
         :purpose="$t('aside.tipsPurpose')"
       />
     </template>
+
+    <AsidePartners />
   </aside>
 </template>

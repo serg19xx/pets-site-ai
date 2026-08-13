@@ -7,7 +7,10 @@
     "animals": "Animals",
     "feed": "Feed",
     "marketplace": "Marketplace",
-    "learn": "Learn"
+    "learn": "Learn",
+    "contact": "Contact",
+    "faq": "FAQ",
+    "menu": "Menu"
   },
   "common": {
     "brand": "Pet Friends",
@@ -64,6 +67,14 @@
     "invite": {
       "title": "Beta testers — Pet Friends",
       "description": "Join the founding Pet Friends beta tester group. Limited spots for early testers."
+    },
+    "contact": {
+      "title": "Contact us — Pet Friends",
+      "description": "Send a message to the Pet Friends team. No account needed."
+    },
+    "faq": {
+      "title": "FAQ — Pet Friends",
+      "description": "Short answers about Pet Friends: what it is, accounts, the pet AI, privacy, and how to join the beta."
     },
     "pet": {
       "title": "Pet — Pet Friends",
@@ -363,6 +374,58 @@
     "betaCta": "View invite"
   },
 
+  "partners": {
+    "asideTitle": "Local partners",
+    "asideHint": "Clinics, shops & shelters near you",
+    "asideEmpty": "Partner logos will appear here soon.",
+    "seeMore": "See more…",
+    "pageTitle": "Local partners",
+    "pageDescription": "Local pet businesses featured on Pet Friends — clinics, shops, and shelters.",
+    "pageLead": "Businesses that support the pet community. Click a logo to visit their site.",
+    "pageEmpty": "We are onboarding our first local partners. Check back soon."
+  },
+
+  "contact": {
+    "title": "Contact us",
+    "lead": "Questions, partnership, or feedback — send a short message. We reply by email.",
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "send": "Send message",
+    "sending": "Sending…",
+    "success": "Thanks — your message was sent. We’ll reply by email.",
+    "tooMany": "Too many messages from this address. Please try again later.",
+    "faqHint": "If you have questions, please look at our {faq} first."
+  },
+
+  "faq": {
+    "title": "FAQ",
+    "lead": "Short answers about Pet Friends. The site is a soft-launch beta — we are still building.",
+    "stillNeedHelp": "If that did not help, write to us via {contact}.",
+    "items": [
+      {
+        "q": "What is Pet Friends?",
+        "a": "A small community for pet owners in Greater Montreal: a public animal gallery, a feed, a marketplace, and pet profiles. This is a founding beta — things can still change. We care more about honest feedback than a polished launch."
+      },
+      {
+        "q": "Do I need an account to look around?",
+        "a": "No. You can browse the gallery, feed, and marketplace as a guest. Sign in to add your pets, post, like, message other members, or publish a listing."
+      },
+      {
+        "q": "What is the AI for animals?",
+        "a": "Each pet can have a small digital personality. When two pets become friends, they can exchange a short hello — for the owners’ fun. It is not a chatbot for humans, and it is not a finished virtual world yet."
+      },
+      {
+        "q": "Are photos and medical records public?",
+        "a": "Gallery photos on a pet profile are meant to be seen by the community. Medical files stay private: another member can request access, you decide, and an approved share is read-only and expires after two hours. Treat other members’ photos, messages, and contacts as confidential."
+      },
+      {
+        "q": "How do I join? Is it free?",
+        "a": "Yes, the site is free for now. To join the founding testers, open the invite page, create an account (or sign in), and accept the tester terms. Spots are limited. Paid options may come later; active testers may get thank-you points or complimentary access — not cash, not a job."
+      }
+    ]
+  },
+
   "invite": {
     "title": "Founding beta testers",
     "eyebrow": "Soft launch invite",
@@ -402,6 +465,7 @@
     "feedback": "Beta feedback",
     "saved": "Saved posts",
     "likedPets": "Liked pets",
+    "friends": "Friends",
     "loginTitle": "Log in",
     "loginSubtitle": "Sign in to manage your pets and profile.",
     "adminUseAdminApp": "Admin accounts cannot use this site. Open the admin console: {url}",
@@ -479,7 +543,31 @@
     "myPostsHint": "Edit, delete, and moderate comments on your posts.",
     "savedHint": "Posts you bookmarked from the community feed.",
     "myListingsHint": "Publish and manage your marketplace listings.",
-    "likedPetsHint": "Animals you liked in the gallery."
+    "likedPetsHint": "Animals you liked in the gallery.",
+    "communitySection": "Community",
+    "friendsHint": "People you added as friends, and requests waiting for a reply."
+  },
+  "friends": {
+    "backToProfile": "Back to profile",
+    "title": "Friends",
+    "subtitle": "Add people from their public profile. They confirm before you become friends.",
+    "listHeading": "Your friends",
+    "incomingHeading": "Requests for you",
+    "outgoingHeading": "Waiting for a reply",
+    "empty": "No friends yet. Open a member’s profile and tap Add friend.",
+    "loadError": "Could not load friends.",
+    "actionError": "Could not update friendship.",
+    "add": "Add friend",
+    "accept": "Accept",
+    "decline": "Decline",
+    "unfriend": "Unfriend",
+    "cancelRequest": "Cancel request",
+    "working": "Working…",
+    "loginToAdd": "Sign in to add this member as a friend.",
+    "thisIsYou": "This is your public profile.",
+    "requestSent": "Request sent",
+    "theyAsked": "This member asked to be friends.",
+    "youAreFriends": "You are friends"
   },
   "likedPets": {
     "backToProfile": "Back to profile",

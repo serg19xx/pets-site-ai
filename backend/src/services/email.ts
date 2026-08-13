@@ -35,6 +35,7 @@ export interface SendEmailInput {
   subject: string
   text: string
   html?: string
+  replyTo?: string
 }
 
 async function sendViaResend(input: SendEmailInput): Promise<void> {
@@ -52,6 +53,7 @@ async function sendViaResend(input: SendEmailInput): Promise<void> {
     body: JSON.stringify({
       from: config.emailFrom,
       to: [input.to],
+      reply_to: input.replyTo || undefined,
       subject: input.subject,
       text: input.text,
       html: input.html ?? input.text.replace(/\n/g, '<br>'),
@@ -84,6 +86,7 @@ async function sendViaSmtp(input: SendEmailInput): Promise<void> {
   await transport.sendMail({
     from: config.emailFrom,
     to: input.to,
+    replyTo: input.replyTo,
     subject: input.subject,
     text: input.text,
     html: input.html ?? input.text.replace(/\n/g, '<br>'),

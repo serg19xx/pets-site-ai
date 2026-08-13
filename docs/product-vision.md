@@ -124,3 +124,4 @@ Implement as **separate tables/flags** (e.g. `breeder_profiles`, `business_profi
 - Supabase / **OVH Cloud VPS** deploy when inviting testers (Caddy TLS). See [deploy-ovh-caddy.md](./deploy-ovh-caddy.md).
 - n8n on VPS; workflow exports in `agents/n8n/`.
 - Feed: repost, share, report, notifications, rich link previews.
+- **Interest groups** (user clubs by hobby, breed, neighbourhood). Large surface; wait until there are enough real members to debug with. Do not start in this beta cycle.
