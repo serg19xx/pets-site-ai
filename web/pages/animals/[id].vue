@@ -167,7 +167,7 @@ usePageSeo({
   <section class="ui-page-container">
     <div class="mb-4">
       <NuxtLink
-        :to="localePath('/')"
+        :to="localePath('/animals')"
         class="ui-link-back mb-0! inline-flex"
       >
         <Icon :icon="UI_ACTION_ICONS.back" class="ui-icon-sm" aria-hidden="true" />

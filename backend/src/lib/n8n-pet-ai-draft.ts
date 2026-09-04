@@ -3,6 +3,7 @@ import type { PetAiIdentity } from './pet-ai-context.js'
 import {
   generateLocalFriendHello,
   generateLocalFriendReply,
+  generateLocalIdleMusing,
   generateLocalNewFriend,
   generateLocalPhotoCaption,
   generateLocalSelfIntroduction,
@@ -66,6 +67,10 @@ function localDraft(
       identity,
       options.friendName?.trim() || 'friend',
     )
+    return { ...local, source: 'local' }
+  }
+  if (templateKey === 'IDLE_MUSING') {
+    const local = generateLocalIdleMusing(identity)
     return { ...local, source: 'local' }
   }
   const local = generateLocalSelfIntroduction(identity)

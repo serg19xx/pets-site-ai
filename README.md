@@ -94,7 +94,7 @@ docker compose up -d --build
 With a root `.env` (after `cp .env.docker.example .env` and edits): `docker compose --env-file .env up -d --build`. If you pass `--env-file .env` but the file does not exist, Compose reports **couldn't find env file** — create `.env` or omit `--env-file`.
 
 - API: `http://localhost:${API_PORT:-8080}` (e.g. health: `/api/health`)
-- Postgres: `localhost:${POSTGRES_PORT:-5432}`
+- Postgres: `localhost:${POSTGRES_PORT:-5434}`
 - Uploads: `backend/uploads/` on the host (bind-mounted into the API container — see [docs/uploads.md](docs/uploads.md))
 
 ### Connect from a desktop client (DBeaver, etc.)
@@ -104,7 +104,7 @@ With Postgres running (`docker compose up -d postgres` or full stack), use a **P
 | Field | Default (no root `.env`) |
 |-------|---------------------------|
 | Host | `127.0.0.1` |
-| Port | `5432` (or your `POSTGRES_PORT`) |
+| Port | `5434` (or your `POSTGRES_PORT`) |
 | Database | `pets` |
 | User | `pets` |
 | Password | `pets_dev_change_me` |

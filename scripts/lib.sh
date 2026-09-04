@@ -34,7 +34,7 @@ postgres_published_port() {
 wait_for_postgres() {
   local user="${POSTGRES_USER:-pets}"
   local db="${POSTGRES_DB:-pets}"
-  local port="${POSTGRES_PORT:-5432}"
+  local port="${POSTGRES_PORT:-5434}"
   local i
   local published=""
 

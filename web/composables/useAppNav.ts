@@ -24,16 +24,16 @@ export function useAppNav() {
 
   const mainItems = computed<AppNavItem[]>(() => [
     {
-      id: 'animals',
-      path: localePath('/'),
-      label: t('nav.animals'),
-      icon: UI_NAV_ICONS.animals,
-    },
-    {
       id: 'feed',
-      path: localePath('/feed'),
+      path: localePath('/'),
       label: t('nav.feed'),
       icon: UI_NAV_ICONS.feed,
+    },
+    {
+      id: 'animals',
+      path: localePath('/animals'),
+      label: t('nav.animals'),
+      icon: UI_NAV_ICONS.animals,
     },
     {
       id: 'marketplace',

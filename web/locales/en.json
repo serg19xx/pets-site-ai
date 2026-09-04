@@ -45,8 +45,12 @@
   },
   "meta": {
     "home": {
+      "title": "Feed — Pet Friends",
+      "description": "Community posts and updates from Pet Friends members. The heart of the club."
+    },
+    "animals": {
       "title": "Animals — Pet Friends",
-      "description": "Browse community pets on Pet Friends. No account needed. Sign in to add your pets and join the conversation."
+      "description": "Meet community pets in a playful gallery. Browse without an account; sign in to add yours."
     },
     "feed": {
       "title": "Feed — Pet Friends",
@@ -54,11 +58,12 @@
     },
     "learn": {
       "title": "Learn — Pet Friends",
-      "description": "Guides, articles, and specialist consultations planned for Pet Friends (under construction)."
+      "description": "Short pet-care guides. Original language of each article; use your browser to translate.",
+      "guideTitle": "{title} — Learn — Pet Friends"
     },
     "consultations": {
       "title": "Consultations — Pet Friends",
-      "description": "Specialist catalog and booking planned for Pet Friends (under construction)."
+      "description": "Specialist catalog — coming when we have people who can take questions."
     },
     "login": {
       "title": "Log in — Pet Friends",
@@ -95,8 +100,8 @@
     }
   },
   "home": {
-    "title": "Animals",
-    "subtitle": "Community pets from Pet Friends — no account needed to browse. Sign in to add yours and more."
+    "title": "Feed",
+    "subtitle": "Updates, photos, and news from the Pet Friends club."
   },
   "feed": {
     "title": "Feed",
@@ -134,15 +139,39 @@
   },
   "learn": {
     "title": "Learn",
-    "subtitle": "Guides, articles, and specialist consultations — planned for a later release.",
-    "articlesTitle": "Articles & guides",
-    "articlesPurpose": "Care, training, health, and breeding practice from clinics, specialists, and experienced members. Verified publishers will share structured knowledge here — not ads in the feed.",
-    "consultationsTitle": "Consultations",
-    "consultationsPurpose": "Find vets, behaviorists, trainers, and other specialists. Browse a public catalog, open a consultant profile, and request advice or a booking when this area launches."
+    "subtitle": "Short guides by animal. Each article stays in the author’s language — use your browser to translate if you need to.",
+    "empty": "No guides yet.",
+    "backToLearn": "Back to Learn",
+    "notFound": "This guide was not found.",
+    "byline": "By {name}",
+    "originalLang": "Original: {lang}",
+    "disclaimer": "This is general information, not a veterinary diagnosis. If your animal is unwell, call a clinic.",
+    "translateHint": "The article below is in its original language. Your browser can translate the page if you need another language.",
+    "consultationsHint": "Looking for a specialist? The {consultations} catalog will open when we have people who can take questions.",
+    "langs": {
+      "en": "English",
+      "fr": "French"
+    },
+    "species": {
+      "dog": "Dogs",
+      "cat": "Cats",
+      "small": "Small pets",
+      "general": "Everyday & city"
+    },
+    "topics": {
+      "care": "Care",
+      "health": "Health",
+      "nutrition": "Nutrition",
+      "behavior": "Behavior",
+      "city": "City life"
+    }
   },
   "consultations": {
     "title": "Consultations",
-    "subtitle": "Specialist catalog and booking — coming in a later release."
+    "subtitle": "A catalog of people you can ask — not the same as the guide library.",
+    "panelTitle": "Not open yet",
+    "panelPurpose": "We will list specialists (vets, trainers, behaviorists) when two or three real people can take questions. Until then there is nothing to book here.",
+    "learnHint": "In the meantime, short guides live in {learn}."
   },
 
   "marketplace": {
@@ -257,6 +286,11 @@
     }
   },
   "gallery": {
+    "kicker": "Pet world",
+    "title": "Animals",
+    "subtitle": "A playful gallery of club pets — and their virtual lives alongside their humans.",
+    "greetingAria": "Show greeting from {name}",
+    "voiceNew": "New",
     "loading": "Loading gallery…",
     "loadError": "Could not load the gallery.",
     "loadMoreError": "Could not load more.",

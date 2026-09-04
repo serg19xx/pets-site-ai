@@ -1,12 +1,10 @@
 /** Inline SVG placeholders by species slug (matches `pet_species.slug` in API). */
 
-/** Matches `--ui-surface-muted` — neutral tile behind illustration. */
-const PLACEHOLDER_BG = '#f5f0eb'
-
+/** Transparent tile so the parent surface (e.g. gallery plate) shows through. */
 function neutralizePlaceholderBg(svg: string): string {
   return svg.replace(
     /<rect width="100" height="100" rx="25" fill="#[^"]+"/,
-    `<rect width="100" height="100" rx="25" fill="${PLACEHOLDER_BG}"`,
+    '<rect width="100" height="100" rx="25" fill="none"',
   )
 }
 

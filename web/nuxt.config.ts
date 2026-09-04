@@ -9,7 +9,19 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-05-01',
   app: {
     head: {
-      link: [{ rel: 'icon', type: 'image/webp', href: '/brand/logo-circle.webp' }],
+      link: [
+        { rel: 'icon', type: 'image/webp', href: '/brand/logo-circle.webp' },
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        {
+          rel: 'preconnect',
+          href: 'https://fonts.gstatic.com',
+          crossorigin: '',
+        },
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap',
+        },
+      ],
     },
   },
   telemetry: false,
@@ -88,27 +100,33 @@ export default defineNuxtConfig({
   routeRules: {
     // Proxy API in preview/production (devProxy only applies to `nuxt dev`)
     '/api/**': { proxy: `${apiInternal}/api/**` },
-    // Home hits the live gallery API — do not prerender at image build time.
-    '/': { ssr: true },
-    '/feed': { ssr: false },
+    // Home is the community feed (client-fetched).
+    '/': { ssr: false },
+    '/feed': { redirect: '/' },
     '/marketplace': { ssr: false },
     '/marketplace/**': { ssr: false },
     // SSR (not prerender): locale switch stays client-side without a hard HTML swap.
     '/learn': { ssr: true },
+    '/learn/**': { ssr: true },
+    '/consultations': { ssr: true },
     '/login': { ssr: true },
     '/invite': { ssr: true },
     '/contact': { ssr: true },
     '/faq': { ssr: true },
-    '/fr': { ssr: true },
-    '/fr/feed': { ssr: false },
+    '/fr': { ssr: false },
+    '/fr/feed': { redirect: '/fr' },
     '/fr/marketplace': { ssr: false },
     '/fr/marketplace/**': { ssr: false },
     '/fr/learn': { ssr: true },
+    '/fr/learn/**': { ssr: true },
+    '/fr/consultations': { ssr: true },
     '/fr/login': { ssr: true },
     '/fr/invite': { ssr: true },
     '/fr/contact': { ssr: true },
     '/fr/faq': { ssr: true },
+    '/animals': { ssr: true },
     '/animals/**': { ssr: true },
+    '/fr/animals': { ssr: true },
     '/fr/animals/**': { ssr: true },
     '/app/**': { ssr: false },
     '/sitemap.xml': { prerender: false },

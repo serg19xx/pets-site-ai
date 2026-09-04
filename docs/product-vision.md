@@ -118,7 +118,7 @@ Implement as **separate tables/flags** (e.g. `breeder_profiles`, `business_profi
 - Marketplace inquiry **SMS via Twilio** (production); until then console/backup email only.
 - Breeder / business / consultant / publisher **capability profiles** (see audience doc).
 - Learn articles + verified professional publishing.
-- Consultations catalog + consultant lite cabinet.
+- Consultations catalog + consultant lite cabinet. Small-step plan: [learn-and-consultations.md](./learn-and-consultations.md).
 - Ads, member boosts, sponsorship / “fee as investment” billing models.
 - Color palette / login icon recolor (SVG or themed asset).
 - Supabase / **OVH Cloud VPS** deploy when inviting testers (Caddy TLS). See [deploy-ovh-caddy.md](./deploy-ovh-caddy.md).

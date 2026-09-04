@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
 
 import PetAvatar from '~/components/PetAvatar.vue'
 import PetVirtualBadge from '~/components/PetVirtualBadge.vue'
@@ -19,20 +20,45 @@ const authUiReady = useAuthUiReady()
 
 const PAGE_SIZE = 24
 const auth = useAuthStore()
+const { isAuthenticated, accessToken } = storeToRefs(auth)
+
+/** Guests see the count only; members can toggle. */
+const canLike = computed(() => Boolean(accessToken.value) && isAuthenticated.value)
+
+/** Soft cartoon plate colors — cycle by pet id (warm pastels, not one purple theme). */
+const GALLERY_PLATES = [
+  '#FFE4CC',
+  '#DFF3E4',
+  '#D6EAF8',
+  '#FFE9B8',
+  '#F8D7E3',
+  '#D5F2F0',
+  '#E8DFD4',
+  '#F3E0C8',
+] as const
+
+function plateForPet(id: number) {
+  return GALLERY_PLATES[Math.abs(id) % GALLERY_PLATES.length]
+}
 
 const extraPets = ref<GalleryPet[]>([])
 const isLoadingMore = ref(false)
 const loadMoreError = ref('')
 const activeLikeId = ref<number | null>(null)
+const openVoiceId = ref<number | null>(null)
 const interactionError = ref('')
 
+function toggleVoice(petId: number) {
+  openVoiceId.value = openVoiceId.value === petId ? null : petId
+}
+
 const { data, pending, error, refresh } = await useAsyncData(
-  () => `gallery-home-${locale.value}`,
+  () => `gallery-animals-${locale.value}`,
   () =>
     fetchGalleryPets({
       limit: PAGE_SIZE,
       offset: 0,
-      accessToken: authUiReady.value ? auth.accessToken : undefined,
+      accessToken: canLike.value ? accessToken.value ?? undefined : undefined,
     }),
   { watch: [locale] },
 )
@@ -75,12 +101,13 @@ watch(locale, () => {
 })
 
 watch(
-  authUiReady,
-  (ready) => {
-    if (ready) {
-      extraPets.value = []
-      void refresh()
+  [authUiReady, canLike, accessToken],
+  ([ready]) => {
+    if (!ready) {
+      return
     }
+    extraPets.value = []
+    void refresh()
   },
 )
 
@@ -94,7 +121,7 @@ async function loadMore() {
     const { pets: list } = await fetchGalleryPets({
       limit: PAGE_SIZE,
       offset: pets.value.length,
-      accessToken: authUiReady.value ? auth.accessToken : undefined,
+      accessToken: canLike.value ? accessToken.value ?? undefined : undefined,
     })
     extraPets.value.push(...list)
   } catch (err) {
@@ -116,20 +143,23 @@ function updatePetState(petId: number, patch: Partial<GalleryPet>) {
 }
 
 async function onToggleLike(pet: GalleryPet) {
-  const token = auth.accessToken
-  if (!token || activeLikeId.value !== null) {
-    interactionError.value = token ? '' : t('feed.loginToInteract')
+  const token = accessToken.value
+  if (!canLike.value || !token) {
+    interactionError.value = t('feed.loginToInteract')
+    return
+  }
+  if (activeLikeId.value !== null) {
     return
   }
   interactionError.value = ''
   activeLikeId.value = pet.id
   const prevLiked = pet.liked
   const prevCount = pet.likeCount
-  updatePetState(pet.id, {
-    liked: !prevLiked,
-    likeCount: prevLiked ? Math.max(0, prevCount - 1) : prevCount + 1,
-  })
   try {
+    updatePetState(pet.id, {
+      liked: !prevLiked,
+      likeCount: prevLiked ? Math.max(0, prevCount - 1) : prevCount + 1,
+    })
     const status = await togglePetLike(pet.id, token)
     updatePetState(pet.id, { liked: status.liked, likeCount: status.count })
   } catch (err) {
@@ -180,56 +210,96 @@ watch(
   </p>
 
   <template v-else>
-    <ul class="ui-gallery-grid">
-      <li v-for="animal in pets" :key="animal.id" class="ui-gallery-card">
-        <NuxtLink :to="petPath(animal.id)" class="ui-gallery-card-link">
-          <div class="ui-gallery-card-media">
+    <ul class="ui-gallery-grid ui-gallery-grid--playful">
+      <li
+        v-for="animal in pets"
+        :key="animal.id"
+        class="ui-gallery-card ui-gallery-card--playful"
+        :style="{ '--gallery-plate': plateForPet(animal.id) }"
+      >
+        <div class="ui-gallery-card-media">
+          <NuxtLink :to="petPath(animal.id)" class="ui-gallery-card-media-link" :aria-label="animal.name">
             <PetAvatar :pet="animal" size="fill" />
-          </div>
-          <div class="ui-gallery-card-body">
-            <p
+          </NuxtLink>
+        </div>
+        <div class="ui-gallery-card-footer">
+          <NuxtLink :to="petPath(animal.id)" class="ui-gallery-card-link">
+            <div class="ui-gallery-card-body">
+              <h2 class="ui-gallery-card-title">
+                <span>{{ animal.name }}</span>
+                <PetVirtualBadge :enabled="animal.virtualLifeEnabled" />
+              </h2>
+              <p class="ui-gallery-card-meta">
+                {{ speciesSubtitle(animal) }}
+              </p>
+            </div>
+          </NuxtLink>
+          <div class="ui-gallery-card-actions">
+            <div
               v-if="cardCaption(animal)"
-              class="ui-gallery-card-caption"
+              class="ui-gallery-voice-wrap"
             >
-              {{ cardCaption(animal) }}
-            </p>
-            <h2 class="ui-gallery-card-title flex flex-wrap items-center gap-2">
-              <span>{{ animal.name }}</span>
-              <PetVirtualBadge :enabled="animal.virtualLifeEnabled" />
-            </h2>
-            <p class="ui-gallery-card-meta">
-              {{ speciesSubtitle(animal) }}
-            </p>
+              <button
+                type="button"
+                class="ui-gallery-voice"
+                :class="{
+                  'ui-gallery-voice--open': openVoiceId === animal.id,
+                  'ui-gallery-voice--new':
+                    Boolean(animal.latestVoiceIsNew && (animal.latestVoice || animal.latestVoiceFr)),
+                }"
+                :aria-expanded="openVoiceId === animal.id"
+                :aria-label="$t('gallery.greetingAria', { name: animal.name })"
+                @click.stop.prevent="toggleVoice(animal.id)"
+              >
+                <Icon
+                  :icon="UI_ACTION_ICONS.message"
+                  class="ui-gallery-voice-icon"
+                  aria-hidden="true"
+                />
+                <span
+                  v-if="animal.latestVoiceIsNew && (animal.latestVoice || animal.latestVoiceFr)"
+                  class="ui-gallery-voice-new"
+                >
+                  {{ $t('gallery.voiceNew') }}
+                </span>
+              </button>
+              <div
+                class="ui-gallery-voice-balloon"
+                :class="{ 'ui-gallery-voice-balloon--open': openVoiceId === animal.id }"
+                role="tooltip"
+              >
+                {{ cardCaption(animal) }}
+              </div>
+            </div>
+            <button
+              type="button"
+              class="ui-gallery-like"
+              :class="{ 'ui-gallery-like--on': animal.liked }"
+              :disabled="activeLikeId === animal.id || !canLike"
+              :title="canLike ? undefined : $t('feed.loginToInteract')"
+              @click.stop="onToggleLike(animal)"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                class="ui-gallery-like-icon"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  d="M19.5 12.5721L12 20L4.5 12.5721C3.0052 11.0921 2.75 8.79606 3.87868 7.01777C5.34777 4.70223 8.53553 4.19491 10.6716 5.96447L12 7.06531L13.3284 5.96447C15.4645 4.19491 18.6522 4.70223 20.1213 7.01777C21.25 8.79606 20.9948 11.0921 19.5 12.5721Z"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span>{{ animal.likeCount }}</span>
+              <span class="sr-only">
+                {{ animal.liked ? $t('pet.unlike') : $t('pet.like') }}
+              </span>
+            </button>
           </div>
-        </NuxtLink>
-        <div class="border-t border-(--ui-border) px-2 py-1">
-          <button
-            type="button"
-            class="ui-feed-action-btn ui-feed-action-btn--like"
-            :class="{ 'ui-feed-action-btn--liked': animal.liked }"
-            :disabled="activeLikeId === animal.id || !authUiReady || !auth.isAuthenticated"
-            @click="onToggleLike(animal)"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              class="ui-feed-like-icon"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <path
-                d="M19.5 12.5721L12 20L4.5 12.5721C3.0052 11.0921 2.75 8.79606 3.87868 7.01777C5.34777 4.70223 8.53553 4.19491 10.6716 5.96447L12 7.06531L13.3284 5.96447C15.4645 4.19491 18.6522 4.70223 20.1213 7.01777C21.25 8.79606 20.9948 11.0921 19.5 12.5721Z"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-            <span>{{ animal.likeCount }}</span>
-            <span class="sr-only">
-              {{ animal.liked ? $t('pet.unlike') : $t('pet.like') }}
-            </span>
-          </button>
         </div>
       </li>
     </ul>

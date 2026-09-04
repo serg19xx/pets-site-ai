@@ -1,5 +1,6 @@
 import cors from '@fastify/cors'
 import Fastify from 'fastify'
+import rawBody from 'fastify-raw-body'
 
 import { registerOpenApi } from './openapi.js'
 import { registerJwtAuth } from './plugins/jwt-auth.js'
@@ -16,6 +17,7 @@ import { marketplaceInquiryRoutes } from './routes/marketplace-inquiries.js'
 import { marketplaceRoutes } from './routes/marketplace.js'
 import { notificationRoutes } from './routes/notifications.js'
 import { petsRoutes } from './routes/pets.js'
+import { stripeWebhookRoutes } from './routes/stripe-webhook.js'
 
 export async function buildServer() {
   const app = Fastify({ logger: true, trustProxy: true })
@@ -23,6 +25,12 @@ export async function buildServer() {
   await app.register(cors, { origin: true })
   await registerJwtAuth(app)
   await registerUploads(app)
+  await app.register(rawBody, {
+    field: 'rawBody',
+    global: false,
+    encoding: false,
+    runFirst: true,
+  })
   await registerOpenApi(app)
   await app.register(healthRoutes, { prefix: '/api' })
   await app.register(contactRoutes, { prefix: '/api' })
@@ -36,5 +44,6 @@ export async function buildServer() {
   await app.register(adminRoutes, { prefix: '/api' })
   await app.register(authRoutes, { prefix: '/api' })
   await app.register(petsRoutes, { prefix: '/api' })
+  await app.register(stripeWebhookRoutes, { prefix: '/api' })
   return app
 }

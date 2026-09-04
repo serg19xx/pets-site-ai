@@ -100,6 +100,8 @@ export const config = {
   twilioAccountSid: readEnv('TWILIO_ACCOUNT_SID'),
   twilioAuthToken: readEnv('TWILIO_AUTH_TOKEN'),
   twilioFromNumber: readEnv('TWILIO_FROM_NUMBER'),
+  /** Stripe endpoint signing secret (whsec_...). Webhook returns 503 while unset. */
+  stripeWebhookSecret: readEnv('STRIPE_WEBHOOK_SECRET'),
   /**
    * Optional n8n webhooks (OVH). When unset, API uses local templates.
    * See agents/n8n/docs/pet-greeting.md and pet-ai-draft.md

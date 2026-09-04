@@ -12,32 +12,36 @@ export const MEMBER_SELECT = `
   u.show_nickname AS member_show_nickname
 `
 
-/** Latest ready/published AI draft — the pet’s most recent “event voice”. */
+/** Latest surface AI draft — the pet’s current gallery voice bubble. */
 export const LATEST_VOICE_SELECT = `
   (
     SELECT d.body
     FROM pet_ai_drafts d
     WHERE d.pet_id = p.id
-      AND d.status IN ('ready', 'published')
-    ORDER BY d.created_at DESC, d.id DESC
+      AND d.is_surface = TRUE
     LIMIT 1
   ) AS latest_voice,
   (
     SELECT d.body_fr
     FROM pet_ai_drafts d
     WHERE d.pet_id = p.id
-      AND d.status IN ('ready', 'published')
-    ORDER BY d.created_at DESC, d.id DESC
+      AND d.is_surface = TRUE
     LIMIT 1
   ) AS latest_voice_fr,
   (
     SELECT d.template_key
     FROM pet_ai_drafts d
     WHERE d.pet_id = p.id
-      AND d.status IN ('ready', 'published')
-    ORDER BY d.created_at DESC, d.id DESC
+      AND d.is_surface = TRUE
     LIMIT 1
-  ) AS latest_voice_template
+  ) AS latest_voice_template,
+  (
+    SELECT d.surfaced_at
+    FROM pet_ai_drafts d
+    WHERE d.pet_id = p.id
+      AND d.is_surface = TRUE
+    LIMIT 1
+  ) AS latest_voice_surfaced_at
 `
 
 export const PET_GALLERY_SELECT = `

@@ -11,4 +11,4 @@ require_docker
 docker compose up -d --build
 echo "Done."
 echo "  API:    http://localhost:8080/api/health"
-echo "  DB:     localhost:5432"
+echo "  DB:     localhost:${POSTGRES_PORT:-5434}"

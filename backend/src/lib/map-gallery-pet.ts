@@ -1,6 +1,7 @@
 import { buildPublicUploadUrl } from './uploads.js'
 import type { PublicMember } from './map-public-member.js'
 import type { PetSex } from '../types/pet.js'
+import { isVoiceNew } from './pet-voice-surface.js'
 
 export interface GalleryPetPhoto {
   id: number
@@ -22,10 +23,14 @@ export interface GalleryPet {
   greetingFr: string | null
   coverCaption: string | null
   coverCaptionFr: string | null
-  /** Most recent AI draft (event reaction), bilingual. */
+  /** Current surface AI voice (gallery bubble). */
   latestVoice: string | null
   latestVoiceFr: string | null
   latestVoiceTemplate: string | null
+  /** ISO timestamp when the surface voice was activated. */
+  latestVoiceSurfacedAt: string | null
+  /** True while within the 3-day "New" window. */
+  latestVoiceIsNew: boolean
   virtualLifeEnabled: boolean
   liked: boolean
   likeCount: number
@@ -116,6 +121,7 @@ export type GalleryRow = {
   latest_voice: string | null
   latest_voice_fr: string | null
   latest_voice_template: string | null
+  latest_voice_surfaced_at: Date | string | null
   virtual_life_enabled: boolean
   liked: boolean
   like_count: number
@@ -149,6 +155,14 @@ export function mapGalleryPetRow(
     latestVoice: row.latest_voice?.trim() || null,
     latestVoiceFr: row.latest_voice_fr?.trim() || null,
     latestVoiceTemplate: row.latest_voice_template?.trim() || null,
+    latestVoiceSurfacedAt: (() => {
+      const raw = row.latest_voice_surfaced_at
+      if (!raw) {
+        return null
+      }
+      return raw instanceof Date ? raw.toISOString() : String(raw)
+    })(),
+    latestVoiceIsNew: isVoiceNew(row.latest_voice_surfaced_at),
     virtualLifeEnabled: Boolean(row.virtual_life_enabled),
     liked: row.liked,
     likeCount: Number(row.like_count ?? 0),

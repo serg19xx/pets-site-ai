@@ -57,8 +57,8 @@ for attempt in 1 2 3 4 5; do
   sleep 2
 done
 if [[ "${migrate_ok}" -ne 1 ]]; then
-  echo "error: database migrations failed. Is Docker Postgres on port ${POSTGRES_PORT:-5432}?" >&2
-  echo "  Check: lsof -nP -iTCP:5432 -sTCP:LISTEN" >&2
+  echo "error: database migrations failed. Is Docker Postgres on port ${POSTGRES_PORT:-5434}?" >&2
+  echo "  Check: lsof -nP -iTCP:${POSTGRES_PORT:-5434} -sTCP:LISTEN" >&2
   echo "  And DATABASE_URL in backend/.env matches compose password (pets_dev_change_me)." >&2
   exit 1
 fi

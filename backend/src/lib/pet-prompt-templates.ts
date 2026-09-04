@@ -20,6 +20,7 @@ export const PET_PROMPT_TEMPLATE_KEYS = [
   'NEW_FRIEND',
   'FRIEND_HELLO',
   'FRIEND_REPLY',
+  'IDLE_MUSING',
 ] as const
 
 export type PetPromptTemplateKey = (typeof PET_PROMPT_TEMPLATE_KEYS)[number]
@@ -131,6 +132,12 @@ export const PET_PROMPT_TEMPLATES: Record<PetPromptTemplateKey, PetPromptTemplat
     label: 'Friend reply',
     instructions:
       'Reply in first person to a new friend’s short hello. One short warm sentence only. Never mention AI.',
+  },
+  IDLE_MUSING: {
+    key: 'IDLE_MUSING',
+    label: 'Idle musing',
+    instructions:
+      'The pet is a bit bored because nothing special happened lately. Write a short playful first-person musing: restless energy, wanting adventure or new friends. Never mention AI, schedules, or databases. 1–3 sentences.',
   },
 }
 

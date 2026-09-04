@@ -8,8 +8,10 @@
  */
 @theme {
   --font-sans:
-    ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Nunito', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
     'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-display:
+    'Fredoka', 'Nunito', ui-sans-serif, system-ui, sans-serif;
 
   --color-primary-50: #faf7f4;
   --color-primary-100: #f0e9e3;
@@ -29,15 +31,15 @@
 }
 
 :root {
-  /* Surfaces & text */
-  --ui-surface: #ffffff;
-  --ui-surface-muted: #f5f0eb;
-  --ui-surface-inset: #faf7f4;
-  --ui-border: #e7ddd4;
-  --ui-border-strong: #d6c9be;
-  --ui-text: #292524;
-  --ui-text-muted: #57534e;
-  --ui-text-subtle: #78716c;
+  /* Surfaces & text — warmer cream, less “stone funeral” */
+  --ui-surface: #fffdf9;
+  --ui-surface-muted: #fff4e8;
+  --ui-surface-inset: #fff8f0;
+  --ui-border: #eadccf;
+  --ui-border-strong: #d9c4b2;
+  --ui-text: #3b2a22;
+  --ui-text-muted: #6a5348;
+  --ui-text-subtle: #8a7266;
   --ui-ring: var(--color-primary-600);
 
   /* Icons */

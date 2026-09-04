@@ -1,4 +1,6 @@
-const STATIC_PATHS = ['', '/feed', '/learn', '/contact', '/faq'] as const
+import { LEARN_GUIDES } from '../../data/learn-guides'
+
+const STATIC_PATHS = ['', '/animals', '/learn', '/consultations', '/contact', '/faq'] as const
 const FR_PREFIX = '/fr'
 
 function xmlEscape(value: string): string {
@@ -51,6 +53,11 @@ export default defineEventHandler(async (event) => {
   for (const id of petIds) {
     lines.push(urlEntry(base, `/animals/${id}`, 'weekly', '0.8'))
     lines.push(urlEntry(base, `${FR_PREFIX}/animals/${id}`, 'weekly', '0.7'))
+  }
+
+  for (const guide of LEARN_GUIDES) {
+    lines.push(urlEntry(base, `/learn/${guide.slug}`, 'monthly', '0.5'))
+    lines.push(urlEntry(base, `${FR_PREFIX}/learn/${guide.slug}`, 'monthly', '0.4'))
   }
 
   lines.push('</urlset>')

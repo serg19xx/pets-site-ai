@@ -29,6 +29,10 @@ export interface GalleryPet {
   latestVoice: string | null
   latestVoiceFr: string | null
   latestVoiceTemplate: string | null
+  /** When the current gallery voice became active (ISO). */
+  latestVoiceSurfacedAt: string | null
+  /** True for up to 3 days after a new surface voice. */
+  latestVoiceIsNew: boolean
   virtualLifeEnabled: boolean
   liked: boolean
   likeCount: number

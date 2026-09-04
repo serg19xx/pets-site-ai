@@ -6,6 +6,10 @@ import {
 } from '../lib/pet-ai-context.js'
 import { resolveBilingualAiDraft } from '../lib/n8n-pet-ai-draft.js'
 import type { PetPromptTemplateKey } from '../lib/pet-prompt-templates.js'
+import {
+  IDLE_MUSING_AFTER_DAYS,
+  isSurfaceVoiceTemplate,
+} from '../lib/pet-voice-surface.js'
 
 export interface PetAiDraftRecord {
   id: number
@@ -16,6 +20,9 @@ export interface PetAiDraftRecord {
   bodyFr: string
   sourceEventType: string | null
   payload: Record<string, unknown>
+  isSurface: boolean
+  surfacedAt: string | null
+  archivedAt: string | null
   createdAt: string
   updatedAt: string
 }
@@ -29,6 +36,9 @@ type DraftRow = {
   body_fr: string
   source_event_type: string | null
   payload: Record<string, unknown> | null
+  is_surface: boolean
+  surfaced_at: Date | null
+  archived_at: Date | null
   created_at: Date
   updated_at: Date
 }
@@ -43,6 +53,19 @@ function mapRow(row: DraftRow): PetAiDraftRecord {
     bodyFr: row.body_fr,
     sourceEventType: row.source_event_type,
     payload: row.payload && typeof row.payload === 'object' ? row.payload : {},
+    isSurface: Boolean(row.is_surface),
+    surfacedAt:
+      row.surfaced_at instanceof Date
+        ? row.surfaced_at.toISOString()
+        : row.surfaced_at
+          ? String(row.surfaced_at)
+          : null,
+    archivedAt:
+      row.archived_at instanceof Date
+        ? row.archived_at.toISOString()
+        : row.archived_at
+          ? String(row.archived_at)
+          : null,
     createdAt:
       row.created_at instanceof Date
         ? row.created_at.toISOString()
@@ -54,6 +77,53 @@ function mapRow(row: DraftRow): PetAiDraftRecord {
   }
 }
 
+const DRAFT_RETURNING = `id, pet_id, template_key, status, body, body_fr,
+               source_event_type, payload, is_surface, surfaced_at, archived_at,
+               created_at, updated_at`
+
+/**
+ * Make `draftId` the gallery surface voice. Previous surface drafts are archived
+ * (is_surface=false) but kept for memory — never deleted.
+ */
+export async function activateSurfaceDraft(
+  petId: number,
+  draftId: number,
+): Promise<void> {
+  const client = await pool.connect()
+  try {
+    await client.query('BEGIN')
+    await client.query(
+      `UPDATE pet_ai_drafts
+       SET is_surface = FALSE,
+           archived_at = COALESCE(archived_at, NOW()),
+           updated_at = NOW()
+       WHERE pet_id = $1
+         AND is_surface = TRUE
+         AND id <> $2`,
+      [petId, draftId],
+    )
+    const r = await client.query(
+      `UPDATE pet_ai_drafts
+       SET is_surface = TRUE,
+           surfaced_at = NOW(),
+           archived_at = NULL,
+           updated_at = NOW()
+       WHERE id = $1
+         AND pet_id = $2`,
+      [draftId, petId],
+    )
+    if ((r.rowCount ?? 0) === 0) {
+      throw new AppError(404, 'Draft not found', 'NOT_FOUND')
+    }
+    await client.query('COMMIT')
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally {
+    client.release()
+  }
+}
+
 async function insertDraft(input: {
   petId: number
   templateKey: PetPromptTemplateKey | string
@@ -62,13 +132,13 @@ async function insertDraft(input: {
   sourceEventType?: string | null
   payload?: Record<string, unknown>
   status?: string
+  activateSurface?: boolean
 }): Promise<PetAiDraftRecord | null> {
   const r = await pool.query<DraftRow>(
     `INSERT INTO pet_ai_drafts (
        pet_id, template_key, status, body, body_fr, source_event_type, payload
      ) VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb)
-     RETURNING id, pet_id, template_key, status, body, body_fr,
-               source_event_type, payload, created_at, updated_at`,
+     RETURNING ${DRAFT_RETURNING}`,
     [
       input.petId,
       input.templateKey,
@@ -80,7 +150,22 @@ async function insertDraft(input: {
     ],
   )
   const row = r.rows[0]
-  return row ? mapRow(row) : null
+  if (!row) {
+    return null
+  }
+  const draft = mapRow(row)
+  const shouldSurface =
+    input.activateSurface ?? isSurfaceVoiceTemplate(String(input.templateKey))
+  if (shouldSurface) {
+    await activateSurfaceDraft(input.petId, draft.id)
+    return {
+      ...draft,
+      isSurface: true,
+      surfacedAt: new Date().toISOString(),
+      archivedAt: null,
+    }
+  }
+  return draft
 }
 
 async function createTemplateDraft(input: {
@@ -184,6 +269,7 @@ export async function createPhotoPostDraft(
         source: draft.source,
       },
       status: 'published',
+      activateSurface: false,
     })
     return { body: draft.body, bodyFr: draft.bodyFr }
   } catch (error) {
@@ -330,6 +416,76 @@ export async function createFriendReplicaExchange(input: {
   }
 }
 
+/**
+ * Create IDLE_MUSING draft when the pet has been quiet for a while. Swallows errors.
+ */
+export async function createIdleMusingDraft(petId: number): Promise<void> {
+  try {
+    if (!(await assertVirtualLifeForAi(petId))) {
+      return
+    }
+    await createTemplateDraft({
+      petId,
+      templateKey: 'IDLE_MUSING',
+      eventHint:
+        'Nothing special happened lately. The pet feels a bit bored and restless (IDLE_DAY).',
+      sourceEventType: 'IDLE_DAY',
+      payload: { reason: 'quiet_period' },
+    })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    console.warn(`[pet-ai-drafts] IDLE_MUSING failed: ${message}`)
+  }
+}
+
+/**
+ * For pets with virtual life on whose surface voice is older than IDLE_MUSING_AFTER_DAYS
+ * (or missing), generate a new idle musing. Safe to call periodically.
+ */
+export async function runIdleMusingSweep(options: {
+  limit?: number
+} = {}): Promise<{ considered: number; generated: number }> {
+  const limit = Math.min(Math.max(options.limit ?? 20, 1), 100)
+  const r = await pool.query<{ id: string }>(
+    `SELECT p.id
+     FROM pets p
+     WHERE p.virtual_life_enabled = TRUE
+       AND (
+         NOT EXISTS (
+           SELECT 1 FROM pet_ai_drafts d
+           WHERE d.pet_id = p.id AND d.is_surface = TRUE
+         )
+         OR EXISTS (
+           SELECT 1 FROM pet_ai_drafts d
+           WHERE d.pet_id = p.id
+             AND d.is_surface = TRUE
+             AND d.surfaced_at < NOW() - ($1::text || ' days')::interval
+         )
+       )
+       AND NOT EXISTS (
+         SELECT 1 FROM pet_ai_drafts d
+         WHERE d.pet_id = p.id
+           AND d.template_key = 'IDLE_MUSING'
+           AND d.created_at > NOW() - ($1::text || ' days')::interval
+       )
+     ORDER BY p.id
+     LIMIT $2`,
+    [String(IDLE_MUSING_AFTER_DAYS), limit],
+  )
+
+  let generated = 0
+  for (const row of r.rows) {
+    const petId = Number(row.id)
+    try {
+      await createIdleMusingDraft(petId)
+      generated += 1
+    } catch {
+      // createIdleMusingDraft already swallows; keep sweep going
+    }
+  }
+  return { considered: r.rows.length, generated }
+}
+
 async function assertPetOwned(userId: number, petId: number): Promise<void> {
   const r = await pool.query('SELECT 1 FROM pets WHERE id = $1 AND user_id = $2', [
     petId,
@@ -356,8 +512,7 @@ export async function listPetAiDrafts(
   const total = Number(countR.rows[0]?.c ?? 0)
 
   const r = await pool.query<DraftRow>(
-    `SELECT id, pet_id, template_key, status, body, body_fr,
-            source_event_type, payload, created_at, updated_at
+    `SELECT ${DRAFT_RETURNING}
      FROM pet_ai_drafts
      WHERE pet_id = $1
      ORDER BY created_at DESC, id DESC

@@ -76,5 +76,5 @@ Until billing exists, marketplace “promoted/benefit” ranking is a product pl
 ## Related docs
 
 - [product-vision.md](./product-vision.md) — v1 decisions and deferred list
-- [marketplace-notifications.md](./marketplace-notifications.md) — listing inquiry alerts
+- [learn-and-consultations.md](./learn-and-consultations.md) — Learn library vs consultations catalog
 - [mvp-stabilization-sprint.md](./mvp-stabilization-sprint.md) — latest stabilization cycle

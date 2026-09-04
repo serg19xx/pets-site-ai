@@ -101,3 +101,24 @@ export function generateLocalFriendReply(
     bodyFr: `Salut ${name} ! Avec plaisir — à tout à l'heure !`,
   }
 }
+
+export function generateLocalIdleMusing(
+  identity: PetAiIdentity,
+): { body: string; bodyFr: string } {
+  const variants = [
+    {
+      body: `What a bore!!! What should I invent today? Who should I meet??`,
+      bodyFr: `Quel ennui !!! Qu'est-ce que je pourrais inventer ? Qui rencontrer ??`,
+    },
+    {
+      body: `Hmm… nothing exciting today. Maybe a new friend is around the corner?`,
+      bodyFr: `Hmm… rien d'excitant aujourd'hui. Peut-être qu'un nouvel ami n'est pas loin ?`,
+    },
+    {
+      body: `I'm restless! Someone want to play, sniff, or share a snack story?`,
+      bodyFr: `Je m'ennuie ! Quelqu'un pour jouer, renifler ou raconter une histoire de gâterie ?`,
+    },
+  ] as const
+  const pick = variants[Math.abs(identity.name.length) % variants.length]!
+  return { body: pick.body, bodyFr: pick.bodyFr }
+}

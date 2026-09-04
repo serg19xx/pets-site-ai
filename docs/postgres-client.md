@@ -1,6 +1,6 @@
 # Connect to local Postgres (DBeaver, TablePlus, etc.)
 
-Use this when PostgreSQL runs from the repo root **`docker compose`** and the default port is published to your machine (`POSTGRES_PORT`, default **5432**).
+Use this when PostgreSQL runs from the repo root **`docker compose`** and the default port is published to your machine (`POSTGRES_PORT`, default **5434**).
 
 ## Connection parameters (defaults)
 
@@ -9,7 +9,7 @@ These match **`docker-compose.yml`** when you do **not** use a root `.env` file 
 | Setting | Value |
 |---------|--------|
 | Host | `127.0.0.1` or `localhost` |
-| Port | `5432` (or `POSTGRES_PORT` if you changed it) |
+| Port | `5434` (or `POSTGRES_PORT` if you changed it) |
 | Database | `pets` |
 | User | `pets` |
 | Password | `pets_dev_change_me` |

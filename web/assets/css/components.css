@@ -45,6 +45,19 @@
            text-stone-700 dark:border-stone-700 dark:text-stone-300;
   }
 
+  .ui-learn-disclaimer {
+    @apply rounded-(--radius-card) border border-(--ui-border) bg-(--ui-surface-inset)
+           px-4 py-3 text-sm text-(--ui-text-muted);
+  }
+
+  .ui-learn-body {
+    @apply flex flex-col gap-3;
+  }
+
+  .ui-learn-list {
+    @apply list-disc space-y-1 pl-5 text-sm text-stone-700 dark:text-stone-300;
+  }
+
   /* —— Typography —— */
   .ui-h1 {
     @apply text-2xl font-semibold tracking-tight text-stone-900 dark:text-stone-100;
@@ -515,21 +528,24 @@
   }
 
   .ui-bottom-nav {
-    @apply fixed inset-x-0 bottom-0 z-40 border-t border-(--ui-border) bg-(--ui-surface)/95 backdrop-blur
-           dark:bg-stone-950/95;
+    @apply fixed inset-x-0 bottom-0 z-40 px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2
+           pointer-events-none;
   }
 
   .ui-bottom-nav-list {
-    @apply mx-auto flex h-16 w-full list-none items-stretch justify-around;
+    @apply pointer-events-auto mx-auto flex h-16 w-full max-w-lg list-none items-stretch
+           justify-around rounded-full border border-(--ui-border) bg-(--ui-surface)/95
+           px-1 shadow-[0_10px_30px_-12px_rgba(41,37,36,0.45)] backdrop-blur
+           dark:bg-stone-950/95;
   }
 
   .ui-bottom-nav-item {
-    @apply flex flex-1 flex-col items-center justify-center gap-0.5 text-xs font-medium
+    @apply flex flex-1 flex-col items-center justify-center gap-0.5 rounded-full text-xs font-medium
            text-(--ui-text-muted) transition-colors;
   }
 
   .ui-bottom-nav-item-active {
-    @apply text-primary-700 dark:text-primary-400;
+    @apply bg-primary-100 text-primary-800 dark:bg-primary-950/60 dark:text-primary-300;
   }
 
   .ui-bottom-nav-label {
@@ -586,7 +602,7 @@
   }
 
   .ui-shell-main {
-    @apply min-w-0 flex-1 px-4 py-4 pb-20 lg:pb-4;
+    @apply min-w-0 flex-1 px-4 py-4 pb-24 lg:pb-4;
   }
 
   .ui-header {
@@ -1207,8 +1223,39 @@
   }
 
   /* —— Gallery card —— */
+  .ui-gallery-page {
+    @apply relative isolate overflow-visible rounded-[1.75rem] px-4 py-5 sm:px-6 sm:py-6;
+    background:
+      radial-gradient(ellipse 80% 55% at 0% 0%, #ffd9b8 0%, transparent 55%),
+      radial-gradient(ellipse 70% 50% at 100% 10%, #c8f0e4 0%, transparent 50%),
+      radial-gradient(ellipse 60% 45% at 80% 100%, #ffe6f0 0%, transparent 55%),
+      #fff8ef;
+  }
+
+  .ui-gallery-page-header {
+    @apply pt-1;
+  }
+
+  .ui-gallery-page-kicker {
+    @apply mb-2 text-xs font-bold tracking-[0.16em] text-primary-600 uppercase;
+    font-family: var(--font-display);
+  }
+
+  .ui-gallery-page .ui-page-title {
+    font-family: var(--font-display);
+    @apply text-3xl font-semibold tracking-tight text-primary-900 sm:text-4xl;
+  }
+
+  .ui-gallery-page .ui-page-subtitle {
+    @apply text-base text-(--ui-text-muted);
+  }
+
   .ui-gallery-grid {
-    @apply grid grid-cols-2 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-4;
+    @apply grid grid-cols-2 gap-3 overflow-visible sm:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-4;
+  }
+
+  .ui-gallery-grid--playful {
+    @apply gap-4 overflow-visible md:gap-5;
   }
 
   .ui-gallery-grid--profile {
@@ -1220,12 +1267,35 @@
            bg-(--ui-surface) shadow-sm;
   }
 
+  .ui-gallery-card--playful {
+    --gallery-plate: var(--ui-surface-muted);
+    @apply relative z-0 overflow-visible border-0 bg-[#fffdf8]
+           shadow-[0_12px_28px_-14px_rgba(61,43,37,0.28)]
+           transition-[transform,box-shadow,z-index] duration-200 ease-out;
+    border-radius: 1.35rem;
+    font-family: var(--font-sans);
+  }
+
+  .ui-gallery-card--playful:hover,
+  .ui-gallery-card--playful:focus-within {
+    @apply z-30 -translate-y-0.5 shadow-[0_18px_36px_-12px_rgba(61,43,37,0.35)];
+  }
+
   .ui-gallery-card-link {
     @apply flex flex-1 flex-col;
   }
 
+  .ui-gallery-card-media-link {
+    @apply absolute inset-0 block overflow-hidden rounded-t-[1.35rem];
+  }
+
   .ui-gallery-card-media {
     @apply relative aspect-square w-full overflow-hidden bg-(--ui-surface-muted);
+  }
+
+  .ui-gallery-card--playful .ui-gallery-card-media {
+    background: var(--gallery-plate);
+    @apply aspect-square overflow-hidden rounded-t-[1.35rem];
   }
 
   .ui-gallery-grid--profile .ui-gallery-card-media {
@@ -1237,12 +1307,33 @@
     @apply block h-full w-full min-h-0 min-w-0 rounded-none;
   }
 
+  .ui-gallery-card--playful .ui-gallery-card-media img {
+    object-fit: cover !important;
+    padding: 0;
+  }
+
   .ui-gallery-card-media .ui-avatar-ring--bleed {
     @apply ring-0;
   }
 
+  .ui-gallery-card-chip {
+    @apply absolute top-3 left-3 z-10;
+  }
+
+  .ui-gallery-card-footer {
+    @apply flex flex-col rounded-b-[1.35rem] bg-[#fffdf8];
+  }
+
   .ui-gallery-card-body {
     @apply flex flex-1 flex-col gap-1.5 p-3;
+  }
+
+  .ui-gallery-card--playful .ui-gallery-card-body {
+    @apply gap-1 px-3.5 pt-3 pb-2;
+  }
+
+  .ui-gallery-card-actions {
+    @apply flex items-center justify-between gap-2 border-t border-(--ui-border) px-3 py-2;
   }
 
   .ui-gallery-card-caption {
@@ -1261,8 +1352,139 @@
     @apply font-medium text-stone-900 dark:text-stone-100;
   }
 
+  .ui-gallery-card--playful .ui-gallery-card-title {
+    font-family: var(--font-display);
+    @apply flex flex-wrap items-center gap-2 text-lg font-semibold tracking-tight text-primary-900;
+  }
+
   .ui-gallery-card-meta {
     @apply text-sm text-(--ui-text-subtle);
+  }
+
+  .ui-gallery-voice-wrap {
+    @apply relative;
+  }
+
+  .ui-gallery-voice {
+    @apply relative inline-flex h-9 w-9 items-center justify-center
+           rounded-full border border-(--ui-border) bg-(--ui-surface-inset) text-primary-700
+           shadow-sm transition-transform duration-150 ease-out;
+  }
+
+  .ui-gallery-voice--new {
+    @apply border-amber-300 ring-2 ring-amber-400/35;
+  }
+
+  .ui-gallery-voice-new {
+    @apply absolute -top-1.5 -right-1.5 rounded-full bg-amber-500 px-1.5 py-0.5
+           text-[0.625rem] font-extrabold leading-none tracking-wide text-white uppercase
+           shadow-sm;
+    font-family: var(--font-display);
+  }
+
+  .ui-gallery-voice:hover,
+  .ui-gallery-voice:focus-visible,
+  .ui-gallery-voice--open {
+    @apply scale-105 border-primary-200 bg-primary-50 text-primary-800;
+  }
+
+  .ui-gallery-voice-icon {
+    @apply h-4 w-4;
+  }
+
+  /* Comic speech balloon above the footer action */
+  .ui-gallery-voice-balloon {
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    right: auto;
+    bottom: calc(100% + 0.65rem);
+    z-index: 50;
+    width: min(15rem, 70vw);
+    max-width: 15rem;
+    padding: 0.75rem 0.9rem 0.8rem;
+    border: 2.5px solid #8b6f5f;
+    border-radius: 1.4rem;
+    background: #fffef7;
+    color: #5a3f36;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: left;
+    white-space: normal;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(0.25rem) scale(0.98);
+    box-shadow: 3px 3px 0 rgba(109, 76, 65, 0.14);
+    transition:
+      opacity 0.15s ease,
+      transform 0.15s ease,
+      visibility 0.15s ease;
+  }
+
+  .ui-gallery-voice-balloon::before,
+  .ui-gallery-voice-balloon::after {
+    content: '';
+    position: absolute;
+    left: 1.15rem;
+    width: 0;
+    height: 0;
+  }
+
+  .ui-gallery-voice-balloon::before {
+    top: 100%;
+    border-left: 12px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 15px solid #8b6f5f;
+  }
+
+  .ui-gallery-voice-balloon::after {
+    top: calc(100% - 2px);
+    border-left: 10px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 13px solid #fffef7;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ui-gallery-card--playful:has(.ui-gallery-voice:hover) .ui-gallery-voice-balloon,
+    .ui-gallery-card--playful:has(.ui-gallery-voice:focus-visible) .ui-gallery-voice-balloon {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .ui-gallery-voice-balloon--open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+  }
+
+  .ui-gallery-like {
+    @apply relative z-10 inline-flex items-center gap-1 rounded-full border border-transparent
+           px-2.5 py-1.5 text-xs font-bold text-stone-700 transition-colors
+           disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .ui-gallery-like:not(:disabled) {
+    @apply cursor-pointer hover:border-primary-200 hover:bg-primary-50 hover:text-primary-800;
+  }
+
+  .ui-gallery-like--on {
+    @apply border-primary-200 bg-primary-50 text-primary-800;
+  }
+
+  .ui-gallery-like-icon {
+    @apply h-3.5 w-3.5;
+  }
+
+  .ui-gallery-like--on .ui-gallery-like-icon path {
+    fill: currentColor;
+    stroke: currentColor;
   }
 
   .ui-pet-photo-caption {

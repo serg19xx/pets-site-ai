@@ -45,8 +45,12 @@
   },
   "meta": {
     "home": {
+      "title": "Fil — Pet Friends",
+      "description": "Publications et nouvelles des membres de Pet Friends. Le cœur du club."
+    },
+    "animals": {
       "title": "Animaux — Pet Friends",
-      "description": "Parcourez les animaux de la communauté sur Pet Friends. Aucun compte requis. Connectez-vous pour ajouter vos animaux."
+      "description": "Découvrez les animaux de la communauté dans une galerie ludique. Parcourez sans compte ; connectez-vous pour ajouter les vôtres."
     },
     "feed": {
       "title": "Fil — Pet Friends",
@@ -54,11 +58,12 @@
     },
     "learn": {
       "title": "Apprendre — Pet Friends",
-      "description": "Guides, articles et consultations de spécialistes prévus sur Pet Friends (en construction)."
+      "description": "Courts guides de soin. Langue originale de chaque article ; utilisez la traduction du navigateur.",
+      "guideTitle": "{title} — Apprendre — Pet Friends"
     },
     "consultations": {
       "title": "Consultations — Pet Friends",
-      "description": "Catalogue de spécialistes et réservation prévus sur Pet Friends (en construction)."
+      "description": "Catalogue de spécialistes — à venir lorsque des personnes pourront répondre."
     },
     "login": {
       "title": "Connexion — Pet Friends",
@@ -95,8 +100,8 @@
     }
   },
   "home": {
-    "title": "Animaux",
-    "subtitle": "Les animaux de la communauté Pet Friends — parcourez sans compte. Connectez-vous pour ajouter les vôtres."
+    "title": "Fil",
+    "subtitle": "Nouvelles, photos et actualités du club Pet Friends."
   },
   "feed": {
     "title": "Fil",
@@ -134,15 +139,39 @@
   },
   "learn": {
     "title": "Apprendre",
-    "subtitle": "Guides, articles et consultations de spécialistes — prévus pour une version ultérieure.",
-    "articlesTitle": "Articles et guides",
-    "articlesPurpose": "Soins, éducation, santé et élevage : contenus de cliniques, spécialistes et membres expérimentés. Les éditeurs vérifiés publieront ici des connaissances structurées — pas de publicité dans le fil.",
-    "consultationsTitle": "Consultations",
-    "consultationsPurpose": "Trouver vétérinaires, comportementalistes, éducateurs et autres spécialistes. Parcourir un catalogue public, ouvrir un profil et demander un conseil ou une réservation lorsque cette zone sera disponible."
+    "subtitle": "Courts guides par espèce. Chaque article reste dans la langue de l’auteur — le navigateur peut traduire si besoin.",
+    "empty": "Aucun guide pour l’instant.",
+    "backToLearn": "Retour à Apprendre",
+    "notFound": "Ce guide est introuvable.",
+    "byline": "Par {name}",
+    "originalLang": "Original : {lang}",
+    "disclaimer": "Informations générales, pas un diagnostic vétérinaire. Si votre animal va mal, appelez une clinique.",
+    "translateHint": "L’article ci-dessous est dans sa langue originale. Votre navigateur peut traduire la page si vous avez besoin d’une autre langue.",
+    "consultationsHint": "Vous cherchez un spécialiste ? Le catalogue {consultations} s’ouvrira lorsque des personnes pourront répondre.",
+    "langs": {
+      "en": "anglais",
+      "fr": "français"
+    },
+    "species": {
+      "dog": "Chiens",
+      "cat": "Chats",
+      "small": "Petits animaux",
+      "general": "Quotidien et ville"
+    },
+    "topics": {
+      "care": "Soins",
+      "health": "Santé",
+      "nutrition": "Alimentation",
+      "behavior": "Comportement",
+      "city": "Vie en ville"
+    }
   },
   "consultations": {
     "title": "Consultations",
-    "subtitle": "Catalogue de spécialistes et réservation — à venir dans une version ultérieure."
+    "subtitle": "Un catalogue de personnes à qui demander — ce n’est pas la bibliothèque de guides.",
+    "panelTitle": "Pas encore ouvert",
+    "panelPurpose": "Nous listerons des spécialistes (vétérinaires, éducateurs, comportementalistes) lorsque deux ou trois personnes réelles pourront répondre. En attendant, il n’y a rien à réserver ici.",
+    "learnHint": "En attendant, les courts guides sont dans {learn}."
   },
 
   "marketplace": {
@@ -256,6 +285,11 @@
     }
   },
   "gallery": {
+    "kicker": "Monde des animaux",
+    "title": "Animaux",
+    "subtitle": "Une galerie ludique des animaux du club — et leur vie virtuelle aux côtés de leurs humains.",
+    "greetingAria": "Voir le salut de {name}",
+    "voiceNew": "Nouveau",
     "loading": "Chargement de la galerie…",
     "loadError": "Impossible de charger la galerie.",
     "loadMoreError": "Impossible de charger la suite.",
