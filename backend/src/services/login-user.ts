@@ -26,6 +26,7 @@ export async function loginUser(
     gender: 'male' | 'female' | 'other' | 'prefer_not_to_say'
     date_of_birth: Date
     phone: string | null
+    city: string | null
     timezone: string | null
     show_full_name: boolean
     show_nickname: boolean
@@ -33,6 +34,7 @@ export async function loginUser(
     show_phone: boolean
     show_gender: boolean
     show_date_of_birth: boolean
+    show_city: boolean
     email_verified_at: Date | null
     password_hash: string
     must_change_password: boolean

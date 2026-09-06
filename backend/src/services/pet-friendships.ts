@@ -16,6 +16,8 @@ import { getPetById } from './pets.js'
  * Pets only socialize within the same species — they do not “speak” other kinds.
  * Same-owner pets never become friends (no household “friendship” theater).
  * Semi-auto: backend suggests candidates; owner of from_pet approves.
+ * Candidate pool prefers pets owned by the owner's accepted human friends
+ * (owner circle → pet world), then fills from the wider virtual-life gallery.
  */
 
 const SUGGESTION_BATCH = 3
@@ -427,6 +429,8 @@ export async function listPendingFriendshipSuggestions(
 /**
  * Propose up to N same-species, other-owner candidates for an owned pet.
  * Requires virtual life on the acting pet.
+ * Prefers pets owned by the owner's accepted human friends (owner circle),
+ * then fills with other virtual-life pets — never pet↔human friendship.
  */
 export async function generateFriendshipSuggestions(
   userId: number,
@@ -446,40 +450,66 @@ export async function generateFriendshipSuggestions(
     throw new AppError(404, 'Pet not found', 'NOT_FOUND')
   }
 
+  const speciesId = Number(fromBrief.species_id)
+  const ownerId = Number(fromBrief.user_id)
   const exclude = adminUsersExclusion('u.email', 5)
-  const candidates = await pool.query<{ id: string }>(
-    `SELECT c.id
-     FROM pets c
-     INNER JOIN users u ON u.id = c.user_id
-     WHERE c.species_id = $1
-       AND c.user_id <> $2
-       AND c.id <> $3
-       AND c.virtual_life_enabled = TRUE
-       AND NOT EXISTS (
-         SELECT 1 FROM pet_friendships pf
-         WHERE (pf.pet_a_id = LEAST($3::bigint, c.id)
-            AND pf.pet_b_id = GREATEST($3::bigint, c.id))
-       )
-       AND NOT EXISTS (
-         SELECT 1 FROM pet_friendship_suggestions s
-         WHERE s.status = 'pending'
-           AND LEAST(s.from_pet_id, s.to_pet_id) = LEAST($3::bigint, c.id)
-           AND GREATEST(s.from_pet_id, s.to_pet_id) = GREATEST($3::bigint, c.id)
-       )
-       ${exclude.clause}
-     ORDER BY random()
-     LIMIT $4`,
-    [
-      Number(fromBrief.species_id),
-      Number(fromBrief.user_id),
-      fromPetId,
-      SUGGESTION_BATCH,
-      ...exclude.params,
-    ],
-  )
 
-  for (const row of candidates.rows) {
-    const toPetId = Number(row.id)
+  async function pickCandidates(preferOwnerFriends: boolean, limit: number): Promise<number[]> {
+    if (limit < 1) {
+      return []
+    }
+    const friendClause = preferOwnerFriends
+      ? `AND EXISTS (
+           SELECT 1 FROM user_friendships uf
+           WHERE uf.status = 'accepted'
+             AND (
+               (uf.user_a_id = $2 AND uf.user_b_id = c.user_id)
+               OR (uf.user_b_id = $2 AND uf.user_a_id = c.user_id)
+             )
+         )`
+      : `AND NOT EXISTS (
+           SELECT 1 FROM user_friendships uf
+           WHERE uf.status = 'accepted'
+             AND (
+               (uf.user_a_id = $2 AND uf.user_b_id = c.user_id)
+               OR (uf.user_b_id = $2 AND uf.user_a_id = c.user_id)
+             )
+         )`
+
+    const candidates = await pool.query<{ id: string }>(
+      `SELECT c.id
+       FROM pets c
+       INNER JOIN users u ON u.id = c.user_id
+       WHERE c.species_id = $1
+         AND c.user_id <> $2
+         AND c.id <> $3
+         AND c.virtual_life_enabled = TRUE
+         AND NOT EXISTS (
+           SELECT 1 FROM pet_friendships pf
+           WHERE (pf.pet_a_id = LEAST($3::bigint, c.id)
+              AND pf.pet_b_id = GREATEST($3::bigint, c.id))
+         )
+         AND NOT EXISTS (
+           SELECT 1 FROM pet_friendship_suggestions s
+           WHERE s.status = 'pending'
+             AND LEAST(s.from_pet_id, s.to_pet_id) = LEAST($3::bigint, c.id)
+             AND GREATEST(s.from_pet_id, s.to_pet_id) = GREATEST($3::bigint, c.id)
+         )
+         ${friendClause}
+         ${exclude.clause}
+       ORDER BY random()
+       LIMIT $4`,
+      [speciesId, ownerId, fromPetId, limit, ...exclude.params],
+    )
+    return candidates.rows.map((row) => Number(row.id))
+  }
+
+  const fromCircle = await pickCandidates(true, SUGGESTION_BATCH)
+  const remaining = SUGGESTION_BATCH - fromCircle.length
+  const fromWider = remaining > 0 ? await pickCandidates(false, remaining) : []
+  const candidateIds = [...fromCircle, ...fromWider]
+
+  for (const toPetId of candidateIds) {
     try {
       await pool.query(
         `INSERT INTO pet_friendship_suggestions (from_pet_id, to_pet_id, status)

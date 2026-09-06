@@ -9,6 +9,7 @@ export interface UpdateProfileInput {
   fullName: string
   nickname?: string
   phone?: string | null
+  city?: string | null
   gender: UserGender
   dateOfBirth: string
   showFullName: boolean
@@ -17,6 +18,7 @@ export interface UpdateProfileInput {
   showPhone: boolean
   showGender: boolean
   showDateOfBirth: boolean
+  showCity: boolean
 }
 
 export async function updateProfile(input: UpdateProfileInput): Promise<UserProfile> {
@@ -39,38 +41,24 @@ export async function updateProfile(input: UpdateProfileInput): Promise<UserProf
 
   const nickname = normalizeNickname(input.nickname, fullName)
   const phone = input.phone?.trim() ? input.phone.trim() : null
+  const city = input.city?.trim() ? input.city.trim().slice(0, 120) : null
 
   try {
-    const result = await pool.query<{
-      id: string
-      full_name: string
-      nickname: string
-      email: string
-      gender: UserGender
-      date_of_birth: Date
-      phone: string | null
-      avatar_path: string | null
-      timezone: string | null
-      is_beta_tester: boolean
-      show_full_name: boolean
-      show_nickname: boolean
-      show_email: boolean
-      show_phone: boolean
-      show_gender: boolean
-      show_date_of_birth: boolean
-    }>(
+    const result = await pool.query(
       `UPDATE users
        SET full_name = $2,
            nickname = $3,
            phone = $4,
-           gender = $5,
-           date_of_birth = $6,
-           show_full_name = $7,
-           show_nickname = $8,
-           show_email = $9,
-           show_phone = $10,
-           show_gender = $11,
-           show_date_of_birth = $12,
+           city = $5,
+           gender = $6,
+           date_of_birth = $7,
+           show_full_name = $8,
+           show_nickname = $9,
+           show_email = $10,
+           show_phone = $11,
+           show_gender = $12,
+           show_date_of_birth = $13,
+           show_city = $14,
            updated_at = NOW()
        WHERE id = $1
        RETURNING ${PROFILE_RETURNING}`,
@@ -79,6 +67,7 @@ export async function updateProfile(input: UpdateProfileInput): Promise<UserProf
         fullName,
         nickname,
         phone,
+        city,
         input.gender,
         input.dateOfBirth,
         input.showFullName,
@@ -87,6 +76,7 @@ export async function updateProfile(input: UpdateProfileInput): Promise<UserProf
         input.showPhone,
         input.showGender,
         input.showDateOfBirth,
+        input.showCity,
       ],
     )
 

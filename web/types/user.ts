@@ -15,6 +15,7 @@ export interface PublicUser {
   gender: UserGender
   dateOfBirth: string
   phone: string | null
+  city: string | null
   avatarUrl: string | null
   isBetaTester: boolean
   isAdmin: boolean
@@ -27,6 +28,7 @@ export interface ProfilePrivacy {
   showPhone: boolean
   showGender: boolean
   showDateOfBirth: boolean
+  showCity: boolean
 }
 
 export interface UserProfile extends PublicUser, ProfilePrivacy {

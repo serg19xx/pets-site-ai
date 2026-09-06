@@ -64,6 +64,7 @@ const profilePrivacyProperties = {
   showPhone: { type: 'boolean' },
   showGender: { type: 'boolean' },
   showDateOfBirth: { type: 'boolean' },
+  showCity: { type: 'boolean' },
 } as const
 
 export const publicUserSchema = {
@@ -76,6 +77,7 @@ export const publicUserSchema = {
     gender: genderEnum,
     dateOfBirth: { type: 'string', format: 'date' },
     phone: { type: ['string', 'null'] },
+    city: { type: ['string', 'null'] },
     avatarUrl: { type: ['string', 'null'] },
     isBetaTester: { type: 'boolean' },
     isAdmin: { type: 'boolean' },
@@ -88,6 +90,7 @@ export const publicUserSchema = {
     'gender',
     'dateOfBirth',
     'phone',
+    'city',
     'avatarUrl',
     'isBetaTester',
     'isAdmin',
@@ -110,6 +113,7 @@ export const userProfileSchema = {
     'showPhone',
     'showGender',
     'showDateOfBirth',
+    'showCity',
   ],
 } as const
 
@@ -165,6 +169,7 @@ export const updateProfileBodySchema = {
     'showPhone',
     'showGender',
     'showDateOfBirth',
+    'showCity',
   ],
   properties: {
     fullName: { type: 'string', minLength: 1, maxLength: 200 },
@@ -172,6 +177,7 @@ export const updateProfileBodySchema = {
     gender: genderEnum,
     dateOfBirth: { type: 'string', format: 'date' },
     phone: { type: 'string', maxLength: 32 },
+    city: { type: 'string', maxLength: 120 },
     ...profilePrivacyProperties,
   },
 } as const

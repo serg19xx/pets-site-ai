@@ -1,0 +1,260 @@
+<script setup lang="ts">
+import { ApiError } from '~/lib/auth-api'
+import { fetchMarketplaceInquiries } from '~/lib/marketplace-inquiries-api'
+import { useAuthStore } from '~/stores/auth'
+import type { MarketplaceInquirySummary } from '~/types/marketplace-inquiry'
+
+type InboxFilter = 'all' | 'customer' | 'seller'
+
+const props = withDefaults(
+  defineProps<{
+    active?: boolean
+    /** When set, only this role is loaded and role filter buttons are hidden. */
+    role?: InboxFilter
+  }>(),
+  { active: true, role: undefined },
+)
+
+const { t } = useI18n()
+const localePath = useLocalePath()
+const auth = useAuthStore()
+const { formatIso } = useDateTime()
+
+const filter = ref<InboxFilter>(props.role ?? 'all')
+const inquiries = ref<MarketplaceInquirySummary[]>([])
+const isLoading = ref(true)
+const loadError = ref('')
+const isRefreshing = ref(false)
+let pollTimer: ReturnType<typeof setInterval> | null = null
+
+const showRoleFilters = computed(() => props.role === undefined)
+
+watch(
+  () => props.role,
+  (role) => {
+    if (role) {
+      filter.value = role
+    }
+  },
+)
+
+const unreadTotal = computed(() =>
+  inquiries.value.reduce((sum, item) => sum + (item.unreadCount > 0 ? item.unreadCount : 0), 0),
+)
+
+defineExpose({ unreadTotal, reload: () => loadInquiries({ silent: true }) })
+
+function otherParty(item: MarketplaceInquirySummary) {
+  return item.role === 'seller' ? item.customer : item.seller
+}
+
+function roleBadgeKey(item: MarketplaceInquirySummary): 'roleBuying' | 'roleSelling' {
+  return item.role === 'customer' ? 'roleBuying' : 'roleSelling'
+}
+
+function lastMessagePreview(item: MarketplaceInquirySummary) {
+  if (!item.lastMessage) {
+    return ''
+  }
+  const prefix =
+    item.lastMessage.senderUserId === auth.user?.id
+      ? t('marketplace.inquiry.lastMessageYou')
+      : otherParty(item).displayName
+  return `${prefix}: ${item.lastMessage.body}`
+}
+
+function formatTime(iso: string) {
+  return formatIso(iso)
+}
+
+function emptyStateKey(): 'emptyAll' | 'emptySent' | 'emptyReceived' {
+  if (filter.value === 'customer') {
+    return 'emptySent'
+  }
+  if (filter.value === 'seller') {
+    return 'emptyReceived'
+  }
+  return 'emptyAll'
+}
+
+async function loadInquiries(options?: { silent?: boolean }) {
+  const token = auth.accessToken
+  if (!token) {
+    return
+  }
+  const silent = options?.silent === true
+  if (silent) {
+    isRefreshing.value = true
+  } else {
+    isLoading.value = true
+  }
+  loadError.value = ''
+  try {
+    const { inquiries: list } = await fetchMarketplaceInquiries(token, filter.value, {
+      limit: 50,
+    })
+    inquiries.value = list
+  } catch (err) {
+    loadError.value =
+      err instanceof ApiError ? err.message : t('marketplace.inquiry.loadError')
+  } finally {
+    isRefreshing.value = false
+    isLoading.value = false
+  }
+}
+
+function startPolling() {
+  stopPolling()
+  pollTimer = setInterval(() => {
+    void loadInquiries({ silent: true })
+  }, 15000)
+}
+
+function stopPolling() {
+  if (!pollTimer) {
+    return
+  }
+  clearInterval(pollTimer)
+  pollTimer = null
+}
+
+watch(filter, () => {
+  void loadInquiries()
+})
+
+watch(
+  () => props.active,
+  (active) => {
+    if (active) {
+      void loadInquiries({ silent: inquiries.value.length > 0 })
+      startPolling()
+    } else {
+      stopPolling()
+    }
+  },
+  { immediate: true },
+)
+
+onUnmounted(() => {
+  stopPolling()
+})
+</script>
+
+<template>
+  <div>
+    <p v-if="props.role !== 'customer'" class="ui-card p-3 text-sm text-stone-700 dark:text-stone-300">
+      {{ $t('marketplace.inquiry.inboxExplain') }}
+    </p>
+
+    <div v-if="showRoleFilters" class="mt-4 flex flex-wrap items-center gap-2">
+      <button
+        type="button"
+        class="ui-btn-sm"
+        :class="filter === 'all' ? 'ui-btn-primary' : 'ui-btn-secondary'"
+        @click="filter = 'all'"
+      >
+        {{ $t('marketplace.inquiry.filterAll') }}
+      </button>
+      <button
+        type="button"
+        class="ui-btn-sm"
+        :class="filter === 'customer' ? 'ui-btn-primary' : 'ui-btn-secondary'"
+        @click="filter = 'customer'"
+      >
+        {{ $t('marketplace.inquiry.filterBuying') }}
+      </button>
+      <button
+        type="button"
+        class="ui-btn-sm"
+        :class="filter === 'seller' ? 'ui-btn-primary' : 'ui-btn-secondary'"
+        @click="filter = 'seller'"
+      >
+        {{ $t('marketplace.inquiry.filterSelling') }}
+      </button>
+      <button
+        type="button"
+        class="ui-btn-sm ui-btn-secondary ml-auto"
+        :disabled="isRefreshing"
+        @click="loadInquiries({ silent: true })"
+      >
+        {{ isRefreshing ? $t('common.loading') : $t('common.refresh') }}
+      </button>
+    </div>
+    <div v-else class="mt-4 flex justify-end">
+      <button
+        type="button"
+        class="ui-btn-sm ui-btn-secondary"
+        :disabled="isRefreshing"
+        @click="loadInquiries({ silent: true })"
+      >
+        {{ isRefreshing ? $t('common.loading') : $t('common.refresh') }}
+      </button>
+    </div>
+
+    <p v-if="isLoading" class="ui-loading mt-6">{{ $t('common.loading') }}</p>
+    <p v-else-if="loadError" class="ui-alert-error mt-6" role="alert">{{ loadError }}</p>
+    <p v-else-if="inquiries.length === 0" class="ui-empty mt-8">
+      {{ $t(`marketplace.inquiry.${emptyStateKey()}`) }}
+    </p>
+
+    <ul v-else class="mt-6 flex list-none flex-col gap-3">
+      <li v-for="item in inquiries" :key="item.id">
+        <article class="ui-card overflow-hidden">
+          <NuxtLink
+            :to="localePath(`/app/marketplace-inquiries/${item.id}`)"
+            class="block p-4 transition hover:bg-(--ui-surface-muted)/30"
+          >
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0 flex-1">
+                <span
+                  class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold"
+                  :class="
+                    item.role === 'customer'
+                      ? 'bg-sky-100 text-sky-900 dark:bg-sky-900/40 dark:text-sky-100'
+                      : 'bg-amber-100 text-amber-900 dark:bg-amber-900/40 dark:text-amber-100'
+                  "
+                >
+                  {{ $t(`marketplace.inquiry.${roleBadgeKey(item)}`) }}
+                </span>
+                <h2 class="mt-2 text-base font-semibold text-stone-900 line-clamp-2 dark:text-stone-100">
+                  {{ item.listingTitle }}
+                </h2>
+                <p class="ui-caption mt-0.5">
+                  {{ $t('marketplace.inquiry.listingId', { id: item.listingId }) }}
+                </p>
+                <p class="mt-2 text-sm text-stone-700 dark:text-stone-300">
+                  {{ $t('marketplace.inquiry.withPerson', { name: otherParty(item).displayName }) }}
+                </p>
+                <p
+                  v-if="item.lastMessage"
+                  class="mt-2 line-clamp-2 text-sm text-stone-600 dark:text-stone-400"
+                >
+                  {{ lastMessagePreview(item) }}
+                </p>
+              </div>
+              <div class="shrink-0 text-right">
+                <span
+                  v-if="item.unreadCount > 0"
+                  class="inline-flex min-w-5 items-center justify-center rounded-full bg-primary-600 px-1.5 py-0.5 text-xs font-semibold text-white"
+                >
+                  {{ item.unreadCount }}
+                </span>
+                <p v-if="item.lastMessage" class="ui-caption mt-1">
+                  {{ formatTime(item.lastMessage.createdAt) }}
+                </p>
+              </div>
+            </div>
+          </NuxtLink>
+          <div class="border-t border-(--ui-border) px-4 py-2">
+            <NuxtLink
+              :to="localePath(`/marketplace/${item.listingId}`)"
+              class="ui-link text-sm"
+            >
+              {{ $t('marketplace.inquiry.viewListing') }}
+            </NuxtLink>
+          </div>
+        </article>
+      </li>
+    </ul>
+  </div>
+</template>

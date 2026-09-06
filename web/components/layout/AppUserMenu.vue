@@ -24,6 +24,26 @@ const unreadNotificationCount = ref(0)
 let unreadPollTimer: ReturnType<typeof setInterval> | null = null
 
 const hasUnreadInquiries = computed(() => unreadInquiryCount.value > 0)
+const hasUnreadNotifications = computed(() => unreadNotificationCount.value > 0)
+/** Dot on avatar: any unread item hidden inside the account menu. */
+const hasAccountAttention = computed(
+  () => hasUnreadInquiries.value || hasUnreadNotifications.value,
+)
+
+const avatarMenuAriaLabel = computed(() => {
+  const name = auth.displayName
+  if (!hasAccountAttention.value) {
+    return `Account menu: ${name}`
+  }
+  const parts: string[] = []
+  if (unreadNotificationCount.value > 0) {
+    parts.push(`${unreadNotificationCount.value} unread notifications`)
+  }
+  if (unreadInquiryCount.value > 0) {
+    parts.push(`${unreadInquiryCount.value} unread listing messages`)
+  }
+  return `Account menu: ${name}. ${parts.join(', ')}`
+})
 
 function updateMenuPosition() {
   if (!rootRef.value) {
@@ -97,7 +117,7 @@ function signOut() {
   void navigateTo(localePath('/'))
 }
 
-async function loadUnreadInquiriesCount() {
+async function loadUnreadCounts() {
   const token = auth.accessToken
   if (!token) {
     unreadInquiryCount.value = 0
@@ -119,7 +139,7 @@ async function loadUnreadInquiriesCount() {
 function startUnreadPolling() {
   stopUnreadPolling()
   unreadPollTimer = setInterval(() => {
-    void loadUnreadInquiriesCount()
+    void loadUnreadCounts()
   }, 20000)
 }
 
@@ -140,7 +160,7 @@ watch(
       unreadNotificationCount.value = 0
       return
     }
-    void loadUnreadInquiriesCount()
+    void loadUnreadCounts()
     startUnreadPolling()
   },
   { immediate: true },
@@ -148,7 +168,7 @@ watch(
 
 watch(isOpen, (open) => {
   if (open) {
-    void loadUnreadInquiriesCount()
+    void loadUnreadCounts()
   }
 })
 </script>
@@ -158,7 +178,7 @@ watch(isOpen, (open) => {
     <button
       type="button"
       class="ui-avatar-trigger ui-avatar-trigger--header relative"
-      :aria-label="`Account menu: ${auth.displayName}`"
+      :aria-label="avatarMenuAriaLabel"
       :aria-expanded="isOpen"
       aria-haspopup="menu"
       @click="toggleMenu"
@@ -169,8 +189,8 @@ watch(isOpen, (open) => {
         size="header"
       />
       <span
-        v-if="hasUnreadInquiries"
-        class="absolute -right-1 -top-1 inline-flex h-2.5 w-2.5 rounded-full bg-primary-600"
+        v-if="hasAccountAttention"
+        class="absolute -right-0.5 -top-0.5 inline-flex h-3 w-3 rounded-full bg-amber-500 ring-2 ring-white dark:ring-stone-900"
         aria-hidden="true"
       />
     </button>
@@ -217,7 +237,7 @@ watch(isOpen, (open) => {
         role="menuitem"
         @click="closeMenu"
       >
-        <Icon :icon="UI_ACTION_ICONS.send" class="ui-icon-sm" aria-hidden="true" />
+        <Icon :icon="UI_ACTION_ICONS.posts" class="ui-icon-sm" aria-hidden="true" />
         {{ t('auth.myPosts') }}
       </NuxtLink>
       <NuxtLink
@@ -226,17 +246,8 @@ watch(isOpen, (open) => {
         role="menuitem"
         @click="closeMenu"
       >
-        <Icon :icon="UI_ACTION_ICONS.star" class="ui-icon-sm" aria-hidden="true" />
+        <Icon :icon="UI_ACTION_ICONS.store" class="ui-icon-sm" aria-hidden="true" />
         {{ t('auth.myListings') }}
-      </NuxtLink>
-      <NuxtLink
-        :to="localePath('/app/marketplace-inquiries')"
-        class="ui-menu-item"
-        role="menuitem"
-        @click="closeMenu"
-      >
-        <Icon :icon="UI_ACTION_ICONS.message" class="ui-icon-sm" aria-hidden="true" />
-        {{ t('auth.listingMessages') }}
         <span
           v-if="hasUnreadInquiries"
           class="ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-primary-600 px-1.5 py-0.5 text-xs font-semibold text-white"
@@ -250,7 +261,7 @@ watch(isOpen, (open) => {
         role="menuitem"
         @click="closeMenu"
       >
-        <Icon :icon="UI_ACTION_ICONS.message" class="ui-icon-sm" aria-hidden="true" />
+        <Icon :icon="UI_ACTION_ICONS.notifications" class="ui-icon-sm" aria-hidden="true" />
         {{ t('auth.notifications') }}
         <span
           v-if="unreadNotificationCount > 0"
@@ -266,7 +277,7 @@ watch(isOpen, (open) => {
         role="menuitem"
         @click="closeMenu"
       >
-        <Icon :icon="UI_ACTION_ICONS.send" class="ui-icon-sm" aria-hidden="true" />
+        <Icon :icon="UI_ACTION_ICONS.feedback" class="ui-icon-sm" aria-hidden="true" />
         {{ t('auth.feedback') }}
       </NuxtLink>
       <NuxtLink

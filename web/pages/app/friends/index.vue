@@ -90,6 +90,11 @@ function onRemove(userId: number) {
       <Icon :icon="UI_ACTION_ICONS.back" class="ui-icon-sm" aria-hidden="true" />
       {{ $t('friends.backToProfile') }}
     </NuxtLink>
+    <p class="mt-2">
+      <NuxtLink :to="localePath('/app/people')" class="ui-text-link text-sm">
+        {{ $t('people.navTitle') }}
+      </NuxtLink>
+    </p>
 
     <h1 class="ui-page-title mt-4">{{ $t('friends.title') }}</h1>
     <p class="ui-page-subtitle mt-2">{{ $t('friends.subtitle') }}</p>
@@ -152,6 +157,12 @@ function onRemove(userId: number) {
         <h2 class="ui-section-title">{{ $t('friends.listHeading') }}</h2>
         <p v-if="friends.length === 0" class="ui-empty mt-4">
           {{ $t('friends.empty') }}
+          <NuxtLink
+            :to="localePath('/app/people')"
+            class="ui-text-link mt-2 inline-block"
+          >
+            {{ $t('people.navTitle') }}
+          </NuxtLink>
         </p>
         <ul v-else class="mt-3 flex list-none flex-col gap-2">
           <li v-for="person in friends" :key="`fr-${person.id}`">

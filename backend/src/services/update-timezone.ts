@@ -12,6 +12,7 @@ type ProfileDbRow = {
   gender: UserGender
   date_of_birth: Date
   phone: string | null
+  city: string | null
   avatar_path: string | null
   timezone: string | null
   is_beta_tester: boolean
@@ -21,6 +22,7 @@ type ProfileDbRow = {
   show_phone: boolean
   show_gender: boolean
   show_date_of_birth: boolean
+  show_city: boolean
 }
 
 export async function updateUserTimezone(

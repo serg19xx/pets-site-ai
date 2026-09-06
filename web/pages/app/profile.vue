@@ -40,6 +40,7 @@ const successMessage = ref('')
 const fullName = ref('')
 const nickname = ref('')
 const phone = ref('')
+const city = ref('')
 const gender = ref<UserGender>('prefer_not_to_say')
 const dateOfBirth = ref('')
 const showFullName = ref(true)
@@ -48,6 +49,7 @@ const showEmail = ref(false)
 const showPhone = ref(false)
 const showGender = ref(false)
 const showDateOfBirth = ref(false)
+const showCity = ref(false)
 
 const phoneDisplay = computed(() => {
   const value = auth.user?.phone?.trim()
@@ -60,6 +62,7 @@ function loadFormFromUser(user: UserProfile) {
   fullName.value = user.fullName
   nickname.value = user.nickname
   phone.value = user.phone ?? ''
+  city.value = user.city ?? ''
   gender.value = user.gender
   dateOfBirth.value = user.dateOfBirth
   showFullName.value = user.showFullName ?? true
@@ -68,6 +71,7 @@ function loadFormFromUser(user: UserProfile) {
   showPhone.value = user.showPhone ?? false
   showGender.value = user.showGender ?? false
   showDateOfBirth.value = user.showDateOfBirth ?? false
+  showCity.value = user.showCity ?? false
 }
 
 function startEditing() {
@@ -136,6 +140,7 @@ async function saveProfile() {
     fullName: fullName.value.trim(),
     nickname: nickname.value.trim() || undefined,
     phone: phone.value.trim() || undefined,
+    city: city.value.trim() || undefined,
     gender: gender.value,
     dateOfBirth: dateOfBirth.value,
     showFullName: showFullName.value,
@@ -144,6 +149,7 @@ async function saveProfile() {
     showPhone: showPhone.value,
     showGender: showGender.value,
     showDateOfBirth: showDateOfBirth.value,
+    showCity: showCity.value,
   }
 
   isSaving.value = true
@@ -422,6 +428,29 @@ async function onRemoveAvatar() {
             </label>
           </template>
         </div>
+
+        <div>
+          <p class="ui-field-label">
+            {{ $t('profile.city') }}
+            <span v-if="!isEditing" class="font-normal">{{ hiddenLabel(auth.user.showCity) }}</span>
+          </p>
+          <p v-if="!isEditing" class="font-medium">
+            {{ auth.user.city?.trim() || $t('common.notProvided') }}
+          </p>
+          <template v-else>
+            <input
+              v-model="city"
+              type="text"
+              maxlength="120"
+              class="ui-input"
+              :placeholder="$t('profile.cityPlaceholder')"
+            />
+            <label class="ui-checkbox-label">
+              <input v-model="showCity" type="checkbox" class="ui-checkbox" />
+              {{ $t('profile.showCity') }}
+            </label>
+          </template>
+        </div>
       </div>
       <div class="ui-field-row">
         <h2 class="ui-section-title">
@@ -493,6 +522,16 @@ async function onRemoveAvatar() {
       <h2 class="ui-section-title">{{ $t('profile.communitySection') }}</h2>
       <ul class="mt-3 flex list-none flex-col gap-2">
         <li>
+          <NuxtLink :to="localePath('/app/people')" class="ui-list-link">
+            <Icon :icon="UI_ACTION_ICONS.search" class="ui-icon-md shrink-0 text-primary-600" aria-hidden="true" />
+            <div class="min-w-0 flex-1">
+              <p class="ui-list-link-title">{{ $t('people.navTitle') }}</p>
+              <p class="ui-list-link-meta">{{ $t('profile.peopleHint') }}</p>
+            </div>
+            <Icon :icon="UI_ACTION_ICONS.chevron" class="ui-icon-sm shrink-0 text-(--ui-text-muted)" aria-hidden="true" />
+          </NuxtLink>
+        </li>
+        <li>
           <NuxtLink :to="localePath('/app/friends')" class="ui-list-link">
             <Icon :icon="UI_ACTION_ICONS.users" class="ui-icon-md shrink-0 text-primary-600" aria-hidden="true" />
             <div class="min-w-0 flex-1">
@@ -530,7 +569,7 @@ async function onRemoveAvatar() {
         </li>
         <li>
           <NuxtLink :to="localePath('/app/my-listings')" class="ui-list-link">
-            <Icon :icon="UI_ACTION_ICONS.star" class="ui-icon-md shrink-0 text-primary-600" aria-hidden="true" />
+            <Icon :icon="UI_ACTION_ICONS.store" class="ui-icon-md shrink-0 text-primary-600" aria-hidden="true" />
             <div class="min-w-0 flex-1">
               <p class="ui-list-link-title">{{ $t('auth.myListings') }}</p>
               <p class="ui-list-link-meta">{{ $t('profile.myListingsHint') }}</p>

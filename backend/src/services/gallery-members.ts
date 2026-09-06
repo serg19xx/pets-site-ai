@@ -1,7 +1,12 @@
 import { pool } from '../db/pool.js'
 import { isAdminEmail } from '../lib/admin.js'
-import { mapPublicMember, type PublicMemberRow } from '../lib/map-public-member.js'
+import {
+  mapPublicMember,
+  mapPublicMemberProfile,
+  type PublicMemberRow,
+} from '../lib/map-public-member.js'
 import { mapGalleryPetRow, type GalleryRow } from '../lib/map-gallery-pet.js'
+import type { UserGender } from '../types/user.js'
 
 export const MEMBER_SELECT = `
   u.id AS member_id,
@@ -98,7 +103,17 @@ export interface GalleryMemberJoinRow {
 export type GalleryDetailRow = GalleryRow & GalleryMemberJoinRow
 
 export async function getPublicMemberProfile(userId: number) {
-  const userR = await pool.query<PublicMemberRow & { email: string }>(
+  const userR = await pool.query<
+    PublicMemberRow & {
+      email: string
+      city: string | null
+      show_city: boolean
+      gender: UserGender
+      show_gender: boolean
+      date_of_birth: Date
+      show_date_of_birth: boolean
+    }
+  >(
     `SELECT
       id,
       full_name,
@@ -106,6 +121,12 @@ export async function getPublicMemberProfile(userId: number) {
       avatar_path,
       show_full_name,
       show_nickname,
+      city,
+      show_city,
+      gender,
+      show_gender,
+      date_of_birth,
+      show_date_of_birth,
       email
     FROM users
     WHERE id = $1`,
@@ -128,7 +149,7 @@ export async function getPublicMemberProfile(userId: number) {
   )
 
   return {
-    member: mapPublicMember(userRow),
+    member: mapPublicMemberProfile(userRow),
     pets: petsR.rows.map((row) => mapGalleryPetRow(row, [])),
   }
 }

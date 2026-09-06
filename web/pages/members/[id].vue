@@ -8,9 +8,11 @@ import { pickGalleryCardVoice } from '~/lib/pick-pet-caption'
 import { fetchGalleryMember } from '~/lib/pets-api'
 import { UI_ACTION_ICONS } from '~/lib/ui-icons'
 import type { GalleryPet } from '~/types/gallery'
+import { useEnumLabels } from '~/composables/useEnumLabels'
 
 const { t, locale } = useI18n()
 const localePath = useLocalePath()
+const { genderLabel } = useEnumLabels()
 
 const route = useRoute()
 const memberId = computed(() => Number(route.params.id))
@@ -34,6 +36,24 @@ const isLoading = computed(() => pending.value && !member.value)
 const memberInitial = computed(() => {
   const name = member.value?.displayName.trim() ?? ''
   return name ? name.charAt(0).toUpperCase() : '?'
+})
+
+const memberPublicMeta = computed(() => {
+  const m = member.value
+  if (!m) {
+    return ''
+  }
+  const bits: string[] = []
+  if (m.city) {
+    bits.push(m.city)
+  }
+  if (m.gender) {
+    bits.push(genderLabel(m.gender))
+  }
+  if (m.ageYears !== null && m.ageYears !== undefined) {
+    bits.push(t('member.ageYears', { count: m.ageYears }))
+  }
+  return bits.join(' · ')
 })
 
 const errorMessage = computed(() => {
@@ -115,6 +135,9 @@ usePageSeo({
         <div>
           <h1 class="ui-h1">{{ member.displayName }}</h1>
           <p class="ui-page-subtitle mt-1">{{ $t('member.subtitle') }}</p>
+          <p v-if="memberPublicMeta" class="mt-1 text-sm text-(--ui-text-muted)">
+            {{ memberPublicMeta }}
+          </p>
           <MemberFriendActions :member-id="member.id" />
         </div>
       </header>

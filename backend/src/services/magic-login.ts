@@ -18,6 +18,7 @@ export async function completeMagicLogin(
     gender: 'male' | 'female' | 'other' | 'prefer_not_to_say'
     date_of_birth: Date
     phone: string | null
+    city: string | null
     timezone: string | null
     show_full_name: boolean
     show_nickname: boolean
@@ -25,6 +26,7 @@ export async function completeMagicLogin(
     show_phone: boolean
     show_gender: boolean
     show_date_of_birth: boolean
+    show_city: boolean
     must_change_password: boolean
   }>(
     `SELECT ${PROFILE_SELECT}, a.must_change_password

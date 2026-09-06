@@ -117,7 +117,10 @@ onUnmounted(() => {
 
 <template>
   <section class="ui-page-container">
-    <NuxtLink :to="localePath('/app/marketplace-inquiries')" class="ui-link-back mb-0! inline-flex">
+    <NuxtLink
+      :to="localePath('/app/my-listings')"
+      class="ui-link-back mb-0! inline-flex"
+    >
       {{ $t('marketplace.inquiry.backToInbox') }}
     </NuxtLink>
 

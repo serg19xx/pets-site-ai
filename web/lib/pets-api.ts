@@ -1,7 +1,7 @@
 import { apiUrl } from '~/lib/api'
 import { ApiError } from '~/lib/auth-api'
 import type { GalleryPet } from '~/types/gallery'
-import type { PublicMember } from '~/types/public-member'
+import type { PublicMember, PublicMemberProfile } from '~/types/public-member'
 import type { PetPhoto } from '~/types/pet-photo'
 import type { PetCertificate } from '~/types/pet-certificate'
 import type {
@@ -229,12 +229,12 @@ export async function fetchMedicalShareByToken(
 }
 
 export async function fetchGalleryMember(id: number): Promise<{
-  member: PublicMember
+  member: PublicMemberProfile
   pets: GalleryPet[]
 }> {
   const response = await fetch(apiUrl(`/api/gallery/members/${id}`))
   const body = await parseJson<{
-    member: PublicMember
+    member: PublicMemberProfile
     pets: GalleryPet[]
   } & ApiErrorBody>(response)
   if (!response.ok) {

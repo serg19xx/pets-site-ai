@@ -46,6 +46,10 @@ export async function registerOpenApi(app: FastifyInstance) {
           description: 'Owner-to-owner friend requests and friends list',
         },
         {
+          name: 'members',
+          description: 'Discover community members by public profile and pets',
+        },
+        {
           name: 'stripe',
           description: 'Signed Stripe webhook receiver',
         },

@@ -28,6 +28,7 @@ export interface UpdateProfilePayload {
   fullName: string
   nickname?: string
   phone?: string
+  city?: string
   gender: UserGender
   dateOfBirth: string
   showFullName: boolean
@@ -36,6 +37,7 @@ export interface UpdateProfilePayload {
   showPhone: boolean
   showGender: boolean
   showDateOfBirth: boolean
+  showCity: boolean
 }
 
 interface ApiErrorBody {

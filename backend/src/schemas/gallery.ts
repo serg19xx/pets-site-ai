@@ -3,7 +3,10 @@ import {
   petParentRecordSchema,
 } from './pets.js'
 
+import { USER_GENDERS } from '../types/user.js'
+
 const petSexEnum = { type: 'string', enum: ['male', 'female', 'unknown'] }
+const genderEnum = { type: 'string', enum: [...USER_GENDERS] }
 
 export const publicMemberSchema = {
   type: 'object',
@@ -13,6 +16,19 @@ export const publicMemberSchema = {
     avatarUrl: { type: ['string', 'null'] },
   },
   required: ['id', 'displayName', 'avatarUrl'],
+} as const
+
+export const publicMemberProfileSchema = {
+  type: 'object',
+  properties: {
+    id: { type: 'integer' },
+    displayName: { type: 'string' },
+    avatarUrl: { type: ['string', 'null'] },
+    city: { type: ['string', 'null'] },
+    gender: { anyOf: [genderEnum, { type: 'null' }] },
+    ageYears: { type: ['integer', 'null'] },
+  },
+  required: ['id', 'displayName', 'avatarUrl', 'city', 'gender', 'ageYears'],
 } as const
 
 const galleryPetItemSchema = {
@@ -200,7 +216,7 @@ export const galleryPetResponseSchema = {
 export const galleryMemberResponseSchema = {
   type: 'object',
   properties: {
-    member: publicMemberSchema,
+    member: publicMemberProfileSchema,
     pets: { type: 'array', items: galleryPetItemSchema },
   },
   required: ['member', 'pets'],

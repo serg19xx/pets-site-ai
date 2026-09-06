@@ -65,6 +65,7 @@ interface UpdateProfileBody {
   fullName: string
   nickname?: string
   phone?: string
+  city?: string
   gender: string
   dateOfBirth: string
   showFullName: boolean
@@ -73,6 +74,7 @@ interface UpdateProfileBody {
   showPhone: boolean
   showGender: boolean
   showDateOfBirth: boolean
+  showCity: boolean
 }
 
 interface UpdateTimezoneBody {
@@ -230,6 +232,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         fullName: body.fullName,
         nickname: body.nickname,
         phone: body.phone?.trim() || null,
+        city: body.city?.trim() || null,
         gender: parseGender(body.gender),
         dateOfBirth: body.dateOfBirth,
         showFullName: body.showFullName,
@@ -238,6 +241,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         showPhone: body.showPhone,
         showGender: body.showGender,
         showDateOfBirth: body.showDateOfBirth,
+        showCity: body.showCity,
       })
       return { user }
     },

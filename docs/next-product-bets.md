@@ -30,7 +30,8 @@
 ### 2. Локальность «рядом со мной» (P0)
 
 - Питомцы / объявления / активность по городу (Quebec soft-launch)
-- Гео или город в профиле / объявлении
+- **Частично:** `users.city` + `show_city`, публичная карточка `/members/:id`, Discover `/app/people` (human + multi pet sets + friendsOnly)
+- Дальше: гео, лента/галерея по локации
 
 **Критерий:** лента или галерея фильтруется по локации.
 
@@ -43,9 +44,9 @@
 
 ### 4. Круг хозяина (P1)
 
-- **Сейчас (MVP):** друзья хозяев — запрос + подтверждение, список в кабинете `/app/friends`, кнопка на публичном профиле `/members/:id`
-- Позже: няня, вет как контакты (не полноценный Facebook)
-- Заготовка «owner circle» на публичной странице питомца
+- **Сейчас:** друзья `/app/friends` + Discover `/app/people` (human filters, multi pet sets AND, `friendsOnly`)
+- Virtual pet suggestions prefer pets owned by the owner's human friends (not pet↔human friendship)
+- Дальше: DM только между друзьями; «owner circle» на странице питомца; голос AI с контекстом круга
 
 ### 5. Паспорт питомца пакетом (P1)
 
