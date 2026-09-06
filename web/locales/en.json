@@ -58,8 +58,9 @@
     },
     "learn": {
       "title": "Learn — Pet Friends",
-      "description": "Short pet-care guides. Original language of each article; use your browser to translate.",
-      "guideTitle": "{title} — Learn — Pet Friends"
+      "description": "Short pet-care guides and Canada animal-law reference links. Original language of each article; use your browser to translate.",
+      "guideTitle": "{title} — Learn — Pet Friends",
+      "legalTitle": "Animal law references (Canada) — Learn — Pet Friends"
     },
     "consultations": {
       "title": "Consultations — Pet Friends",
@@ -164,6 +165,35 @@
       "nutrition": "Nutrition",
       "behavior": "Behavior",
       "city": "City life"
+    },
+    "legal": {
+      "cardTitle": "Animal law references (Canada)",
+      "cardMeta": "Official federal and provincial links on ownership, welfare, and related rules.",
+      "title": "Animal law references (Canada)",
+      "subtitle": "Curated links to official statutes and government pages. Laws change — always read the current text on the source site.",
+      "metaDescription": "Official Canadian federal and provincial animal welfare and ownership law links for Pet Friends members.",
+      "disclaimer": "This is not legal advice. Pet Friends only lists public sources so you can find the rules yourself. For your situation, talk to a lawyer or the relevant authority.",
+      "municipalNote": "Cities and towns often have their own by-laws (dogs, kennels, breeding). Check your municipality in addition to provincial and federal law.",
+      "searchLabel": "Search legal references",
+      "searchPlaceholder": "Search this list (e.g. Quebec, cruelty, MAPAQ)…",
+      "searchHint": "Filters the curated links on this page. Smarter AI search (local first, then assisted lookup) is planned for later.",
+      "searchEmpty": "No links on this page match that text. Try another word, or check a province section below when the field is cleared.",
+      "regions": {
+        "federal": "Canada (federal)",
+        "qc": "Quebec",
+        "on": "Ontario",
+        "bc": "British Columbia",
+        "ab": "Alberta",
+        "mb": "Manitoba",
+        "sk": "Saskatchewan",
+        "ns": "Nova Scotia",
+        "nb": "New Brunswick",
+        "nl": "Newfoundland and Labrador",
+        "pe": "Prince Edward Island",
+        "yt": "Yukon",
+        "nt": "Northwest Territories",
+        "nu": "Nunavut"
+      }
     }
   },
   "consultations": {

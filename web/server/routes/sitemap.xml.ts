@@ -1,6 +1,6 @@
 import { LEARN_GUIDES } from '../../data/learn-guides'
 
-const STATIC_PATHS = ['', '/animals', '/learn', '/consultations', '/contact', '/faq'] as const
+const STATIC_PATHS = ['', '/animals', '/learn', '/learn/legal', '/consultations', '/contact', '/faq'] as const
 const FR_PREFIX = '/fr'
 
 function xmlEscape(value: string): string {

@@ -58,8 +58,9 @@
     },
     "learn": {
       "title": "Apprendre — Pet Friends",
-      "description": "Courts guides de soin. Langue originale de chaque article ; utilisez la traduction du navigateur.",
-      "guideTitle": "{title} — Apprendre — Pet Friends"
+      "description": "Courts guides de soin et liens vers les lois canadiennes sur les animaux. Langue originale de chaque article ; utilisez la traduction du navigateur.",
+      "guideTitle": "{title} — Apprendre — Pet Friends",
+      "legalTitle": "Références juridiques (Canada) — Apprendre — Pet Friends"
     },
     "consultations": {
       "title": "Consultations — Pet Friends",
@@ -164,6 +165,35 @@
       "nutrition": "Alimentation",
       "behavior": "Comportement",
       "city": "Vie en ville"
+    },
+    "legal": {
+      "cardTitle": "Références juridiques (Canada)",
+      "cardMeta": "Liens officiels fédéraux et provinciaux : détention, bien-être et règles connexes.",
+      "title": "Références juridiques (Canada)",
+      "subtitle": "Liens sélectionnés vers des lois et pages gouvernementales officielles. Les textes changent — lisez toujours la version à jour sur le site source.",
+      "metaDescription": "Liens officiels fédéraux et provinciaux canadiens sur le bien-être et la détention des animaux pour les membres Pet Friends.",
+      "disclaimer": "Ceci n’est pas un avis juridique. Pet Friends liste seulement des sources publiques pour que vous trouviez les règles. Pour votre cas, consultez un avocat ou l’autorité compétente.",
+      "municipalNote": "Les villes ont souvent leurs propres règlements (chiens, chenils, élevage). Vérifiez aussi votre municipalité en plus du droit provincial et fédéral.",
+      "searchLabel": "Rechercher dans les références juridiques",
+      "searchPlaceholder": "Filtrer cette liste (ex. Québec, cruauté, MAPAQ)…",
+      "searchHint": "Filtre les liens sélectionnés sur cette page. Une recherche IA plus intelligente (d’abord locale, puis assistée) est prévue plus tard.",
+      "searchEmpty": "Aucun lien sur cette page ne correspond. Essayez un autre mot, ou videz le champ pour revoir toutes les sections.",
+      "regions": {
+        "federal": "Canada (fédéral)",
+        "qc": "Québec",
+        "on": "Ontario",
+        "bc": "Colombie-Britannique",
+        "ab": "Alberta",
+        "mb": "Manitoba",
+        "sk": "Saskatchewan",
+        "ns": "Nouvelle-Écosse",
+        "nb": "Nouveau-Brunswick",
+        "nl": "Terre-Neuve-et-Labrador",
+        "pe": "Île-du-Prince-Édouard",
+        "yt": "Yukon",
+        "nt": "Territoires du Nord-Ouest",
+        "nu": "Nunavut"
+      }
     }
   },
   "consultations": {

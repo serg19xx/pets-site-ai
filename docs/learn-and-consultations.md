@@ -68,6 +68,22 @@ A handful of short editorial guides (same spirit as FAQ) so the Learn tab is not
 
 **Done when:** phone user can open Learn → species → a guide.
 
+### Stage 1b — legal link shelf (Canada)
+
+Static curated links in `web/data/learn-legal-links.ts`, UI at `/learn/legal` (card from `/learn`). Federal + provinces/territories; Quebec listed first. Disclaimer: not legal advice; municipal by-laws are separate.
+
+**Search (now):** a filter field on `/learn/legal` matches the curated list only (titles, notes, region, topics).
+
+**Search (later — do not build yet):** free-text box where the user describes what they need. Flow:
+
+1. **Local first** — AI / retrieval over the curated catalog (+ later Learn guides) and return matching official links / notes.
+2. **If nothing useful locally** — hand off to automation (n8n or similar) to look up candidates from trusted government sources.
+3. **Human approve** before anything new is added to the shelf; never auto-publish statute text as legal advice.
+
+Freshness monitor (n8n URL health): documented in `agents/n8n/docs/learn-legal-monitor.md` — **deferred** for now; not required at soft-launch.
+
+**Done when:** member can open Learn → Animal law references → official sources (+ filter the list).
+
 ### Stage 2 — publish without a frontend deploy
 
 Tables `contributors` (optional `user_id`) and `learn_guides`; TipTap + image upload for **us**. External authors still send files. Guests read published HTML.

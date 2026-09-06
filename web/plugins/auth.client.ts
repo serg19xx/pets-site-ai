@@ -24,10 +24,11 @@ export default defineNuxtPlugin((nuxtApp) => {
       })
   }
 
-  nuxtApp.hook('app:mounted', () => {
-    requestAnimationFrame(() => {
-      authUiReady.value = true
-    })
+  // Must wait until Suspense hydration finishes. Setting this on app:mounted
+  // (even behind rAF) flips HeaderAuth/AppAside while SSR HTML is still
+  // hydrating → "Hydration completed but contains mismatches" on SSR pages.
+  nuxtApp.hook('app:suspense:resolve', () => {
+    authUiReady.value = true
   })
 
   window.addEventListener('storage', (event) => {

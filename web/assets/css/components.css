@@ -619,11 +619,19 @@
   }
 
   .ui-brand-link {
-    @apply flex shrink-0 items-center gap-2 rounded-md transition-opacity hover:opacity-90;
+    @apply flex shrink-0 items-center gap-2 rounded-md;
+  }
+
+  .ui-brand-home {
+    @apply rounded-md transition-opacity hover:opacity-90;
+  }
+
+  .ui-brand-mark-btn {
+    @apply shrink-0 rounded-md p-0 transition-opacity hover:opacity-90;
   }
 
   .ui-brand-mark {
-    @apply shrink-0 cursor-pointer select-none;
+    @apply block select-none;
   }
 
   .ui-brand-mark--wide {

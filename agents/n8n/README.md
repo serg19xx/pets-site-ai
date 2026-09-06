@@ -24,3 +24,6 @@ agents/n8n/
 |------|---------|
 | [`workflows/pet-greeting.json`](./workflows/pet-greeting.json) | LLM greeting for pet create / Regenerate |
 | [`docs/pet-greeting.md`](./docs/pet-greeting.md) | Import, credentials, API env, curl test |
+| [`workflows/pet-ai-draft.json`](./workflows/pet-ai-draft.json) | Bilingual pet AI draft |
+| [`docs/pet-ai-draft.md`](./docs/pet-ai-draft.md) | Import and API env for drafts |
+| [`docs/learn-legal-monitor.md`](./docs/learn-legal-monitor.md) | Planned URL health monitor for `/learn/legal` (human approve) |

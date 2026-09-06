@@ -5,7 +5,7 @@ export const UI_NAV_ICONS = {
   learn: 'lucide:book-open',
   marketplace: 'lucide:store',
   contact: 'lucide:mail',
-  faq: 'lucide:circle-help',
+  faq: 'lucide:circle-question-mark',
   more: 'lucide:circle-ellipsis',
 } as const
 

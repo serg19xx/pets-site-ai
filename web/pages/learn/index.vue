@@ -30,6 +30,18 @@ function guidesIn(species: LearnSpecies) {
       <p class="ui-page-subtitle mt-1">{{ $t('learn.subtitle') }}</p>
     </header>
 
+    <NuxtLink :to="localePath('/learn/legal')" class="ui-list-link mb-8">
+      <div class="min-w-0 flex-1">
+        <p class="ui-list-link-title">{{ $t('learn.legal.cardTitle') }}</p>
+        <p class="ui-list-link-meta">{{ $t('learn.legal.cardMeta') }}</p>
+      </div>
+      <Icon
+        :icon="UI_ACTION_ICONS.chevron"
+        class="ui-icon-sm shrink-0 text-(--ui-text-muted)"
+        aria-hidden="true"
+      />
+    </NuxtLink>
+
     <p v-if="LEARN_GUIDES.length === 0" class="ui-empty">
       {{ $t('learn.empty') }}
     </p>

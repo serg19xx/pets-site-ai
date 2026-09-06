@@ -1,29 +1,25 @@
 <script setup lang="ts">
 const { t } = useI18n()
 const { variant, src, toggleVariant } = useBrandLogo()
-
-function onLogoClick(event: MouseEvent) {
-  event.preventDefault()
-  event.stopPropagation()
-  toggleVariant()
-}
 </script>
 
 <template>
-  <img
-    :src="src"
-    alt=""
-    role="button"
-    tabindex="0"
-    class="ui-brand-mark"
-    :class="variant === 'circle' ? 'ui-brand-mark--circle' : 'ui-brand-mark--wide'"
+  <button
+    type="button"
+    class="ui-brand-mark-btn"
     :title="t('common.brandLogoSwitch')"
-    width="160"
-    height="88"
-    decoding="async"
-    fetchpriority="high"
-    @click="onLogoClick"
-    @keydown.enter.prevent="toggleVariant"
-    @keydown.space.prevent="toggleVariant"
-  />
+    :aria-label="t('common.brandLogoSwitch')"
+    @click="toggleVariant"
+  >
+    <img
+      :src="src"
+      :alt="t('common.brand')"
+      class="ui-brand-mark"
+      :class="variant === 'circle' ? 'ui-brand-mark--circle' : 'ui-brand-mark--wide'"
+      width="160"
+      height="88"
+      decoding="async"
+      fetchpriority="high"
+    />
+  </button>
 </template>
