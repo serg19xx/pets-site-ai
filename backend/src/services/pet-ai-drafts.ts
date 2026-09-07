@@ -9,6 +9,7 @@ import type { PetPromptTemplateKey } from '../lib/pet-prompt-templates.js'
 import {
   IDLE_MUSING_AFTER_DAYS,
   isSurfaceVoiceTemplate,
+  shouldShowVoiceNewBadge,
 } from '../lib/pet-voice-surface.js'
 
 export interface PetAiDraftRecord {
@@ -84,11 +85,14 @@ const DRAFT_RETURNING = `id, pet_id, template_key, status, body, body_fr,
 /**
  * Make `draftId` the gallery surface voice. Previous surface drafts are archived
  * (is_surface=false) but kept for memory — never deleted.
+ * Idle musings replace the bubble without lighting the "New" badge.
  */
 export async function activateSurfaceDraft(
   petId: number,
   draftId: number,
+  options: { showNewBadge?: boolean } = {},
 ): Promise<void> {
+  const showNewBadge = options.showNewBadge !== false
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
@@ -105,12 +109,15 @@ export async function activateSurfaceDraft(
     const r = await client.query(
       `UPDATE pet_ai_drafts
        SET is_surface = TRUE,
-           surfaced_at = NOW(),
+           surfaced_at = CASE
+             WHEN $3::boolean THEN NOW()
+             ELSE NOW() - INTERVAL '4 days'
+           END,
            archived_at = NULL,
            updated_at = NOW()
        WHERE id = $1
          AND pet_id = $2`,
-      [draftId, petId],
+      [draftId, petId, showNewBadge],
     )
     if ((r.rowCount ?? 0) === 0) {
       throw new AppError(404, 'Draft not found', 'NOT_FOUND')
@@ -157,11 +164,14 @@ async function insertDraft(input: {
   const shouldSurface =
     input.activateSurface ?? isSurfaceVoiceTemplate(String(input.templateKey))
   if (shouldSurface) {
-    await activateSurfaceDraft(input.petId, draft.id)
+    const showNewBadge = shouldShowVoiceNewBadge(String(input.templateKey))
+    await activateSurfaceDraft(input.petId, draft.id, { showNewBadge })
     return {
       ...draft,
       isSurface: true,
-      surfacedAt: new Date().toISOString(),
+      surfacedAt: showNewBadge
+        ? new Date().toISOString()
+        : new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
       archivedAt: null,
     }
   }

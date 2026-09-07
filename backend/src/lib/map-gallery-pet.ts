@@ -162,7 +162,11 @@ export function mapGalleryPetRow(
       }
       return raw instanceof Date ? raw.toISOString() : String(raw)
     })(),
-    latestVoiceIsNew: isVoiceNew(row.latest_voice_surfaced_at),
+    latestVoiceIsNew: isVoiceNew(
+      row.latest_voice_surfaced_at,
+      Date.now(),
+      row.latest_voice_template,
+    ),
     virtualLifeEnabled: Boolean(row.virtual_life_enabled),
     liked: row.liked,
     likeCount: Number(row.like_count ?? 0),

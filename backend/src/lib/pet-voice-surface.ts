@@ -8,6 +8,9 @@ export const VOICE_NEW_BADGE_MS = 3 * 24 * 60 * 60 * 1000
 /** Days without a fresh surface event before an idle musing may be generated. */
 export const IDLE_MUSING_AFTER_DAYS = 5
 
+/** Quiet-period filler — replaces the bubble but must not look like a fresh event. */
+export const VOICE_NEW_EXCLUDED_TEMPLATES = new Set(['IDLE_MUSING'])
+
 /** Templates that replace the gallery voice bubble (not photo captions / friend chat). */
 export const SURFACE_VOICE_TEMPLATE_KEYS = new Set([
   'SELF_INTRODUCTION',
@@ -30,7 +33,21 @@ export function isSurfaceVoiceTemplate(templateKey: string): boolean {
   return SURFACE_VOICE_TEMPLATE_KEYS.has(templateKey)
 }
 
-export function isVoiceNew(surfacedAt: string | Date | null | undefined, now = Date.now()): boolean {
+export function shouldShowVoiceNewBadge(templateKey: string | null | undefined): boolean {
+  if (!templateKey) {
+    return true
+  }
+  return !VOICE_NEW_EXCLUDED_TEMPLATES.has(templateKey)
+}
+
+export function isVoiceNew(
+  surfacedAt: string | Date | null | undefined,
+  now = Date.now(),
+  templateKey?: string | null,
+): boolean {
+  if (!shouldShowVoiceNewBadge(templateKey)) {
+    return false
+  }
   if (!surfacedAt) {
     return false
   }
