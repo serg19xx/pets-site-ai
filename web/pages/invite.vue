@@ -146,6 +146,27 @@ onMounted(() => {
 
         <section>
           <h2 class="text-base font-semibold text-stone-900 dark:text-stone-100">
+            {{ $t('invite.howTitle') }}
+          </h2>
+          <p class="ui-body mt-2">{{ $t('invite.howIntro') }}</p>
+          <ol class="ui-body mt-3 list-decimal space-y-2 pl-5">
+            <li>{{ $t('invite.howStepUse') }}</li>
+            <li>{{ $t('invite.howStepNotice') }}</li>
+            <li>{{ $t('invite.howStepNotes') }}</li>
+            <li>
+              <i18n-t keypath="invite.howStepSend" tag="span">
+                <template #feedback>
+                  <NuxtLink :to="localePath('/app/feedback')" class="ui-link">
+                    {{ $t('auth.feedback') }}
+                  </NuxtLink>
+                </template>
+              </i18n-t>
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h2 class="text-base font-semibold text-stone-900 dark:text-stone-100">
             {{ $t('invite.privacyTitle') }}
           </h2>
           <p class="ui-body mt-2">{{ $t('invite.privacyBody') }}</p>
@@ -192,6 +213,13 @@ onMounted(() => {
         >
           {{ $t('invite.alreadyTester') }}
         </p>
+        <NuxtLink
+          v-if="auth.user?.isBetaTester"
+          :to="localePath('/app/feedback')"
+          class="ui-btn-secondary ui-btn-md text-center"
+        >
+          {{ $t('invite.openFeedback') }}
+        </NuxtLink>
         <template v-else-if="status.open">
           <button
             type="button"
