@@ -4,10 +4,12 @@
     "switchToEn": "Passer à l'anglais"
   },
   "nav": {
-    "animals": "Animaux",
+    "gallery": "Galerie",
     "feed": "Fil",
     "marketplace": "Marketplace",
     "learn": "Apprendre",
+    "groups": "Groupes",
+    "consultations": "Consultations",
     "contact": "Contact",
     "faq": "FAQ",
     "menu": "Menu"
@@ -65,6 +67,10 @@
     "consultations": {
       "title": "Consultations — Pet Friends",
       "description": "Catalogue de spécialistes — à venir lorsque des personnes pourront répondre."
+    },
+    "groups": {
+      "title": "Groupes — Pet Friends",
+      "description": "Groupes d’intérêt pour propriétaires — prévu. Dites-nous quels thèmes vous voulez."
     },
     "login": {
       "title": "Connexion — Pet Friends",
@@ -136,7 +142,8 @@
   },
   "underConstruction": {
     "badge": "En construction",
-    "feedback": "Dites-nous ce que vous aimeriez voir ici — vos retours guident la prochaine version."
+    "feedback": "Dites-nous ce que vous aimeriez voir ici — vos retours guident la prochaine version.",
+    "feedbackWithLink": "Dites-nous ce que vous aimeriez voir ici — utilisez {feedback} ; vos notes guident la prochaine version."
   },
   "learn": {
     "title": "Apprendre",
@@ -148,7 +155,9 @@
     "originalLang": "Original : {lang}",
     "disclaimer": "Informations générales, pas un diagnostic vétérinaire. Si votre animal va mal, appelez une clinique.",
     "translateHint": "L’article ci-dessous est dans sa langue originale. Votre navigateur peut traduire la page si vous avez besoin d’une autre langue.",
-    "consultationsHint": "Vous cherchez un spécialiste ? Le catalogue {consultations} s’ouvrira lorsque des personnes pourront répondre.",
+    "consultationsHint": "Vous cherchez un spécialiste ? {consultations} est prévu — voyez ce qui vient et dites-nous si vous en avez besoin.",
+    "groupsHint": "Des clubs par thème ? {groups} ouvrira plus tard — votez avec votre feedback.",
+    "roadmapComing": "Bientôt",
     "langs": {
       "en": "anglais",
       "fr": "français"
@@ -200,8 +209,31 @@
     "title": "Consultations",
     "subtitle": "Un catalogue de personnes à qui demander — ce n’est pas la bibliothèque de guides.",
     "panelTitle": "Pas encore ouvert",
-    "panelPurpose": "Nous listerons des spécialistes (vétérinaires, éducateurs, comportementalistes) lorsque deux ou trois personnes réelles pourront répondre. En attendant, il n’y a rien à réserver ici.",
+    "panelPurpose": "Nous listerons des spécialistes (vétérinaires, éducateurs, comportementalistes, nutritionnistes, juristes) lorsque deux ou trois personnes réelles pourront répondre. En attendant, il n’y a rien à réserver ici.",
+    "plannedTitle": "Ce qui sera ici",
+    "planned": {
+      "catalog": "Un catalogue consultable par spécialité et espèce",
+      "profile": "Profils publics de spécialistes (bio, espèces couvertes)",
+      "appointment": "Prendre rendez-vous / poser une question (connexion requise)",
+      "materials": "Articles optionnels liés à chaque spécialiste"
+    },
+    "feedbackHint": "Vous en avez besoin plus tôt ? Dites-le via {feedback} (testeurs) ou {contact}.",
     "learnHint": "En attendant, les courts guides sont dans {learn}."
+  },
+
+  "groups": {
+    "title": "Groupes",
+    "subtitle": "Clubs d’intérêt dans Pet Friends — des thèmes qui vous touchent, pas un second fil.",
+    "panelTitle": "Prévu — pas encore construit",
+    "panelPurpose": "Toute personne avec un compte pourra créer un groupe. Les créateurs modèrent leurs clubs. Nous attendons plus de membres pour ne pas laisser des groupes vides.",
+    "plannedTitle": "Ce qui sera ici",
+    "planned": {
+      "theme": "Thèmes : chiens, chats, éducation, santé, éleveurs, promenades de quartier…",
+      "create": "Créer un groupe avec n’importe quel compte — pas besoin d’avoir un animal",
+      "discover": "Parcourir tous les groupes avec recherche et filtres",
+      "myGroups": "Mes groupes dans le menu du compte — clubs que vous créez et administrez"
+    },
+    "feedbackHint": "Quels thèmes d’abord ? Envoyez vos idées via {feedback} (testeurs) ou {contact}."
   },
 
   "marketplace": {

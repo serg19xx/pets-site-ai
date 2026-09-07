@@ -65,7 +65,7 @@ watch(
 
 <template>
   <section class="ui-page-container">
-    <NuxtLink :to="localePath('/')" class="ui-link-back">
+    <NuxtLink :to="localePath('/feed')" class="ui-link-back">
       {{ $t('pet.backToGallery') }}
     </NuxtLink>
     <h1 class="ui-h1 mt-4">

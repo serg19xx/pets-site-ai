@@ -4,7 +4,7 @@ import { unref } from 'vue'
 export interface PageSeoOptions {
   title: MaybeRef<string>
   description?: MaybeRef<string>
-  /** Path for canonical (e.g. `/animals/1`). Defaults to current route path. */
+  /** Path for canonical (e.g. `/gallery/1`). Defaults to current route path. */
   path?: MaybeRef<string>
   image?: MaybeRef<string | undefined>
   noindex?: boolean

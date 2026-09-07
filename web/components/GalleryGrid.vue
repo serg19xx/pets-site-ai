@@ -92,7 +92,7 @@ function cardCaption(animal: GalleryPet) {
 }
 
 function petPath(id: number) {
-  return localePath(`/animals/${id}`)
+  return localePath(`/gallery/${id}`)
 }
 
 watch(locale, () => {
@@ -179,7 +179,7 @@ watch(
     const itemListElement = list.map((animal, index) => ({
       '@type': 'ListItem',
       position: index + 1,
-      url: `${siteUrl.replace(/\/$/, '')}${localePath(`/animals/${animal.id}`)}`,
+      url: `${siteUrl.replace(/\/$/, '')}${localePath(`/gallery/${animal.id}`)}`,
       name: animal.name,
     }))
     useHead({

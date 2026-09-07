@@ -30,7 +30,7 @@ function guidesIn(species: LearnSpecies) {
       <p class="ui-page-subtitle mt-1">{{ $t('learn.subtitle') }}</p>
     </header>
 
-    <NuxtLink :to="localePath('/learn/legal')" class="ui-list-link mb-8">
+    <NuxtLink :to="localePath('/learn/legal')" class="ui-list-link mb-3">
       <div class="min-w-0 flex-1">
         <p class="ui-list-link-title">{{ $t('learn.legal.cardTitle') }}</p>
         <p class="ui-list-link-meta">{{ $t('learn.legal.cardMeta') }}</p>
@@ -41,6 +41,31 @@ function guidesIn(species: LearnSpecies) {
         aria-hidden="true"
       />
     </NuxtLink>
+
+    <div class="mb-8 flex flex-col gap-3">
+      <NuxtLink :to="localePath('/consultations')" class="ui-list-link">
+        <div class="min-w-0 flex-1">
+          <p class="ui-list-link-title">{{ $t('consultations.title') }}</p>
+          <p class="ui-list-link-meta">{{ $t('learn.roadmapComing') }}</p>
+        </div>
+        <Icon
+          :icon="UI_ACTION_ICONS.chevron"
+          class="ui-icon-sm shrink-0 text-(--ui-text-muted)"
+          aria-hidden="true"
+        />
+      </NuxtLink>
+      <NuxtLink :to="localePath('/groups')" class="ui-list-link">
+        <div class="min-w-0 flex-1">
+          <p class="ui-list-link-title">{{ $t('groups.title') }}</p>
+          <p class="ui-list-link-meta">{{ $t('learn.roadmapComing') }}</p>
+        </div>
+        <Icon
+          :icon="UI_ACTION_ICONS.chevron"
+          class="ui-icon-sm shrink-0 text-(--ui-text-muted)"
+          aria-hidden="true"
+        />
+      </NuxtLink>
+    </div>
 
     <p v-if="LEARN_GUIDES.length === 0" class="ui-empty">
       {{ $t('learn.empty') }}
@@ -75,6 +100,15 @@ function guidesIn(species: LearnSpecies) {
         <template #consultations>
           <NuxtLink :to="localePath('/consultations')" class="ui-link">
             {{ $t('consultations.title') }}
+          </NuxtLink>
+        </template>
+      </i18n-t>
+    </p>
+    <p class="ui-page-subtitle mt-2">
+      <i18n-t keypath="learn.groupsHint" tag="span">
+        <template #groups>
+          <NuxtLink :to="localePath('/groups')" class="ui-link">
+            {{ $t('groups.title') }}
           </NuxtLink>
         </template>
       </i18n-t>

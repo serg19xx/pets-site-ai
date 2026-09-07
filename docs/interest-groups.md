@@ -73,6 +73,8 @@ Names can change; keep **Groups** in the public nav and **My Groups** in the acc
 
 Enough active members that empty catalogs and spam are real problems we can learn from. Until then keep this doc only.
 
+**Soft stub (live):** public `/groups` page + nav link explain the plan and invite feedback. No create/join yet.
+
 ### Stage 1 — create + catalog
 
 - Create group (name, description, topic tags).

@@ -377,7 +377,7 @@ export async function declineMedicalRequest(
       type: 'medical_request_declined',
       title: `${mapped.petName}: medical request declined`,
       body: `The owner declined to share ${mapped.petName}’s medical records.`,
-      linkPath: `/animals/${petId}`,
+      linkPath: `/gallery/${petId}`,
       meta: { petId, requestId },
       channels: ['in_app', 'email', 'sms'],
     })

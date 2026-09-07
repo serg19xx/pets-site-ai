@@ -20,20 +20,26 @@ export function useAppNav() {
   const localePath = useLocalePath()
   const route = useRoute()
 
-  const homePath = computed(() => localePath('/'))
+  const homePath = computed(() => localePath('/feed'))
 
   const mainItems = computed<AppNavItem[]>(() => [
     {
       id: 'feed',
-      path: localePath('/'),
+      path: localePath('/feed'),
       label: t('nav.feed'),
       icon: UI_NAV_ICONS.feed,
     },
     {
-      id: 'animals',
-      path: localePath('/animals'),
-      label: t('nav.animals'),
+      id: 'gallery',
+      path: localePath('/gallery'),
+      label: t('nav.gallery'),
       icon: UI_NAV_ICONS.animals,
+    },
+    {
+      id: 'groups',
+      path: localePath('/groups'),
+      label: t('nav.groups'),
+      icon: UI_NAV_ICONS.groups,
     },
     {
       id: 'marketplace',
@@ -46,6 +52,12 @@ export function useAppNav() {
       path: localePath('/learn'),
       label: t('nav.learn'),
       icon: UI_NAV_ICONS.learn,
+    },
+    {
+      id: 'consultations',
+      path: localePath('/consultations'),
+      label: t('nav.consultations'),
+      icon: UI_NAV_ICONS.consultations,
     },
   ])
 
@@ -71,7 +83,7 @@ export function useAppNav() {
   /** Always the first four destinations in the mobile bottom bar. */
   const bottomPrimaryItems = computed(() => mainItems.value.slice(0, 4))
 
-  /** Future main links that do not fit in the 4+menu bar. */
+  /** Remaining main links under the mobile Menu overflow. */
   const bottomExtraItems = computed(() => mainItems.value.slice(4))
 
   return {

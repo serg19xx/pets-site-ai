@@ -24,7 +24,7 @@ const loadError = ref('')
 const activeLikeId = ref<number | null>(null)
 
 function petPath(id: number) {
-  return localePath(`/animals/${id}`)
+  return localePath(`/gallery/${id}`)
 }
 
 function speciesSubtitle(animal: GalleryPet) {

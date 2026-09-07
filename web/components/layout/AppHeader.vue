@@ -11,7 +11,7 @@ const localePath = useLocalePath()
     <div class="ui-header-inner">
       <div class="ui-brand-link">
         <AppBrandMark />
-        <NuxtLink :to="localePath('/')" class="ui-brand-home">
+        <NuxtLink :to="localePath('/feed')" class="ui-brand-home">
           <span class="ui-brand-wordmark hidden md:inline">
             <span class="ui-brand-wordmark-pet">{{ $t('common.brandPet') }}</span>
             <span class="ui-brand-wordmark-friends">{{ $t('common.brandFriends') }}</span>

@@ -114,7 +114,7 @@ function signOut() {
   unreadInquiryCount.value = 0
   unreadNotificationCount.value = 0
   closeMenu()
-  void navigateTo(localePath('/'))
+  void navigateTo(localePath('/feed'))
 }
 
 async function loadUnreadCounts() {

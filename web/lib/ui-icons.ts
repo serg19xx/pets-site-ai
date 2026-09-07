@@ -4,6 +4,8 @@ export const UI_NAV_ICONS = {
   feed: 'lucide:newspaper',
   learn: 'lucide:book-open',
   marketplace: 'lucide:store',
+  groups: 'lucide:users',
+  consultations: 'lucide:stethoscope',
   contact: 'lucide:mail',
   faq: 'lucide:circle-question-mark',
   more: 'lucide:circle-ellipsis',

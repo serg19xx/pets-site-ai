@@ -87,7 +87,7 @@ function mapParent(row: ParentRow): PetParentRecord {
             ? buildPublicUploadUrl(row.linked_avatar_path)
             : null,
           ownerUserId: Number(row.linked_user_id),
-          publicPath: `/animals/${Number(row.linked_pet_id)}`,
+          publicPath: `/gallery/${Number(row.linked_pet_id)}`,
         }
       : null
 

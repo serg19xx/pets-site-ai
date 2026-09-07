@@ -94,7 +94,7 @@ async function handleSubmit() {
       </p>
       <div class="mt-3 flex flex-wrap gap-2">
         <NuxtLink
-          :to="localePath('/')"
+          :to="localePath('/feed')"
           class="ui-btn-primary ui-btn-sm"
         >
           {{ $t('auth.goToGallery') }}
@@ -152,7 +152,7 @@ async function handleSubmit() {
     </form>
 
     <p class="ui-text-center-muted mt-4">
-      <NuxtLink :to="localePath('/')" class="ui-link">
+      <NuxtLink :to="localePath('/feed')" class="ui-link">
         {{ $t('auth.backToGallery') }}
       </NuxtLink>
       <span class="mx-2">·</span>

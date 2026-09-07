@@ -11,7 +11,7 @@ usePageSeo({
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: t('gallery.title'),
-    url: `${siteUrl}${localePath('/animals')}`,
+    url: `${siteUrl}${localePath('/gallery')}`,
     description: t('meta.animals.description'),
     isPartOf: {
       '@type': 'WebSite',

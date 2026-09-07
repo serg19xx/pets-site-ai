@@ -1,6 +1,6 @@
 import { LEARN_GUIDES } from '../../data/learn-guides'
 
-const STATIC_PATHS = ['', '/animals', '/learn', '/learn/legal', '/consultations', '/contact', '/faq'] as const
+const STATIC_PATHS = ['/feed', '/gallery', '/learn', '/learn/legal', '/consultations', '/groups', '/contact', '/faq'] as const
 const FR_PREFIX = '/fr'
 
 function xmlEscape(value: string): string {
@@ -45,14 +45,15 @@ export default defineEventHandler(async (event) => {
   ]
 
   for (const path of STATIC_PATHS) {
-    lines.push(urlEntry(base, path, path === '' ? 'daily' : 'weekly', path === '' ? '1.0' : '0.6'))
-    const frPath = path === '' ? FR_PREFIX : `${FR_PREFIX}${path}`
-    lines.push(urlEntry(base, frPath, path === '' ? 'daily' : 'weekly', path === '' ? '0.9' : '0.5'))
+    const isHome = path === '/feed'
+    lines.push(urlEntry(base, path, isHome ? 'daily' : 'weekly', isHome ? '1.0' : '0.6'))
+    const frPath = `${FR_PREFIX}${path}`
+    lines.push(urlEntry(base, frPath, isHome ? 'daily' : 'weekly', isHome ? '0.9' : '0.5'))
   }
 
   for (const id of petIds) {
-    lines.push(urlEntry(base, `/animals/${id}`, 'weekly', '0.8'))
-    lines.push(urlEntry(base, `${FR_PREFIX}/animals/${id}`, 'weekly', '0.7'))
+    lines.push(urlEntry(base, `/gallery/${id}`, 'weekly', '0.8'))
+    lines.push(urlEntry(base, `${FR_PREFIX}/gallery/${id}`, 'weekly', '0.7'))
   }
 
   for (const guide of LEARN_GUIDES) {

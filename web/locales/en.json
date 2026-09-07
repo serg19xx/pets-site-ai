@@ -4,10 +4,12 @@
     "switchToEn": "Switch to English"
   },
   "nav": {
-    "animals": "Animals",
+    "gallery": "Gallery",
     "feed": "Feed",
     "marketplace": "Marketplace",
     "learn": "Learn",
+    "groups": "Groups",
+    "consultations": "Consultations",
     "contact": "Contact",
     "faq": "FAQ",
     "menu": "Menu"
@@ -65,6 +67,10 @@
     "consultations": {
       "title": "Consultations — Pet Friends",
       "description": "Specialist catalog — coming when we have people who can take questions."
+    },
+    "groups": {
+      "title": "Groups — Pet Friends",
+      "description": "Interest groups for pet owners — planned. Tell us what themes you want."
     },
     "login": {
       "title": "Log in — Pet Friends",
@@ -136,7 +142,8 @@
   },
   "underConstruction": {
     "badge": "Under construction",
-    "feedback": "Tell us what you would like to see here — your feedback shapes the next release."
+    "feedback": "Tell us what you would like to see here — your feedback shapes the next release.",
+    "feedbackWithLink": "Tell us what you would like to see here — use {feedback}; your notes shape the next release."
   },
   "learn": {
     "title": "Learn",
@@ -148,7 +155,9 @@
     "originalLang": "Original: {lang}",
     "disclaimer": "This is general information, not a veterinary diagnosis. If your animal is unwell, call a clinic.",
     "translateHint": "The article below is in its original language. Your browser can translate the page if you need another language.",
-    "consultationsHint": "Looking for a specialist? The {consultations} catalog will open when we have people who can take questions.",
+    "consultationsHint": "Looking for a specialist? {consultations} is planned — see what is coming and tell us if you need it.",
+    "groupsHint": "Want owner clubs by theme? {groups} will open later — vote with your feedback.",
+    "roadmapComing": "Coming later",
     "langs": {
       "en": "English",
       "fr": "French"
@@ -200,8 +209,31 @@
     "title": "Consultations",
     "subtitle": "A catalog of people you can ask — not the same as the guide library.",
     "panelTitle": "Not open yet",
-    "panelPurpose": "We will list specialists (vets, trainers, behaviorists) when two or three real people can take questions. Until then there is nothing to book here.",
+    "panelPurpose": "We will list specialists (vets, trainers, behaviorists, nutritionists, lawyers) when two or three real people can take questions. Until then there is nothing to book here.",
+    "plannedTitle": "What will be here",
+    "planned": {
+      "catalog": "A searchable catalog by specialty and animal species",
+      "profile": "Public specialist profiles (bio, species they cover)",
+      "appointment": "Arrange appointment / ask a question (login required)",
+      "materials": "Optional articles linked from each specialist"
+    },
+    "feedbackHint": "Want this sooner? Tell us via {feedback} (testers) or {contact}.",
     "learnHint": "In the meantime, short guides live in {learn}."
+  },
+
+  "groups": {
+    "title": "Groups",
+    "subtitle": "Interest clubs inside Pet Friends — themes you care about, not just a second feed.",
+    "panelTitle": "Planned — not built yet",
+    "panelPurpose": "Anyone with an account will be able to create a group. Creators moderate their own clubs. We wait until more members join so empty groups do not feel abandoned.",
+    "plannedTitle": "What will be here",
+    "planned": {
+      "theme": "Themes such as dogs, cats, training, health talk, breeders, neighbourhood walks…",
+      "create": "Create a group with any account — pet ownership not required",
+      "discover": "Browse all groups with search and filters",
+      "myGroups": "My Groups in your account menu — clubs you create and admin"
+    },
+    "feedbackHint": "Which themes matter to you first? Send ideas via {feedback} (testers) or {contact}."
   },
 
   "marketplace": {

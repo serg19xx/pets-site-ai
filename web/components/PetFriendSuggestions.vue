@@ -118,7 +118,7 @@ async function onDecline(suggestion: PetFriendshipSuggestion) {
 }
 
 function candidatePath(id: number) {
-  return localePath(`/animals/${id}`)
+  return localePath(`/gallery/${id}`)
 }
 
 watch(

@@ -11,6 +11,8 @@ withDefaults(defineProps<Props>(), {
   compact: false,
   title: '',
 })
+
+const localePath = useLocalePath()
 </script>
 
 <template>
@@ -29,7 +31,13 @@ withDefaults(defineProps<Props>(), {
       {{ purpose }}
     </p>
     <p class="ui-under-construction-feedback">
-      {{ $t('underConstruction.feedback') }}
+      <i18n-t keypath="underConstruction.feedbackWithLink" tag="span">
+        <template #feedback>
+          <NuxtLink :to="localePath('/app/feedback')" class="ui-link">
+            {{ $t('auth.feedback') }}
+          </NuxtLink>
+        </template>
+      </i18n-t>
     </p>
   </section>
 </template>

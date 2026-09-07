@@ -110,7 +110,7 @@ const heading = computed(() =>
 <template>
   <section class="mx-auto max-w-md">
     <NuxtLink
-      :to="localePath('/')"
+      :to="localePath('/feed')"
       class="ui-link-back"
     >
       {{ $t('common.back') }}

@@ -230,7 +230,7 @@ onMounted(() => {
             {{ isJoining ? $t('invite.joining') : $t('invite.joinCta') }}
           </button>
         </template>
-        <NuxtLink :to="localePath('/')" class="ui-link">
+        <NuxtLink :to="localePath('/feed')" class="ui-link">
           {{ $t('auth.goToGallery') }}
         </NuxtLink>
       </div>

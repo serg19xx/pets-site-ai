@@ -172,7 +172,7 @@ async function onUnfriend() {
 }
 
 function friendPath(id: number) {
-  return localePath(`/animals/${id}`)
+  return localePath(`/gallery/${id}`)
 }
 </script>
 
