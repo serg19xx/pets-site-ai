@@ -1408,8 +1408,8 @@
     right: auto;
     bottom: calc(100% + 0.65rem);
     z-index: 50;
-    width: min(15rem, 70vw);
-    max-width: 15rem;
+    width: min(15rem, calc(100vw - 2rem));
+    max-width: min(15rem, calc(100vw - 2rem));
     padding: 0.75rem 0.9rem 0.8rem;
     border: 2.5px solid #8b6f5f;
     border-radius: 1.4rem;
@@ -1455,6 +1455,66 @@
     border-left: 10px solid transparent;
     border-right: 5px solid transparent;
     border-top: 13px solid #fffef7;
+  }
+
+  /* Trailing columns: pin balloon to the right so it stays in the viewport */
+  .ui-gallery-grid--playful > li:nth-child(2n) .ui-gallery-voice-balloon {
+    left: auto;
+    right: 0;
+  }
+
+  .ui-gallery-grid--playful > li:nth-child(2n) .ui-gallery-voice-balloon::before,
+  .ui-gallery-grid--playful > li:nth-child(2n) .ui-gallery-voice-balloon::after {
+    left: auto;
+    right: 1.15rem;
+  }
+
+  @media (min-width: 1024px) {
+    .ui-gallery-grid--playful > li:nth-child(2n) .ui-gallery-voice-balloon {
+      left: 0;
+      right: auto;
+    }
+
+    .ui-gallery-grid--playful > li:nth-child(2n) .ui-gallery-voice-balloon::before,
+    .ui-gallery-grid--playful > li:nth-child(2n) .ui-gallery-voice-balloon::after {
+      left: 1.15rem;
+      right: auto;
+    }
+
+    .ui-gallery-grid--playful > li:nth-child(3n) .ui-gallery-voice-balloon {
+      left: auto;
+      right: 0;
+    }
+
+    .ui-gallery-grid--playful > li:nth-child(3n) .ui-gallery-voice-balloon::before,
+    .ui-gallery-grid--playful > li:nth-child(3n) .ui-gallery-voice-balloon::after {
+      left: auto;
+      right: 1.15rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .ui-gallery-grid--playful > li:nth-child(3n) .ui-gallery-voice-balloon {
+      left: 0;
+      right: auto;
+    }
+
+    .ui-gallery-grid--playful > li:nth-child(3n) .ui-gallery-voice-balloon::before,
+    .ui-gallery-grid--playful > li:nth-child(3n) .ui-gallery-voice-balloon::after {
+      left: 1.15rem;
+      right: auto;
+    }
+
+    .ui-gallery-grid--playful > li:nth-child(4n) .ui-gallery-voice-balloon {
+      left: auto;
+      right: 0;
+    }
+
+    .ui-gallery-grid--playful > li:nth-child(4n) .ui-gallery-voice-balloon::before,
+    .ui-gallery-grid--playful > li:nth-child(4n) .ui-gallery-voice-balloon::after {
+      left: auto;
+      right: 1.15rem;
+    }
   }
 
   @media (hover: hover) and (pointer: fine) {
