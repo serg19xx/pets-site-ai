@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import PetAvatar from '~/components/PetAvatar.vue'
@@ -47,9 +47,57 @@ const loadMoreError = ref('')
 const activeLikeId = ref<number | null>(null)
 const openVoiceId = ref<number | null>(null)
 const interactionError = ref('')
+const gridRef = ref<HTMLElement | null>(null)
+const balloonStyle = ref<Record<string, string>>({})
 
 function toggleVoice(petId: number) {
   openVoiceId.value = openVoiceId.value === petId ? null : petId
+}
+
+function updateBalloonPosition() {
+  const petId = openVoiceId.value
+  const grid = gridRef.value
+  if (!petId || !grid) {
+    balloonStyle.value = {}
+    return
+  }
+  const btn = grid.querySelector(`[data-voice-btn="${petId}"]`)
+  if (!(btn instanceof HTMLElement)) {
+    balloonStyle.value = {}
+    return
+  }
+  const gridRect = grid.getBoundingClientRect()
+  const btnRect = btn.getBoundingClientRect()
+  const card = btn.closest('.ui-gallery-card')
+  const cardWidth =
+    card instanceof HTMLElement ? card.getBoundingClientRect().width : btnRect.width
+  const gapRaw = getComputedStyle(grid).columnGap || getComputedStyle(grid).gap || '0'
+  const gap = Number.parseFloat(gapRaw) || 0
+  const pad = 8
+  const gridLeft = Math.max(8, gridRect.left + pad)
+  const gridRight = Math.min(window.innerWidth - 8, gridRect.right - pad)
+  const gridInner = Math.max(0, gridRight - gridLeft)
+  // Cap at ~2 cards (full width on 2-col mobile; compact on 3–4 col desktops).
+  const twoCards = cardWidth * 2 + gap
+  const width = Math.min(gridInner, Math.max(cardWidth, twoCards))
+  const preferredLeft = btnRect.left + btnRect.width / 2 - width / 2
+  const left = Math.min(Math.max(preferredLeft, gridLeft), gridRight - width)
+  const bottom = Math.max(8, window.innerHeight - btnRect.top + 10)
+  const tailLeft = Math.min(
+    Math.max(18, btnRect.left + btnRect.width / 2 - left - 6),
+    Math.max(18, width - 28),
+  )
+  balloonStyle.value = {
+    left: `${left}px`,
+    width: `${width}px`,
+    bottom: `${bottom}px`,
+    '--gallery-balloon-tail-left': `${tailLeft}px`,
+  }
+}
+
+async function refreshBalloonPosition() {
+  await nextTick()
+  updateBalloonPosition()
 }
 
 const { data, pending, error, refresh } = await useAsyncData(
@@ -67,6 +115,30 @@ const pets = computed(() => [...(data.value?.pets ?? []), ...extraPets.value])
 const total = computed(() => data.value?.total ?? 0)
 const hasMore = computed(() => pets.value.length < total.value)
 const isLoading = computed(() => pending.value && pets.value.length === 0)
+const openVoicePet = computed(
+  () => pets.value.find((pet) => pet.id === openVoiceId.value) ?? null,
+)
+const openVoiceText = computed(() =>
+  openVoicePet.value ? cardCaption(openVoicePet.value) : '',
+)
+
+watch(openVoiceId, (id) => {
+  if (id) {
+    void refreshBalloonPosition()
+  } else {
+    balloonStyle.value = {}
+  }
+})
+
+onMounted(() => {
+  window.addEventListener('scroll', updateBalloonPosition, true)
+  window.addEventListener('resize', updateBalloonPosition)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', updateBalloonPosition, true)
+  window.removeEventListener('resize', updateBalloonPosition)
+})
 
 const loadError = computed(() => {
   if (loadMoreError.value) {
@@ -210,7 +282,7 @@ watch(
   </p>
 
   <template v-else>
-    <ul class="ui-gallery-grid ui-gallery-grid--playful">
+    <ul ref="gridRef" class="ui-gallery-grid ui-gallery-grid--playful">
       <li
         v-for="animal in pets"
         :key="animal.id"
@@ -247,6 +319,7 @@ watch(
                   'ui-gallery-voice--new':
                     Boolean(animal.latestVoiceIsNew && (animal.latestVoice || animal.latestVoiceFr)),
                 }"
+                :data-voice-btn="animal.id"
                 :aria-expanded="openVoiceId === animal.id"
                 :aria-label="$t('gallery.greetingAria', { name: animal.name })"
                 @click.stop.prevent="toggleVoice(animal.id)"
@@ -263,13 +336,6 @@ watch(
                   {{ $t('gallery.voiceNew') }}
                 </span>
               </button>
-              <div
-                class="ui-gallery-voice-balloon"
-                :class="{ 'ui-gallery-voice-balloon--open': openVoiceId === animal.id }"
-                role="tooltip"
-              >
-                {{ cardCaption(animal) }}
-              </div>
             </div>
             <button
               type="button"
@@ -303,6 +369,15 @@ watch(
         </div>
       </li>
     </ul>
+
+    <div
+      v-if="openVoiceText"
+      class="ui-gallery-voice-balloon ui-gallery-voice-balloon--dock ui-gallery-voice-balloon--open"
+      role="tooltip"
+      :style="balloonStyle"
+    >
+      {{ openVoiceText }}
+    </div>
 
     <p v-if="loadError" class="ui-alert-error mt-4" role="alert">
       {{ loadError }}

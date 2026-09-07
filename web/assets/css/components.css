@@ -1400,16 +1400,10 @@
     @apply h-4 w-4;
   }
 
-  /* Comic speech balloon above the footer action */
+  /* Shared dock balloon: up to ~2 cards wide, fixed above the open voice button */
   .ui-gallery-voice-balloon {
     pointer-events: none;
-    position: absolute;
-    left: 0;
-    right: auto;
-    bottom: calc(100% + 0.65rem);
-    z-index: 50;
-    width: min(15rem, calc(100vw - 2rem));
-    max-width: min(15rem, calc(100vw - 2rem));
+    z-index: 60;
     padding: 0.75rem 0.9rem 0.8rem;
     border: 2.5px solid #8b6f5f;
     border-radius: 1.4rem;
@@ -1421,24 +1415,35 @@
     line-height: 1.4;
     text-align: left;
     white-space: normal;
-    overflow: visible;
     overflow-wrap: anywhere;
     word-break: break-word;
+    box-shadow: 3px 3px 0 rgba(109, 76, 65, 0.14);
+  }
+
+  .ui-gallery-voice-balloon--dock {
+    position: fixed;
+    top: auto;
+    right: auto;
     opacity: 0;
     visibility: hidden;
     transform: translateY(0.25rem) scale(0.98);
-    box-shadow: 3px 3px 0 rgba(109, 76, 65, 0.14);
     transition:
       opacity 0.15s ease,
       transform 0.15s ease,
       visibility 0.15s ease;
   }
 
+  .ui-gallery-voice-balloon--dock.ui-gallery-voice-balloon--open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+  }
+
   .ui-gallery-voice-balloon::before,
   .ui-gallery-voice-balloon::after {
     content: '';
     position: absolute;
-    left: 1.15rem;
+    left: var(--gallery-balloon-tail-left, 1.15rem);
     width: 0;
     height: 0;
   }
@@ -1455,81 +1460,6 @@
     border-left: 10px solid transparent;
     border-right: 5px solid transparent;
     border-top: 13px solid #fffef7;
-  }
-
-  /* Trailing columns: pin balloon to the right so it stays in the viewport */
-  .ui-gallery-grid--playful > li:nth-child(2n) .ui-gallery-voice-balloon {
-    left: auto;
-    right: 0;
-  }
-
-  .ui-gallery-grid--playful > li:nth-child(2n) .ui-gallery-voice-balloon::before,
-  .ui-gallery-grid--playful > li:nth-child(2n) .ui-gallery-voice-balloon::after {
-    left: auto;
-    right: 1.15rem;
-  }
-
-  @media (min-width: 1024px) {
-    .ui-gallery-grid--playful > li:nth-child(2n) .ui-gallery-voice-balloon {
-      left: 0;
-      right: auto;
-    }
-
-    .ui-gallery-grid--playful > li:nth-child(2n) .ui-gallery-voice-balloon::before,
-    .ui-gallery-grid--playful > li:nth-child(2n) .ui-gallery-voice-balloon::after {
-      left: 1.15rem;
-      right: auto;
-    }
-
-    .ui-gallery-grid--playful > li:nth-child(3n) .ui-gallery-voice-balloon {
-      left: auto;
-      right: 0;
-    }
-
-    .ui-gallery-grid--playful > li:nth-child(3n) .ui-gallery-voice-balloon::before,
-    .ui-gallery-grid--playful > li:nth-child(3n) .ui-gallery-voice-balloon::after {
-      left: auto;
-      right: 1.15rem;
-    }
-  }
-
-  @media (min-width: 1280px) {
-    .ui-gallery-grid--playful > li:nth-child(3n) .ui-gallery-voice-balloon {
-      left: 0;
-      right: auto;
-    }
-
-    .ui-gallery-grid--playful > li:nth-child(3n) .ui-gallery-voice-balloon::before,
-    .ui-gallery-grid--playful > li:nth-child(3n) .ui-gallery-voice-balloon::after {
-      left: 1.15rem;
-      right: auto;
-    }
-
-    .ui-gallery-grid--playful > li:nth-child(4n) .ui-gallery-voice-balloon {
-      left: auto;
-      right: 0;
-    }
-
-    .ui-gallery-grid--playful > li:nth-child(4n) .ui-gallery-voice-balloon::before,
-    .ui-gallery-grid--playful > li:nth-child(4n) .ui-gallery-voice-balloon::after {
-      left: auto;
-      right: 1.15rem;
-    }
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .ui-gallery-card--playful:has(.ui-gallery-voice:hover) .ui-gallery-voice-balloon,
-    .ui-gallery-card--playful:has(.ui-gallery-voice:focus-visible) .ui-gallery-voice-balloon {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0) scale(1);
-    }
-  }
-
-  .ui-gallery-voice-balloon--open {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0) scale(1);
   }
 
   .ui-gallery-like {
