@@ -48,10 +48,39 @@ const activeLikeId = ref<number | null>(null)
 const openVoiceId = ref<number | null>(null)
 const interactionError = ref('')
 const gridRef = ref<HTMLElement | null>(null)
+const balloonRef = ref<HTMLElement | null>(null)
 const balloonStyle = ref<Record<string, string>>({})
+
+function closeVoice() {
+  openVoiceId.value = null
+}
 
 function toggleVoice(petId: number) {
   openVoiceId.value = openVoiceId.value === petId ? null : petId
+}
+
+function onVoiceDismissPointer(event: Event) {
+  if (!openVoiceId.value) {
+    return
+  }
+  const target = event.target
+  if (!(target instanceof Node)) {
+    return
+  }
+  // Another voice button switches via toggleVoice; don't dismiss first.
+  if (target instanceof Element && target.closest('[data-voice-btn]')) {
+    return
+  }
+  if (balloonRef.value?.contains(target)) {
+    return
+  }
+  closeVoice()
+}
+
+function onVoiceDismissKey(event: KeyboardEvent) {
+  if (event.key === 'Escape' && openVoiceId.value) {
+    closeVoice()
+  }
 }
 
 function updateBalloonPosition() {
@@ -133,11 +162,15 @@ watch(openVoiceId, (id) => {
 onMounted(() => {
   window.addEventListener('scroll', updateBalloonPosition, true)
   window.addEventListener('resize', updateBalloonPosition)
+  document.addEventListener('pointerdown', onVoiceDismissPointer, true)
+  document.addEventListener('keydown', onVoiceDismissKey)
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', updateBalloonPosition, true)
   window.removeEventListener('resize', updateBalloonPosition)
+  document.removeEventListener('pointerdown', onVoiceDismissPointer, true)
+  document.removeEventListener('keydown', onVoiceDismissKey)
 })
 
 const loadError = computed(() => {
@@ -372,6 +405,7 @@ watch(
 
     <div
       v-if="openVoiceText"
+      ref="balloonRef"
       class="ui-gallery-voice-balloon ui-gallery-voice-balloon--dock ui-gallery-voice-balloon--open"
       role="tooltip"
       :style="balloonStyle"
