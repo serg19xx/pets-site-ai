@@ -8,24 +8,26 @@ Contributor tracker: [learn-contributors-tracker.md](./learn-contributors-tracke
 
 ## Decisions that do not change
 
-- **Learn** = durable guides (read). **Consultations** = people you can ask later. Not one pile.
-- Primary browse axis = **animal species**. Topics (care, health, behavior, city) sit *inside* a species. Do not show empty species.
+- **Learn** = knowledge base (read). **Consultations** = people you can ask / book later. Not one pile.
+- Primary browse axis = **animal species**. Topics (care, health, behavior, city, breeds) sit *inside* a species. Do not show empty species.
+- Learn holds **both** phone-readable guides **and** curated external links. Links may outnumber original articles — same shelf pattern as legal (Stage 1b).
 - An author writes **one original language**. Site chrome stays EN/FR. Article translation is not editorial work.
 - A contributor **does not need a site account**. Same idea as local partners. Attach a user later if they want to edit or answer requests.
 - External intake: **PDF / Word / images** to the editorial inbox. Readers see HTML on a phone.
 - In-site editor later: **TipTap**, narrow toolbar (headings, bold/italic, lists, images). No font picker, no drawing, no charts.
 - Courses / “training product” are out of this plan.
 - Consultations do not start until **2–3 real specialists** exist.
+- Platform take (subscription and/or % of booking) is a **later** decision — document options now; do not build billing until real consultants are live.
 
 ## Three layers
 
 | Layer | What | Surface |
 |-------|------|---------|
 | People | Who may write or consult | Contributor record (tracker, later a table) |
-| Materials | Guides | `/learn`, `/learn/:slug` |
-| Consultations | Live ask / request | `/consultations` (later) |
+| Materials | Guides + curated link shelves | `/learn`, `/learn/:slug`, `/learn/legal`, later `/learn/:species` link packs |
+| Consultations | Specialist profile, their pieces, ask / book | `/consultations`, `/consultations/:id` (later) |
 
-One contributor → many guides + zero or one consultation card.
+One contributor → many Learn materials + zero or one consultation card (profile with articles + “Arrange appointment”).
 
 ### Contributor statuses
 
@@ -37,9 +39,26 @@ One contributor → many guides + zero or one consultation card.
 
 **Species (nav):** `dog` · `cat` · `small` (rabbit, guinea pig, … — one basket until there is an expert) · `general` (city, season, product how-tos).
 
-**Topics:** care · health (disclaimer: not a vet visit) · nutrition · behavior · city (QC winter, walks, neighbours).
+**Topics (inside a species):** care · health (disclaimer: not a vet visit) · nutrition · behavior · training · breeds (overview / popular breeds — not a full encyclopedia on day one) · city (QC winter, walks, neighbours).
 
-No author for a species → no section. Better eight dog cards than twelve empty “reptiles” shelves.
+No author / no curated links for a species → no section. Better eight dog cards than twelve empty “reptiles” shelves.
+
+### What belongs on a species shelf
+
+Anything useful to an owner of that species, for example:
+
+- How to care for the animal day to day
+- Feeding basics and common mistakes
+- Training / behavior starters
+- Breed overviews (what exists, temperament notes — with sources)
+- When to see a vet (signposting, not diagnosis)
+
+Each item is either:
+
+1. **Original guide** — short HTML we host (`/learn/:slug`), or
+2. **Curated link** — title, short note, trusted URL, optional topic tags (same spirit as `learn-legal-links.ts`).
+
+Prefer a mix. Do not wait for perfect long articles when a good external guide already exists — link it, label the source, keep editorial control (no auto-scrape into the shelf).
 
 ## Language
 
@@ -84,34 +103,69 @@ Freshness monitor (n8n URL health): documented in `agents/n8n/docs/learn-legal-m
 
 **Done when:** member can open Learn → Animal law references → official sources (+ filter the list).
 
+### Stage 1c — species link packs (same pattern as legal)
+
+Reuse the legal shelf idea per species: static curated lists (e.g. `web/data/learn-dog-links.ts`) with title, note, URL, topic tags, optional language. Show under Dog / Cat / … only when the pack is non-empty; mix with original guides on the same Learn home.
+
+**Scope for first packs:** care, nutrition, training/behavior, a few breed overviews — trusted clinics, associations, government/animal-welfare pages. No scraped full text; link out. Human approve every URL.
+
+**Done when:** Learn → Dog (or Cat) shows at least a small link pack and/or wave-0 guides — not an empty heading.
+
 ### Stage 2 — publish without a frontend deploy
 
-Tables `contributors` (optional `user_id`) and `learn_guides`; TipTap + image upload for **us**. External authors still send files. Guests read published HTML.
+Tables `contributors` (optional `user_id`) and `learn_guides`; TipTap + image upload for **us**. External authors still send files. Guests read published HTML. Link packs can stay in data files until volume forces a table.
 
 ### Stage 3 — in-place auto-translate
 
 EN↔FR button, cache, medical disclaimer. No download yet.
 
-### Stage 4 — Consultations
+### Stage 4 — Consultations (people)
 
-Same contributor, flag “consults” + species they take. Catalog + login request (marketplace-inquiry style) or email. Consultant cabinet only if they ask to run a queue.
+Same contributor, flag “consults” + species / specialties they take (vet, lawyer, nutritionist, trainer, …).
+
+**Public profile** (`/consultations/:id`), e.g. “Dr. Wagner — veterinarian”:
+
+- Short bio, specialty, species they cover
+- Their published materials (Learn guides and/or pieces attached to the profile)
+- Primary CTA: **Arrange appointment** (login required) — first version can be a request/inbox like marketplace inquiry or email; real calendar later
+- Clear that advice is professional service, not a substitute for emergency care where relevant
+
+**Catalog** (`/consultations`): browse by specialty / species + search. Consultant lite cabinet only if they ask to run a queue.
+
+**Done when:** 2–3 real specialists have cards; a logged-in member can send a booking/ask request.
+
+### Stage 4b — monetization (decide after Stage 4 is live)
+
+Do **not** implement payments until consultants are real and the request flow works. Options to keep in mind (can combine later):
+
+| Model | Who pays | Pros | Cons |
+|-------|----------|------|------|
+| **Monthly subscription** for the consultant (presence / cabinet / listing) | Consultant | Predictable platform revenue; simple billing | Harder sell before traffic is proven |
+| **% of consultation / booking fee** | Split from client payment | Aligns with success; scales if global usage grows | Local volume may be small; needs payment rails + disputes |
+| **Hybrid** | Both | Listing fee + small take rate | More product/ops complexity |
+
+Open questions (intentionally undecided): whether the platform takes a cut at all at soft-launch; who sets the appointment price (consultant vs platform); refunds / no-shows. Revisit when at least one paid booking path is requested by a real consultant.
+
+Global note: a small % looks weak in one city; the same model can become material income if the site is used across many countries — design data/billing so a take rate can be added without rewriting the catalog.
 
 ### Stage 5 — not until it hurts
 
-Author-facing editor, font pickers, in-browser Word/PDF, courses, comments on guides, empty rare-species sections, requiring a second language from the author.
+Author-facing editor, font pickers, in-browser Word/PDF, courses, comments on guides, empty rare-species sections, requiring a second language from the author, full booking calendar, Stripe (or similar) before there is demand.
 
 ## Chronology of content (editorial queue)
 
 | Wave | Why | Example |
 |------|-----|---------|
-| 0 | Page not empty | 1 dog, 1 cat, 1 general |
+| 0 | Page not empty | 1 dog, 1 cat, 1 general guide |
+| 0b | Species shelves feel alive | Curated link packs (care / feed / training) + legal shelf |
 | 1 | Useful here (QC) | Winter paws, heat, city walks |
 | 2 | Life cycle | Puppy/kitten first weeks, when to see a vet |
 | 3 | Species with a real expert | Rabbit only with someone who knows rabbits |
-| 4 | Consultations | Catalog after 2–3 real people |
+| 4 | Consultations | Catalog after 2–3 real people; then appointment CTA |
+| 5 | Money | Subscription and/or % — only after paid demand exists |
 
-Seasonal and dangerous first; library does not expire like a feed. Show “updated”; rewrite, do not duplicate.
+Seasonal and dangerous first; library does not expire like a feed. Show “updated”; rewrite, do not duplicate. Prefer linking a strong external source over rewriting it badly.
 
 ## Medical accuracy
 
-Health guides need a visible disclaimer. Original language is the source of truth. Machine translation is assistance, not a second official article. Prefer named vet/clinic authors before deep medical pieces.
+Health guides need a visible disclaimer. Original language is the source of truth. Machine translation is assistance, not a second official article. Prefer named vet/clinic authors before deep medical pieces. Curated health links: prefer professional bodies and known clinics; never present a link shelf as a diagnosis.

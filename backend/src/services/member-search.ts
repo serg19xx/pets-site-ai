@@ -21,6 +21,8 @@ export interface PetFilterSet {
 
 export interface MemberSearchFilters {
   viewerUserId: number
+  /** Match public nickname / full name (privacy-visible fields only). */
+  q?: string
   gender?: UserGender
   ageMin?: number
   ageMax?: number
@@ -174,6 +176,18 @@ export async function searchPublicMembers(
           (uf.user_a_id = $1 AND uf.user_b_id = u.id)
           OR (uf.user_b_id = $1 AND uf.user_a_id = u.id)
         )
+    )`)
+  }
+
+  const q = filters.q?.trim().toLowerCase()
+  if (q) {
+    if (q.length > 80) {
+      throw new AppError(400, 'Search text is too long', 'VALIDATION_ERROR')
+    }
+    params.push(`%${q}%`)
+    where.push(`(
+      (u.show_nickname = TRUE AND lower(u.nickname) LIKE $${params.length})
+      OR (u.show_full_name = TRUE AND lower(u.full_name) LIKE $${params.length})
     )`)
   }
 

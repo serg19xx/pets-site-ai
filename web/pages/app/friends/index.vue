@@ -28,6 +28,38 @@ const isLoading = ref(true)
 const loadError = ref('')
 const actionError = ref('')
 const busyUserId = ref<number | null>(null)
+const listQuery = ref('')
+
+function matchesQuery(person: { displayName: string }, query: string) {
+  if (!query) {
+    return true
+  }
+  return person.displayName.toLowerCase().includes(query)
+}
+
+const normalizedQuery = computed(() => listQuery.value.trim().toLowerCase())
+
+const filteredIncoming = computed(() =>
+  incoming.value.filter((person) => matchesQuery(person, normalizedQuery.value)),
+)
+const filteredOutgoing = computed(() =>
+  outgoing.value.filter((person) => matchesQuery(person, normalizedQuery.value)),
+)
+const filteredFriends = computed(() =>
+  friends.value.filter((person) => matchesQuery(person, normalizedQuery.value)),
+)
+
+const hasAnyPeople = computed(
+  () => friends.value.length + incoming.value.length + outgoing.value.length > 0,
+)
+
+const hasFilteredResults = computed(
+  () =>
+    filteredFriends.value.length +
+      filteredIncoming.value.length +
+      filteredOutgoing.value.length >
+    0,
+)
 
 async function loadFriends(options?: { silent?: boolean }) {
   const token = auth.accessToken
@@ -90,14 +122,16 @@ function onRemove(userId: number) {
       <Icon :icon="UI_ACTION_ICONS.back" class="ui-icon-sm" aria-hidden="true" />
       {{ $t('friends.backToProfile') }}
     </NuxtLink>
-    <p class="mt-2">
-      <NuxtLink :to="localePath('/app/people')" class="ui-text-link text-sm">
+
+    <div class="mt-4 flex flex-wrap items-start justify-between gap-3">
+      <div class="min-w-0">
+        <h1 class="ui-page-title">{{ $t('friends.title') }}</h1>
+        <p class="ui-page-subtitle mt-2">{{ $t('friends.subtitle') }}</p>
+      </div>
+      <NuxtLink :to="localePath('/app/people')" class="ui-btn-secondary ui-btn-sm shrink-0">
         {{ $t('people.navTitle') }}
       </NuxtLink>
-    </p>
-
-    <h1 class="ui-page-title mt-4">{{ $t('friends.title') }}</h1>
-    <p class="ui-page-subtitle mt-2">{{ $t('friends.subtitle') }}</p>
+    </div>
 
     <p v-if="isLoading" class="ui-loading mt-6">{{ $t('common.loading') }}</p>
     <p v-else-if="loadError" class="ui-alert-error mt-6" role="alert">
@@ -109,76 +143,97 @@ function onRemove(userId: number) {
         {{ actionError }}
       </p>
 
-      <section v-if="incoming.length > 0" class="mt-8">
-        <h2 class="ui-section-title">{{ $t('friends.incomingHeading') }}</h2>
-        <ul class="mt-3 flex list-none flex-col gap-2">
-          <li v-for="person in incoming" :key="`in-${person.id}`">
-            <MemberFriendRow :member="person">
-              <button
-                type="button"
-                class="ui-btn-primary ui-btn-sm"
-                :disabled="busyUserId !== null"
-                @click="onAccept(person.id)"
-              >
-                {{ $t('friends.accept') }}
-              </button>
-              <button
-                type="button"
-                class="ui-btn-ghost ui-btn-sm"
-                :disabled="busyUserId !== null"
-                @click="onDecline(person.id)"
-              >
-                {{ $t('friends.decline') }}
-              </button>
-            </MemberFriendRow>
-          </li>
-        </ul>
-      </section>
+      <label v-if="hasAnyPeople" class="ui-field mt-6 max-w-md">
+        {{ $t('friends.filterLabel') }}
+        <input
+          v-model="listQuery"
+          type="search"
+          class="ui-input"
+          maxlength="80"
+          autocomplete="off"
+          :placeholder="$t('friends.filterPlaceholder')"
+        />
+      </label>
 
-      <section v-if="outgoing.length > 0" class="mt-8">
-        <h2 class="ui-section-title">{{ $t('friends.outgoingHeading') }}</h2>
-        <ul class="mt-3 flex list-none flex-col gap-2">
-          <li v-for="person in outgoing" :key="`out-${person.id}`">
-            <MemberFriendRow :member="person">
-              <button
-                type="button"
-                class="ui-btn-ghost ui-btn-sm"
-                :disabled="busyUserId !== null"
-                @click="onRemove(person.id)"
-              >
-                {{ $t('friends.cancelRequest') }}
-              </button>
-            </MemberFriendRow>
-          </li>
-        </ul>
-      </section>
+      <p
+        v-if="hasAnyPeople && normalizedQuery && !hasFilteredResults"
+        class="ui-empty mt-6"
+      >
+        {{ $t('friends.filterEmpty') }}
+      </p>
 
-      <section class="mt-8">
-        <h2 class="ui-section-title">{{ $t('friends.listHeading') }}</h2>
-        <p v-if="friends.length === 0" class="ui-empty mt-4">
-          {{ $t('friends.empty') }}
-          <NuxtLink
-            :to="localePath('/app/people')"
-            class="ui-text-link mt-2 inline-block"
-          >
-            {{ $t('people.navTitle') }}
-          </NuxtLink>
-        </p>
-        <ul v-else class="mt-3 flex list-none flex-col gap-2">
-          <li v-for="person in friends" :key="`fr-${person.id}`">
-            <MemberFriendRow :member="person">
-              <button
-                type="button"
-                class="ui-btn-ghost ui-btn-sm"
-                :disabled="busyUserId !== null"
-                @click="onRemove(person.id)"
-              >
-                {{ $t('friends.unfriend') }}
-              </button>
-            </MemberFriendRow>
-          </li>
-        </ul>
-      </section>
+      <template v-else>
+        <section v-if="filteredIncoming.length > 0" class="mt-8">
+          <h2 class="ui-section-title">{{ $t('friends.incomingHeading') }}</h2>
+          <ul class="mt-3 flex list-none flex-col gap-2">
+            <li v-for="person in filteredIncoming" :key="`in-${person.id}`">
+              <MemberFriendRow :member="person">
+                <button
+                  type="button"
+                  class="ui-btn-primary ui-btn-sm"
+                  :disabled="busyUserId !== null"
+                  @click="onAccept(person.id)"
+                >
+                  {{ $t('friends.accept') }}
+                </button>
+                <button
+                  type="button"
+                  class="ui-btn-ghost ui-btn-sm"
+                  :disabled="busyUserId !== null"
+                  @click="onDecline(person.id)"
+                >
+                  {{ $t('friends.decline') }}
+                </button>
+              </MemberFriendRow>
+            </li>
+          </ul>
+        </section>
+
+        <section v-if="filteredOutgoing.length > 0" class="mt-8">
+          <h2 class="ui-section-title">{{ $t('friends.outgoingHeading') }}</h2>
+          <ul class="mt-3 flex list-none flex-col gap-2">
+            <li v-for="person in filteredOutgoing" :key="`out-${person.id}`">
+              <MemberFriendRow :member="person">
+                <button
+                  type="button"
+                  class="ui-btn-ghost ui-btn-sm"
+                  :disabled="busyUserId !== null"
+                  @click="onRemove(person.id)"
+                >
+                  {{ $t('friends.cancelRequest') }}
+                </button>
+              </MemberFriendRow>
+            </li>
+          </ul>
+        </section>
+
+        <section class="mt-8">
+          <h2 class="ui-section-title">{{ $t('friends.listHeading') }}</h2>
+          <p v-if="friends.length === 0" class="ui-empty mt-4">
+            {{ $t('friends.empty') }}
+            <NuxtLink
+              :to="localePath('/app/people')"
+              class="ui-text-link mt-2 inline-block"
+            >
+              {{ $t('people.navTitle') }}
+            </NuxtLink>
+          </p>
+          <ul v-else-if="filteredFriends.length > 0" class="mt-3 flex list-none flex-col gap-2">
+            <li v-for="person in filteredFriends" :key="`fr-${person.id}`">
+              <MemberFriendRow :member="person">
+                <button
+                  type="button"
+                  class="ui-btn-ghost ui-btn-sm"
+                  :disabled="busyUserId !== null"
+                  @click="onRemove(person.id)"
+                >
+                  {{ $t('friends.unfriend') }}
+                </button>
+              </MemberFriendRow>
+            </li>
+          </ul>
+        </section>
+      </template>
     </template>
   </section>
 </template>

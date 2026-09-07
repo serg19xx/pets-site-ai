@@ -626,7 +626,7 @@
     "likedPetsHint": "Animals you liked in the gallery.",
     "communitySection": "Community",
     "friendsHint": "People you added as friends, and requests waiting for a reply.",
-    "peopleHint": "Find members by city, age, gender, or the pets they have."
+    "peopleHint": "Find members by name, city, age, gender, or the pets they have."
   },
   "people": {
     "navTitle": "Find people",
@@ -635,6 +635,8 @@
     "title": "Find people",
     "subtitle": "Discover other pet owners. Search uses only fields they chose to show publicly.",
     "humanFilters": "About the person",
+    "nameSearch": "Name or nickname",
+    "nameSearchPlaceholder": "Search by public name…",
     "petFilters": "About their pets",
     "petSetsHint": "Each set is one pet condition. A member must match every set (e.g. has a cat AND a dog).",
     "petSetLabel": "Pet set {n}",
@@ -663,10 +665,13 @@
     "backToProfile": "Back to profile",
     "title": "Friends",
     "subtitle": "Add people from their public profile. They confirm before you become friends.",
+    "filterLabel": "Search your list",
+    "filterPlaceholder": "Filter by name…",
+    "filterEmpty": "No one on your list matches that name.",
     "listHeading": "Your friends",
     "incomingHeading": "Requests for you",
     "outgoingHeading": "Waiting for a reply",
-    "empty": "No friends yet. Open a member’s profile and tap Add friend.",
+    "empty": "No friends yet. Open Find people or a member’s profile and tap Add friend.",
     "loadError": "Could not load friends.",
     "actionError": "Could not update friendship.",
     "add": "Add friend",

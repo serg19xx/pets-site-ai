@@ -625,7 +625,7 @@
     "likedPetsHint": "Animaux que vous avez aimés dans la galerie.",
     "communitySection": "Communauté",
     "friendsHint": "Les personnes que vous avez ajoutées, et les demandes en attente.",
-    "peopleHint": "Trouvez des membres par ville, âge, genre, ou selon leurs animaux."
+    "peopleHint": "Trouvez des membres par nom, ville, âge, genre, ou selon leurs animaux."
   },
   "people": {
     "navTitle": "Trouver des personnes",
@@ -634,6 +634,8 @@
     "title": "Trouver des personnes",
     "subtitle": "Découvrez d'autres propriétaires. La recherche n'utilise que les champs qu'ils ont choisis d'afficher.",
     "humanFilters": "À propos de la personne",
+    "nameSearch": "Nom ou surnom",
+    "nameSearchPlaceholder": "Rechercher par nom public…",
     "petFilters": "À propos de leurs animaux",
     "petSetsHint": "Chaque ensemble est une condition. Un membre doit correspondre à tous (ex. a un chat ET un chien).",
     "petSetLabel": "Ensemble animal {n}",
@@ -662,10 +664,13 @@
     "backToProfile": "Retour au profil",
     "title": "Amis",
     "subtitle": "Ajoutez des personnes depuis leur profil public. Elles confirment avant de devenir amis.",
+    "filterLabel": "Rechercher dans votre liste",
+    "filterPlaceholder": "Filtrer par nom…",
+    "filterEmpty": "Personne dans votre liste ne correspond à ce nom.",
     "listHeading": "Vos amis",
     "incomingHeading": "Demandes pour vous",
     "outgoingHeading": "En attente de réponse",
-    "empty": "Pas encore d’amis. Ouvrez le profil d’un membre et appuyez sur Ajouter.",
+    "empty": "Pas encore d’amis. Ouvrez Trouver des personnes ou le profil d’un membre et appuyez sur Ajouter.",
     "loadError": "Impossible de charger les amis.",
     "actionError": "Impossible de mettre à jour l’amitié.",
     "add": "Ajouter",

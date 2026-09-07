@@ -30,6 +30,7 @@ export interface MemberPetFilterSet {
 }
 
 export interface MemberSearchParams {
+  q?: string
   gender?: UserGender | ''
   ageMin?: number | null
   ageMax?: number | null
@@ -58,6 +59,9 @@ export async function searchMembers(
 
   const payload: Record<string, unknown> = {
     friendsOnly: Boolean(params.friendsOnly),
+  }
+  if (params.q?.trim()) {
+    payload.q = params.q.trim()
   }
   if (params.gender) {
     payload.gender = params.gender

@@ -57,6 +57,7 @@ const memberSearchBodySchema = {
   type: 'object',
   additionalProperties: false,
   properties: {
+    q: { type: 'string', maxLength: 80 },
     gender: { type: 'string', enum: [...USER_GENDERS] },
     ageMin: { type: 'integer', minimum: 0, maximum: 120 },
     ageMax: { type: 'integer', minimum: 0, maximum: 120 },
@@ -129,6 +130,7 @@ function parseFriendsOnly(raw: string | boolean | undefined): boolean {
 }
 
 function filtersFromQuery(q: {
+  q?: string
   gender?: string
   ageMin?: string
   ageMax?: string
@@ -141,6 +143,7 @@ function filtersFromQuery(q: {
   offset?: string
 }): Omit<MemberSearchFilters, 'viewerUserId'> {
   return {
+    q: q.q,
     gender: parseOptionalGender(q.gender),
     ageMin: parseOptionalInt(q.ageMin),
     ageMax: parseOptionalInt(q.ageMax),
@@ -157,6 +160,7 @@ function filtersFromQuery(q: {
 export const membersRoutes: FastifyPluginAsync = async (app) => {
   app.get<{
     Querystring: {
+      q?: string
       gender?: string
       ageMin?: string
       ageMax?: string
@@ -182,6 +186,7 @@ export const membersRoutes: FastifyPluginAsync = async (app) => {
           type: 'object',
           additionalProperties: false,
           properties: {
+            q: { type: 'string', maxLength: 80 },
             gender: { type: 'string', enum: [...USER_GENDERS] },
             ageMin: { type: 'integer', minimum: 0, maximum: 120 },
             ageMax: { type: 'integer', minimum: 0, maximum: 120 },
@@ -211,6 +216,7 @@ export const membersRoutes: FastifyPluginAsync = async (app) => {
 
   app.post<{
     Body: {
+      q?: string
       gender?: string
       ageMin?: number
       ageMax?: number
@@ -245,6 +251,7 @@ export const membersRoutes: FastifyPluginAsync = async (app) => {
       const body = request.body
       return searchPublicMembers({
         viewerUserId: getUserId(request),
+        q: body.q,
         gender: parseOptionalGender(body.gender),
         ageMin: body.ageMin,
         ageMax: body.ageMax,

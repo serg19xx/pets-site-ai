@@ -36,6 +36,9 @@ interface PetFilterSetRow {
   breedList: PetBreedListItem[]
 }
 
+const nameQuery = ref(
+  typeof route.query.q === 'string' ? route.query.q.slice(0, 80) : '',
+)
 const gender = ref<UserGender | ''>('')
 const ageMin = ref<number | null>(null)
 const ageMax = ref<number | null>(null)
@@ -164,6 +167,7 @@ async function runSearch(offset = 0) {
   loadError.value = ''
   try {
     const { members, total: nextTotal } = await searchMembers(token, {
+      q: nameQuery.value,
       gender: gender.value,
       ageMin: Number.isFinite(ageMin.value as number) ? ageMin.value : null,
       ageMax: Number.isFinite(ageMax.value as number) ? ageMax.value : null,
@@ -187,6 +191,7 @@ async function runSearch(offset = 0) {
 }
 
 function clearFilters() {
+  nameQuery.value = ''
   gender.value = ''
   ageMin.value = null
   ageMax.value = null
@@ -229,6 +234,17 @@ onMounted(async () => {
       @submit.prevent="runSearch(0)"
     >
       <h2 class="ui-section-title">{{ $t('people.humanFilters') }}</h2>
+      <label class="ui-field max-w-xl">
+        {{ $t('people.nameSearch') }}
+        <input
+          v-model="nameQuery"
+          type="search"
+          class="ui-input"
+          maxlength="80"
+          autocomplete="off"
+          :placeholder="$t('people.nameSearchPlaceholder')"
+        />
+      </label>
       <label class="flex items-center gap-2 text-sm text-(--ui-text)">
         <input v-model="friendsOnly" type="checkbox" class="ui-checkbox" />
         {{ $t('people.friendsOnly') }}
