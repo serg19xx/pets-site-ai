@@ -9,11 +9,15 @@ Related: [beta-social-posts.md](./beta-social-posts.md), [social-groups-outreach
 
 ## Message (always)
 
-- Looking for people to **test** and leave **honest notes / ideas**.
-- Soft launch / beta — **not** a finished app.
-- Limited founding spots.
-- Same link every time; rotate angle (see Day 1–7 drafts).
+Order matters — people skim and bounce if it sounds like “we need QA”:
 
+1. **What it is** — a pet owners’ club (Montreal / QC) where the *animal* has a place: gallery, voice, light virtual life.
+2. **Why it’s different** — not only photos for humans; pets can “speak” a little and exchange a short hello; plus feed + classifieds.
+3. **What we ask** — try it, poke around, leave honest notes in Feedback.
+4. Soft beta — **not** a finished app; limited founding spots.
+5. Same link every time; rotate angle (see Day 1–7 drafts + [social-groups-outreach.md](./social-groups-outreach.md)).
+
+Do **not** lead with jargon alone (“soft launch / founding testers”) without the benefit.  
 Do **not** sell “join the best pet social network.” Do **not** promise cash for testing.
 
 ## Where to recruit

@@ -11,20 +11,31 @@
 
 1. Один пост на группу, не чаще чем раз в 2–3 недели (или по правилам группы).
 2. Сначала прочитай pinned / rules: многие запрещают self-promo — тогда только в «разрешённый день» или через коммент модератору.
-3. Тон: **ищу тестёров**, не «запускаем готовое приложение».
+3. Тон: **сначала польза и «зачем сайт»**, потом мягко «попробуйте и скажите» — не сухой призыв «нужны бета-тестеры».
 4. Ссылку часто лучше **в первом комментарии**, не в посте.
 5. Не тегай админов без причины. Не копируй один и тот же текст в 10 групп за час.
+6. Не обещай готовый «лучший pet social» и не обещай деньги за тесты.
 
-## Пост #1 — мягкий (копировать в FB-группы)
+## Пост #1 — мягкий + понятная ценность (копировать в FB-группы)
+
+Люди должны за 10 секунд понять: **что это**, **чем отличается**, **что им с этого**. Роль тестёра — в конце.
 
 ### FR (Montreal / QC — основной)
 
 ```
-Bonjour — je développe Pet Friends, une petite bêta pour propriétaires d’animaux (galerie, profils, fil d’actus).
+Bonjour 👋
 
-On cherche quelques testeurs fondateurs pour essayer le site et donner un retour honnête. Places limitées.
+Vous avez un chien ou un chat — et vous aimeriez un endroit où votre animal a vraiment sa place, pas seulement une photo perdue dans Instagram ?
 
-Ce n’est pas un produit fini — on construit avec vos retours.
+Pet Friends, c’est une petite communauté (Montréal / QC) pour propriétaires :
+• une galerie d’animaux du club
+• chaque animal a une petite « voix » / personnalité sur le site
+• les animaux peuvent se « rencontrer » et échanger un court bonjour (pour le fun des propriétaires)
+• un fil d’actus + de petites annonces (animaux / services)
+
+Ce n’est pas un chatbot pour humains — c’est le monde des animaux, à côté du vôtre.
+
+On est en bêta douce : le site n’est pas fini. On cherche quelques propriétaires pour l’essayer, se promener un peu, et dire franchement ce qui plaît ou bloque. Places limitées.
 
 Lien d’invite en commentaire 👇
 ```
@@ -32,16 +43,25 @@ Lien d’invite en commentaire 👇
 **Commentaire:**
 ```
 Invite : https://pb.websmith-shop.com/invite
+(Étapes simples : créer le compte → ajouter votre animal → regarder la galerie → essayer un « bonjour » si vous voulez → Feedback dans l’app)
 ```
 
 ### EN (если группа англоязычная)
 
 ```
-Hi — I’m building Pet Friends, a soft-launch community for pet owners (gallery, pet profiles, feed).
+Hi 👋
 
-Looking for a few founding testers to try it and leave honest feedback. Limited spots.
+Got a dog or cat — and wish there was a place where *your pet* feels present, not just another photo lost in Instagram?
 
-Not a finished app — we’re building with your input.
+Pet Friends is a small Montreal / QC club for pet owners:
+• a gallery of club animals
+• each pet has a little “voice” / personality on the site
+• pets can “meet” and exchange a short hello (for owners’ fun)
+• a feed + pet classifieds (animals / services)
+
+Not a chatbot for humans — it’s the pets’ world, next to yours.
+
+Soft beta: the site isn’t finished. Looking for a few owners to try it, poke around, and say honestly what works or what’s missing. Limited spots.
 
 Invite link in the comments 👇
 ```
@@ -49,54 +69,63 @@ Invite link in the comments 👇
 **Comment:**
 ```
 Invite: https://pb.websmith-shop.com/invite
+(Simple path: create account → add your pet → browse gallery → try a “hello” if you like → Feedback in the app)
 ```
 
-## Пост #3 — что это за сайт + ИИ (для коллажа)
+## Пост #3 — полный (для коллажа): ценность → отличие → что делать
 
 Один блок: скопировать целиком. Картинка: square collage.
 
 ```
-https://pb.websmith-shop.com/invite
-
 —— FR ——
 
-Bonjour — je développe Pet Friends, une petite communauté en bêta pour propriétaires d’animaux (Montréal / QC).
+Bonjour — je construis Pet Friends, un petit club pour propriétaires d’animaux (Montréal / QC).
 
-Sur le site :
-• galerie d’animaux
-• fil d’actus
-• petites annonces (achat / vente / services)
-• profils d’animaux (photos, infos, dossiers)
+Pourquoi ça existe
+Beaucoup de sites montrent des photos. Ici, l’idée est que votre animal a une petite vie sur le site avec vous : profil, voix, rencontres légères — pour le plaisir des propriétaires.
 
-Le plus particulier : un écosystème IA pour les animaux. Chaque animal a une petite personnalité numérique — il peut « rencontrer » un autre animal et échanger un court bonjour, comme s’il vivait un peu sur le site. Ce n’est pas un chatbot pour humains : c’est le monde des animaux, pour le fun des propriétaires.
+Ce que vous y trouvez
+• Galerie d’animaux du club
+• Profil de chaque animal (photos, infos)
+• Courts « bonjours » entre animaux (personnalité numérique — pas un chat pour humains)
+• Fil d’actus de la communauté
+• Petites annonces (achat / vente / services)
 
-Ce n’est pas un produit fini. On cherche quelques testeurs fondateurs pour essayer et donner un retour honnête. Places limitées.
+Pourquoi on vous écrit
+Ce n’est pas un produit fini. On ouvre quelques places pour des propriétaires qui veulent l’essayer et dire ce qui est utile, confus, ou manquant. Votre retour aide vraiment.
+
+Invite : https://pb.websmith-shop.com/invite
 
 —— EN ——
 
-Hi — I’m building Pet Friends, a soft-launch community for pet owners (Montreal / QC).
+Hi — I’m building Pet Friends, a small club for pet owners (Montreal / QC).
 
-On the site:
-• animal gallery
-• community feed
-• marketplace (buy / sell / services)
-• pet profiles (photos, details, records)
+Why it exists
+Lots of sites show photos. Here the idea is that your pet has a little life on the site with you: profile, voice, light “meetups” — for owners to enjoy.
 
-The special part: an AI ecosystem for the animals. Each pet gets a small digital personality — they can “meet” another pet and exchange a short hello, as if they had a little life on the site. It’s not a chatbot for humans: it’s the pets’ world, for owners to enjoy.
+What you’ll find
+• Club animal gallery
+• Each pet’s profile (photos, details)
+• Short pet-to-pet “hellos” (digital personality — not a chatbot for humans)
+• Community feed
+• Classifieds (buy / sell / services)
 
-Not a finished app. Looking for a few founding testers to try it and leave honest feedback. Limited spots.
+Why we’re posting
+Not a finished product. A few spots for owners who’ll try it and say what’s useful, confusing, or missing. That feedback really helps.
+
+Invite: https://pb.websmith-shop.com/invite
 ```
 
-## Пост #2 — короче (если группа строгая)
+## Пост #2 — короче (если группа строгая) — всё равно с крючком
 
 ### FR
 ```
-Soft launch — on recrute quelques propriétaires d’animaux pour tester Pet Friends et envoyer du feedback. Places founding limitées. Lien en commentaire.
+Petit club pour propriétaires (Montréal/QC) : galerie d’animaux avec une voix, « bonjours » entre animaux, fil et annonces. Bêta — on cherche quelques personnes pour essayer et dire ce qui marche. Lien en commentaire.
 ```
 
 ### EN
 ```
-Soft launch — recruiting a few pet owners to test Pet Friends and leave feedback. Limited founding spots. Link in comments.
+Small pet-owners club (Montreal/QC): animal gallery with a voice, pet-to-pet hellos, feed & classifieds. Soft beta — looking for a few people to try it and say what works. Link in comments.
 ```
 
 ## Где искать группы (Montreal / QC)
